@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 
 struct WeatherOperator {
@@ -18,18 +19,25 @@ struct WeatherOperator {
         performNetworkRequest(with: URLString)
     }
 
+    func createGeoURL(location: CLLocation) {
+        let URLString = "\(weatherURL)&lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)"
+        print(URLString)
+        performNetworkRequest(with: URLString)
+    }
+
     func performNetworkRequest(with urlString: String) {
 
         if let url = URL(string: urlString) {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { data, response, error in
                 if error != nil {
-                    print("There was an error performing the network request.")
+                    print("There was an error performing the network request: \(error).")
                     return
                 }
-                if let safeData = data {
-                        print(safeData)
-                       // let weatherData = parseJSON
+
+                if let encodedData = data {
+                    let dataString = String(data: encodedData, encoding: .utf8)
+                    print(dataString)
                     }
 
                 }

@@ -28,8 +28,6 @@ class WeatherViewController: UIViewController {
     }
 
 
-
-
     @IBAction func didTapSearch(_ sender: Any) {
         print(cityTextField.text!)
         getWeather()
@@ -38,9 +36,9 @@ class WeatherViewController: UIViewController {
 
 
     @IBAction func didTapLocation(_ sender: Any) {
+        locationManager?.requestLocation()
         print("getting location")
     }
-
 
 
     func getWeather() {
@@ -85,7 +83,13 @@ extension WeatherViewController: UITextFieldDelegate {
 extension WeatherViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("got location")
+        if let location = locations.last {
+//            let latitude = location.coordinate.latitude
+//            let longitude = location.coordinate.longitude
+//            let altidue = location.altitude
+//            print("long: \(longitude), lat: \(latitude), alt: \(altidue)")
+            weatherOperator.createGeoURL(location: location)
+        }
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
