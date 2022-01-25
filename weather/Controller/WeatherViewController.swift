@@ -11,6 +11,8 @@ import CoreLocation
 class WeatherViewController: UIViewController {
 
     @IBOutlet var cityTextField: UITextField!
+    @IBOutlet var cityTextLabel: UILabel!
+    @IBOutlet var tempTextLabel: UILabel!
 
     let weatherOperator = WeatherOperator()
 
@@ -25,6 +27,7 @@ class WeatherViewController: UIViewController {
         locationManager?.delegate = self
         locationManager?.requestWhenInUseAuthorization()
         locationManager?.requestLocation()
+
     }
 
 

@@ -35,22 +35,41 @@ struct WeatherOperator {
                     return
                 }
 
-                if let encodedData = data {
-                    let dataString = String(data: encodedData, encoding: .utf8)
-                    print(dataString)
-                    }
-
+                if let weatherData = data {
+                    parseJSON(encodedData: weatherData)
+//                    let dataString = String(data: encodedData, encoding: .utf8)
+//                    print(dataString)
                 }
 
-            task.resume()
             }
+
+            task.resume()
+        }
 
 
 
     }
 
-    func parseJSON(){
+    func parseJSON(encodedData: Data) {
+        let decoder = JSONDecoder()
 
+        do {
+            let decodedData = try decoder.decode(WeatherDataModel.self, from: encodedData)
+
+            let decodedTemp = decodedData.main.temp
+            let decodedName = decodedData.name
+            let decodedCondition = decodedData.weather[0].id
+
+            let weatherModel = WeatherModel(temp: decodedTemp, name: decodedName, condition: decodedCondition)
+
+            print(weatherModel)
+            print(weatherModel.conditionString)
+            print(weatherModel.tempString)
+
+
+        } catch {
+            print(error)
+        }
     }
 
 }
