@@ -8,10 +8,20 @@
 import Foundation
 import CoreLocation
 
+protocol WeatherManagerDelegate {
+    func didFetchWeather(with: WeatherModel)
+    func didCatchError(error: Error)
+}
+
 
 struct WeatherOperator {
 
     let weatherURL = "https://api.openweathermap.org/data/2.5/weather?&appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
+
+    let forecastURL =  "https://api.openweathermap.org/data/2.5/forecast?&appid=63f43c85a20418a56d7bd2c747992f0e&units=metric&q=London"
+
+
+    var delegate: WeatherManagerDelegate?
 
     func createCityURL(city: String) {
         let URLString = "\(weatherURL)&q=\(city)"
@@ -31,26 +41,23 @@ struct WeatherOperator {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { data, response, error in
                 if error != nil {
-                    print("There was an error performing the network request: \(error).")
+                    delegate?.didCatchError(error: error!)
+                    print("There was an error performing the network request: \(error!).")
                     return
                 }
 
                 if let weatherData = data {
-                    parseJSON(encodedData: weatherData)
-//                    let dataString = String(data: encodedData, encoding: .utf8)
-//                    print(dataString)
+                    if let currentWeather = parseJSON(with: weatherData) {
+                        delegate?.didFetchWeather(with: currentWeather)
+                    }
                 }
-
             }
-
             task.resume()
         }
-
-
-
     }
 
-    func parseJSON(encodedData: Data) {
+
+    func parseJSON(with encodedData: Data) -> WeatherModel? {
         let decoder = JSONDecoder()
 
         do {
@@ -66,9 +73,11 @@ struct WeatherOperator {
             print(weatherModel.conditionString)
             print(weatherModel.tempString)
 
+            return weatherModel
 
         } catch {
-            print(error)
+            delegate?.didCatchError(error: error)
+            return nil
         }
     }
 

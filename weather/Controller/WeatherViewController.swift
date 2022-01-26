@@ -8,14 +8,16 @@
 import UIKit
 import CoreLocation
 
-class WeatherViewController: UIViewController {
+
+class WeatherViewController: UIViewController, WeatherManagerDelegate {
 
     @IBOutlet var cityTextField: UITextField!
     @IBOutlet var cityTextLabel: UILabel!
     @IBOutlet var tempTextLabel: UILabel!
 
-    let weatherOperator = WeatherOperator()
+    var weatherOperator = WeatherOperator()
 
+    //here or in view did load
     var locationManager: CLLocationManager?
 
     override func viewDidLoad() {
@@ -27,6 +29,8 @@ class WeatherViewController: UIViewController {
         locationManager?.delegate = self
         locationManager?.requestWhenInUseAuthorization()
         locationManager?.requestLocation()
+
+        weatherOperator.delegate = self
 
     }
 
@@ -48,6 +52,18 @@ class WeatherViewController: UIViewController {
         weatherOperator.createCityURL(city: cityTextField.text!)
     }
 
+
+    func didFetchWeather(with currentWeather: WeatherModel) {
+
+        DispatchQueue.main.async {
+            self.cityTextLabel.text = currentWeather.name
+            self.tempTextLabel.text = currentWeather.tempString
+        }
+    }
+
+    func didCatchError(error: Error) {
+        print("There was an error getting the current weather: \(error).")
+    }
 
 }
 
@@ -87,10 +103,10 @@ extension WeatherViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
-//            let latitude = location.coordinate.latitude
-//            let longitude = location.coordinate.longitude
-//            let altidue = location.altitude
-//            print("long: \(longitude), lat: \(latitude), alt: \(altidue)")
+            //            let latitude = location.coordinate.latitude
+            //            let longitude = location.coordinate.longitude
+            //            let altidue = location.altitude
+            //            print("long: \(longitude), lat: \(latitude), alt: \(altidue)")
             weatherOperator.createGeoURL(location: location)
         }
     }
@@ -100,5 +116,4 @@ extension WeatherViewController: CLLocationManagerDelegate {
     }
 
 }
-
 
