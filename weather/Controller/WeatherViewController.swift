@@ -9,15 +9,17 @@ import UIKit
 import CoreLocation
 
 
-class WeatherViewController: UIViewController, WeatherManagerDelegate {
+class WeatherViewController: UIViewController {
 
     @IBOutlet var cityTextField: UITextField!
     @IBOutlet var cityTextLabel: UILabel!
     @IBOutlet var tempTextLabel: UILabel!
+    @IBOutlet var weatherImageView: UIImageView!
+
 
     var weatherOperator = WeatherOperator()
 
-    //here or in view did load
+    //Jesse: here or in view did load
     var locationManager: CLLocationManager?
 
     override func viewDidLoad() {
@@ -31,12 +33,9 @@ class WeatherViewController: UIViewController, WeatherManagerDelegate {
         locationManager?.requestLocation()
 
         weatherOperator.delegate = self
-
     }
 
-
     @IBAction func didTapSearch(_ sender: Any) {
-        print(cityTextField.text!)
         getWeather()
         cityTextField.endEditing(true)
     }
@@ -44,29 +43,13 @@ class WeatherViewController: UIViewController, WeatherManagerDelegate {
 
     @IBAction func didTapLocation(_ sender: Any) {
         locationManager?.requestLocation()
-        print("getting location")
     }
 
 
     func getWeather() {
         weatherOperator.createCityURL(city: cityTextField.text!)
     }
-
-
-    func didFetchWeather(with currentWeather: WeatherModel) {
-
-        DispatchQueue.main.async {
-            self.cityTextLabel.text = currentWeather.name
-            self.tempTextLabel.text = currentWeather.tempString
-        }
-    }
-
-    func didCatchError(error: Error) {
-        print("There was an error getting the current weather: \(error).")
-    }
-
 }
-
 
 
 //Mark: - UITextFieldDelegate
@@ -74,7 +57,6 @@ class WeatherViewController: UIViewController, WeatherManagerDelegate {
 extension WeatherViewController: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        print(cityTextField.text!)
         getWeather()
         cityTextField.endEditing(true)
         return true
@@ -92,28 +74,51 @@ extension WeatherViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         cityTextField.text = ""
     }
-
 }
 
 
-
-//Mark: - CCLocationWEatherDelegate
+//Mark: - CLLocationManagerDelegate
 
 extension WeatherViewController: CLLocationManagerDelegate {
 
+    //Jesse: pass in location or only lat and lon?
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             //            let latitude = location.coordinate.latitude
             //            let longitude = location.coordinate.longitude
             //            let altidue = location.altitude
-            //            print("long: \(longitude), lat: \(latitude), alt: \(altidue)")
             weatherOperator.createGeoURL(location: location)
+            print(location)
         }
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("error")
     }
+}
 
+
+
+//Mark: - WeatherManagerDelegate
+
+extension WeatherViewController: WeatherManagerDelegate {
+    func didFetchWeather(with currentWeather: WeatherModel) {
+
+        DispatchQueue.main.async {
+            self.cityTextLabel.text = currentWeather.name
+            self.tempTextLabel.text = currentWeather.tempString
+            self.weatherImageView.image = UIImage(systemName: "\(currentWeather.conditionString)")
+        }
+    }
+
+    func didCatchError(error: Error) {
+        print("There was an error getting the current weather: \(error).")
+
+        DispatchQueue.main.async {
+            self.cityTextLabel.text = "Error"
+            self.tempTextLabel.text = "ºC"
+            self.weatherImageView.image = UIImage(systemName: "questionmark")
+        }
+    }
 }
 

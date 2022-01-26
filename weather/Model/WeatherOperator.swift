@@ -45,7 +45,6 @@ struct WeatherOperator {
                     print("There was an error performing the network request: \(error!).")
                     return
                 }
-
                 if let weatherData = data {
                     if let currentWeather = parseJSON(with: weatherData) {
                         delegate?.didFetchWeather(with: currentWeather)
