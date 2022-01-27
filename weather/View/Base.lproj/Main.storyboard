@@ -25,9 +25,12 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="City" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bUA-uA-yrW">
-                                <rect key="frame" x="101" y="739" width="219" height="34"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="City" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bUA-uA-yrW">
+                                <rect key="frame" x="82" y="747" width="250" height="35"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="a19-fJ-8JO"/>
+                                    <constraint firstAttribute="width" constant="250" id="odh-y3-5RK"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="search"/>
                             </textField>
@@ -73,11 +76,13 @@
                         <constraints>
                             <constraint firstItem="D2d-ct-E9Q" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="100" id="7Oz-fg-fMf"/>
                             <constraint firstItem="Mwt-Rg-Oaz" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="9NR-gt-zB1"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="bUA-uA-yrW" secondAttribute="bottom" constant="80" id="HvK-OV-OLE"/>
                             <constraint firstAttribute="bottom" secondItem="6wa-us-iQd" secondAttribute="bottom" id="NWo-ca-3jl"/>
                             <constraint firstItem="D2d-ct-E9Q" firstAttribute="top" secondItem="Mwt-Rg-Oaz" secondAttribute="bottom" constant="80" id="S9L-UB-LnQ"/>
                             <constraint firstItem="6wa-us-iQd" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Urf-aS-0MW"/>
                             <constraint firstItem="rYG-Rw-MVp" firstAttribute="top" secondItem="Mwt-Rg-Oaz" secondAttribute="bottom" constant="30" id="W3Y-dR-wb3"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="6wa-us-iQd" secondAttribute="trailing" id="alh-pV-GQ4"/>
+                            <constraint firstItem="bUA-uA-yrW" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="kOd-dD-rhm"/>
                             <constraint firstItem="Mwt-Rg-Oaz" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="100" id="mDh-kB-B0c"/>
                             <constraint firstItem="6wa-us-iQd" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="sKN-52-wsn"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="rYG-Rw-MVp" secondAttribute="trailing" constant="100" id="sYa-sS-Q36"/>
