@@ -1,13 +1,14 @@
 //
-//  WeatherModel.swift
+//  ForecastModel.swift
 //  weather
 //
-//  Created by Lina on 1/25/22.
+//  Created by Lina on 1/27/22.
 //
 
 import Foundation
 
-struct WeatherModel {
+
+struct ForecastModel {
 
     let temp: Double
     let name: String
@@ -37,4 +38,13 @@ struct WeatherModel {
             return"cloud"
         }
     }
+
+
+    func getDayOfWeek() {
+
+    }
+
+
+
 }
+

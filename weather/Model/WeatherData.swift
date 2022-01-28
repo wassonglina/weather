@@ -9,22 +9,20 @@ import Foundation
 
 
 struct WeatherDataModel: Decodable {
-
     let name: String
     let main: Main
     let weather: [Weather]
-
 }
+
 
 struct Forecast: Decodable {
-
     let city: City
     let list: [List]
-
 }
 
-struct List: Decodable {
 
+struct List: Decodable {
+    let dt: Double
     let main: Main
     let weather: [Weather]
 

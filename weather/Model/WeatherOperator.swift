@@ -10,6 +10,7 @@ import CoreLocation
 
 protocol WeatherManagerDelegate {
     func didFetchWeather(with: WeatherModel)
+    func didFetchForecast(with: ForecastModel)
     func didCatchError(error: Error)
 }
 
@@ -29,18 +30,38 @@ struct WeatherOperator {
     var delegate: WeatherManagerDelegate?
 
     func createCityURL(city: String) {
-        let URLString = "\(weatherForecastURL)&q=\(city)"
-        print(URLString)
-        performNetworkRequest(with: URLString)
+        let weatherURLString = "\(weatherURL)&q=\(city)"
+        let forcastURLString = "\(weatherForecastURL)&q=\(city)"
+        print(weatherURLString)
+        performNetworkRequest(with: weatherURLString) { data in
+            if let currentWeather = parseJSONWeather(with: data) {
+                delegate?.didFetchWeather(with: currentWeather)
+            }
+        }
+        performNetworkRequest(with: forcastURLString) { data in
+            if let forecastWeather = parseJSONForecast(with: data) {
+                delegate?.didFetchForecast(with: forecastWeather)
+            }
+        }
     }
 
     func createGeoURL(location: CLLocation) {
-        let URLString = "\(weatherForecastURL)&lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)"
-        print(URLString)
-        performNetworkRequest(with: URLString)
+        let weatherURLString = "\(weatherURL)&lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)"
+        let forcastURLString = "\(weatherForecastURL)&lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)"
+        print(weatherURLString)
+        performNetworkRequest(with: weatherURLString) { data in
+            if let currentWeather = parseJSONWeather(with: data) {
+                delegate?.didFetchWeather(with: currentWeather)
+            }
+        }
+        performNetworkRequest(with: forcastURLString) { data in
+            if let forecastWeather = parseJSONForecast(with: data) {
+                delegate?.didFetchForecast(with: forecastWeather)
+            }
+        }
     }
 
-    func performNetworkRequest(with urlString: String) {
+    func performNetworkRequest(with urlString: String, handler: @escaping (Data) -> Void ) {
 
         if let url = URL(string: urlString) {
             let session = URLSession(configuration: .default)
@@ -51,9 +72,7 @@ struct WeatherOperator {
                     return
                 }
                 if let weatherData = data {
-                    if let currentWeather = parseJSON(with: weatherData) {
-                        delegate?.didFetchWeather(with: currentWeather)
-                    }
+                    handler(weatherData)
                 }
             }
             task.resume()
@@ -61,7 +80,34 @@ struct WeatherOperator {
     }
 
 
-    func parseJSON(with encodedData: Data) -> WeatherModel? {
+    func parseJSONWeather(with encodedData: Data) -> WeatherModel? {
+        let decoder = JSONDecoder()
+
+        do {
+
+            let decodedWeather = try decoder.decode(WeatherDataModel.self, from: encodedData)
+            let decodedTemp = decodedWeather.main.temp
+            let decodedName = decodedWeather.name
+            let decodedCondition = decodedWeather.weather[0].id
+
+ //           let decodedDate = decodedForecast.list[0].dt
+
+            let weatherModel = WeatherModel(temp: decodedTemp, name: decodedName, condition: decodedCondition)
+
+            print(weatherModel)
+            print(weatherModel.conditionString)
+            print(weatherModel.tempString)
+
+            return weatherModel
+
+        } catch {
+            delegate?.didCatchError(error: error)
+            return nil
+        }
+    }
+
+
+    func parseJSONForecast(with encodedData: Data) -> ForecastModel? {
         let decoder = JSONDecoder()
 
         do {
@@ -71,13 +117,15 @@ struct WeatherOperator {
             let decodedName = decodedForecast.city.name
             let decodedCondition = decodedForecast.list[0].weather[0].id
 
-            let weatherModel = WeatherModel(temp: decodedTemp, name: decodedName, condition: decodedCondition)
+  //          let decodedDate = decodedForecast.list[0].dt
 
-            print(weatherModel)
-            print(weatherModel.conditionString)
-            print(weatherModel.tempString)
+            let forecastModel = ForecastModel(temp: decodedTemp, name: decodedName, condition: decodedCondition)
 
-            return weatherModel
+            print(forecastModel)
+            print(forecastModel.conditionString)
+            print(forecastModel.tempString)
+
+            return forecastModel
 
         } catch {
             delegate?.didCatchError(error: error)

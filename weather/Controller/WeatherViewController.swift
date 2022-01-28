@@ -15,7 +15,8 @@ class WeatherViewController: UIViewController {
     @IBOutlet var cityTextLabel: UILabel!
     @IBOutlet var tempTextLabel: UILabel!
     @IBOutlet var weatherImageView: UIImageView!
-
+    @IBOutlet var forecastUIView: UIView!
+    @IBOutlet var Day1TextLabel: UILabel!
 
     var weatherOperator = WeatherOperator()
 
@@ -33,6 +34,21 @@ class WeatherViewController: UIViewController {
         locationManager?.requestLocation()
 
         weatherOperator.delegate = self
+
+        forecastUIView.layer.cornerRadius = 10
+        forecastUIView.backgroundColor = .white
+        forecastUIView.layer.opacity = 0.15
+
+        cityTextField.backgroundColor = .white
+        cityTextField.layer.opacity = 0.6
+
+//        >> GET CURRENT DATE AND PUT IN FORECAST
+//        let customDateFormatter = DateFormatter()
+//
+//        print(customDateFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: Date())])
+//
+//        Day1TextLabel.text = customDateFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: Date())]
+
     }
 
     @IBAction func didTapSearch(_ sender: Any) {
@@ -102,12 +118,21 @@ extension WeatherViewController: CLLocationManagerDelegate {
 //Mark: - WeatherManagerDelegate
 
 extension WeatherViewController: WeatherManagerDelegate {
+
     func didFetchWeather(with currentWeather: WeatherModel) {
 
         DispatchQueue.main.async {
             self.cityTextLabel.text = currentWeather.name
             self.tempTextLabel.text = currentWeather.tempString
             self.weatherImageView.image = UIImage(systemName: "\(currentWeather.conditionString)")
+        }
+    }
+
+
+    func didFetchForecast(with forecastWeather: ForecastModel) {
+        DispatchQueue.main.async {
+            //hook up outlets
+            self.Day1TextLabel.text = forecastWeather.name
         }
     }
 
