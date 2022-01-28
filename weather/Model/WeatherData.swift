@@ -12,8 +12,8 @@ struct WeatherDataModel: Decodable {
     let name: String
     let main: Main
     let weather: [Weather]
+    let sys: Sys
 }
-
 
 struct Forecast: Decodable {
     let city: City
@@ -38,6 +38,11 @@ struct Weather: Decodable {
 
 struct City: Decodable {
     let name: String
+}
+
+struct Sys: Decodable {
+    let sunrise: Double
+    let sunset: Double
 }
 
 

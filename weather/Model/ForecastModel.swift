@@ -18,22 +18,23 @@ struct ForecastModel {
         String(format: "%.0f ºC", temp)
     }
 
+    //more cases for a more accurate desciption (like thunder etc)
     var conditionString: String {
         switch condition {
         case 200..<300:
-            return "cloud.colt"
+            return "cloud.bolt.fill"
         case 300..<400:
-            return "cloud.drizzle"
+            return "cloud.drizzle.fill"
         case 500..<600:
-            return "cloud.rain"
+            return "cloud.rain.fill"
         case 600..<700:
-            return "cloud.snow"
+            return "cloud.snow.fill"
         case 700..<800:
-            return "sun.haze"
+            return "sun.haze.fill"
         case 800:
-            return "sun.max"
+            return "sun.max.fill"
         case 801..<900:
-            return "cloud"
+            return "cloud.fill"
         default:
             return"cloud"
         }

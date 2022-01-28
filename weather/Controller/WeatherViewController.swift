@@ -16,7 +16,25 @@ class WeatherViewController: UIViewController {
     @IBOutlet var tempTextLabel: UILabel!
     @IBOutlet var weatherImageView: UIImageView!
     @IBOutlet var forecastUIView: UIView!
-    @IBOutlet var Day1TextLabel: UILabel!
+
+    @IBOutlet var forecast1TextLabel: UILabel!
+    @IBOutlet var forecast2TextLabel: UILabel!
+    @IBOutlet var forecast3TextLabel: UILabel!
+    @IBOutlet var forecast4TextLabel: UILabel!
+    @IBOutlet var forecast5TextLabel: UILabel!
+
+    @IBOutlet var cond1ImageView: UIImageView!
+    @IBOutlet var cond2ImageView: UIImageView!
+    @IBOutlet var cond3ImageView: UIImageView!
+    @IBOutlet var cond4ImageView: UIImageView!
+    @IBOutlet var cond5ImageView: UIImageView!
+
+    @IBOutlet var temp1TextLabel: UILabel!
+    @IBOutlet var temp2TextLabel: UILabel!
+    @IBOutlet var temp3TextLabel: UILabel!
+    @IBOutlet var temp4TextLabel: UILabel!
+    @IBOutlet var temp5TextLabel: UILabel!
+
 
     var weatherOperator = WeatherOperator()
 
@@ -41,13 +59,6 @@ class WeatherViewController: UIViewController {
 
         cityTextField.backgroundColor = .white
         cityTextField.layer.opacity = 0.6
-
-//        >> GET CURRENT DATE AND PUT IN FORECAST
-//        let customDateFormatter = DateFormatter()
-//
-//        print(customDateFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: Date())])
-//
-//        Day1TextLabel.text = customDateFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: Date())]
 
     }
 
@@ -130,9 +141,15 @@ extension WeatherViewController: WeatherManagerDelegate {
 
 
     func didFetchForecast(with forecastWeather: ForecastModel) {
+
         DispatchQueue.main.async {
-            //hook up outlets
-            self.Day1TextLabel.text = forecastWeather.name
+            self.forecast1TextLabel.text = forecastWeather.name
+            self.cond1ImageView.image = UIImage(systemName: "\(forecastWeather.conditionString)")
+            self.temp1TextLabel.text = forecastWeather.tempString
+
+            self.forecast2TextLabel.text = forecastWeather.name
+            self.cond2ImageView.image = UIImage(systemName: "\(forecastWeather.conditionString)")
+            self.temp2TextLabel.text = forecastWeather.tempString
         }
     }
 

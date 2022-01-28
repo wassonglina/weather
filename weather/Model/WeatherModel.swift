@@ -20,7 +20,7 @@ struct WeatherModel {
     var conditionString: String {
         switch condition {
         case 200..<300:
-            return "cloud.colt"
+            return "cloud.bolt"
         case 300..<400:
             return "cloud.drizzle"
         case 500..<600:
@@ -31,7 +31,25 @@ struct WeatherModel {
             return "sun.haze"
         case 800:
             return "sun.max"
-        case 801..<900:
+        case 801...802:
+            return "cloud.sun"
+        case 803...804:
+            return "cloud"
+        case 901:
+            return "cloud.moon.bolt"
+        case 902:
+            return "cloud.moon.rain"
+        case 903:
+            return "cloud.rain"
+        case 904:
+            return "cloud.snow"
+        case 905:
+            return "cloud.moon"
+        case 906:
+            return "moon.stars"
+        case 907:
+            return "cloud.moon"
+        case 908:
             return "cloud"
         default:
             return"cloud"

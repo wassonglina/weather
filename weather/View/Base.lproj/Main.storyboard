@@ -81,40 +81,40 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Wix-wJ-GZH">
                                         <rect key="frame" x="177" y="0.0" width="25" height="165"/>
                                         <subviews>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cloud.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="efm-U2-GtY">
-                                                <rect key="frame" x="0.0" y="1.5" width="25" height="20.5"/>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cloud.moon.bolt" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="efm-U2-GtY">
+                                                <rect key="frame" x="0.0" y="-1.5" width="25.5" height="29"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="25" id="1d7-bO-xB9"/>
                                                     <constraint firstAttribute="height" constant="25" id="RH7-1v-8Q9"/>
                                                 </constraints>
                                             </imageView>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="wind" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="8ku-0S-y7M">
-                                                <rect key="frame" x="0.0" y="37" width="25" height="22"/>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cloud.moon.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="8ku-0S-y7M">
+                                                <rect key="frame" x="0.0" y="36.5" width="25" height="21.5"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="25" id="Qf1-CF-axd"/>
                                                     <constraint firstAttribute="width" constant="25" id="SPN-MS-AF7"/>
                                                 </constraints>
                                             </imageView>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="sun.max.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="RTQ-Fx-r3V">
-                                                <rect key="frame" x="0.0" y="69.5" width="25" height="25.5"/>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cloud.drizzle.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="RTQ-Fx-r3V">
+                                                <rect key="frame" x="0.0" y="70" width="25" height="26.5"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="25" id="OMn-8f-2UO"/>
                                                     <constraint firstAttribute="width" constant="25" id="W7U-ag-0m4"/>
                                                 </constraints>
                                             </imageView>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cloud.sun.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="ALy-Me-XQG">
-                                                <rect key="frame" x="0.0" y="104" width="26" height="24"/>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cloud.sun" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="ALy-Me-XQG">
+                                                <rect key="frame" x="0.0" y="104.5" width="26" height="24"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="25" id="CpG-kv-7ko"/>
                                                     <constraint firstAttribute="height" constant="25" id="iSb-eT-cDM"/>
                                                 </constraints>
                                             </imageView>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cloud.sun.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="463-bf-BUg">
-                                                <rect key="frame" x="0.0" y="139" width="26" height="24"/>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cloud" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="463-bf-BUg">
+                                                <rect key="frame" x="0.0" y="141.5" width="25" height="20.5"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="25" id="K1d-m2-vRv"/>
@@ -175,8 +175,8 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="sun.max" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="D2d-ct-E9Q">
-                                <rect key="frame" x="80" y="264" width="140" height="120.5"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="moon" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="D2d-ct-E9Q">
+                                <rect key="frame" x="80" y="265" width="140" height="119"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="120" id="IUk-ex-nGV"/>
@@ -223,10 +223,24 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="Day1TextLabel" destination="jVk-da-1hl" id="OrG-SI-YpR"/>
                         <outlet property="cityTextField" destination="bUA-uA-yrW" id="Yud-PV-4dI"/>
                         <outlet property="cityTextLabel" destination="Mwt-Rg-Oaz" id="96S-ot-0Yr"/>
+                        <outlet property="cond1ImageView" destination="efm-U2-GtY" id="Yko-4z-s4D"/>
+                        <outlet property="cond2ImageView" destination="8ku-0S-y7M" id="fA3-Jt-5R6"/>
+                        <outlet property="cond3ImageView" destination="RTQ-Fx-r3V" id="zwO-IT-YIE"/>
+                        <outlet property="cond4ImageView" destination="ALy-Me-XQG" id="ju3-vn-xUz"/>
+                        <outlet property="cond5ImageView" destination="463-bf-BUg" id="By9-Vw-9ze"/>
+                        <outlet property="forecast1TextLabel" destination="jVk-da-1hl" id="OrG-SI-YpR"/>
+                        <outlet property="forecast2TextLabel" destination="2MH-Xn-Pn9" id="c2f-NS-dxd"/>
+                        <outlet property="forecast3TextLabel" destination="nWJ-MP-cd6" id="d9f-Nt-g1G"/>
+                        <outlet property="forecast4TextLabel" destination="fMS-Un-kCr" id="CS0-Fm-0fA"/>
+                        <outlet property="forecast5TextLabel" destination="j1j-Eq-FBS" id="5pA-rr-q2t"/>
                         <outlet property="forecastUIView" destination="pF2-Wx-93C" id="Tu6-GJ-UZh"/>
+                        <outlet property="temp1TextLabel" destination="Icw-jm-zTQ" id="mrr-yy-g0i"/>
+                        <outlet property="temp2TextLabel" destination="3HW-Qx-KHo" id="u41-5B-V6z"/>
+                        <outlet property="temp3TextLabel" destination="xNS-lW-90T" id="VL0-uQ-5ka"/>
+                        <outlet property="temp4TextLabel" destination="QAb-dU-JIi" id="UaU-qB-pDk"/>
+                        <outlet property="temp5TextLabel" destination="KD7-D6-daE" id="ZIS-gU-zEk"/>
                         <outlet property="tempTextLabel" destination="rYG-Rw-MVp" id="Vth-DK-8xu"/>
                         <outlet property="weatherImageView" destination="D2d-ct-E9Q" id="sSF-XY-N8a"/>
                     </connections>
@@ -237,13 +251,14 @@
         </scene>
     </scenes>
     <resources>
-        <image name="cloud.fill" catalog="system" width="128" height="88"/>
-        <image name="cloud.sun.fill" catalog="system" width="128" height="95"/>
+        <image name="cloud" catalog="system" width="128" height="88"/>
+        <image name="cloud.drizzle.fill" catalog="system" width="125" height="128"/>
+        <image name="cloud.moon.bolt" catalog="system" width="122" height="128"/>
+        <image name="cloud.moon.fill" catalog="system" width="128" height="91"/>
+        <image name="cloud.sun" catalog="system" width="128" height="95"/>
         <image name="location" catalog="system" width="128" height="118"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
-        <image name="sun.max" catalog="system" width="128" height="124"/>
-        <image name="sun.max.fill" catalog="system" width="128" height="124"/>
-        <image name="wind" catalog="system" width="128" height="103"/>
+        <image name="moon" catalog="system" width="128" height="121"/>
         <systemColor name="systemGreenColor">
             <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
