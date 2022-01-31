@@ -88,7 +88,7 @@ struct WeatherOperator {
             let decodedWeather = try decoder.decode(WeatherDataModel.self, from: encodedData)
             let decodedTemp = decodedWeather.main.temp
             let decodedName = decodedWeather.name
-            var decodedCondition = decodedWeather.weather[0].id
+            let decodedCondition = decodedWeather.weather[0].id
             let decodedTimeSunrise = decodedWeather.sys.sunrise
             let decodedTimeSunset = decodedWeather.sys.sunset
 
@@ -100,51 +100,21 @@ struct WeatherOperator {
             print(sunset)
             print(now)
 
-            //Jesse: not doing it automatically and only when called?
-            var nightConditionID: Int {
-                switch decodedCondition {
-                case 200..<300:     //thunder > cloud.moon.bolt
-                    return 901
-                case 300..<400:     //drizzle > cloud.moon.rain
-                    return 902
-                case 500..<600:     //rain > cloud.rain
-                    return 903
-                case 600..<700:     //snow > cloud.snow
-                    return 904
-                case 700..<800:     //haze > cloud.moon
-                    return 905
-                case 800:           //clear > moon stars
-                    return 906
-                case 801...802:     //cloud.moon
-                    return 907
-                case 803...804:     //cloud
-                    return 908
-                default:            //cloud.moon
-                    return 907
-                }
-            }
-
-                //doesn't work > once sun sets it's jumping to the next sunset in the future > in which case: now < sunset
-//            if now > sunset as Date  {
-//                print("it's nighttime and sunny")
-//                decodedCondition = nightConditionID
-//            } else {
-//                print ("it's daytime")
-//            }
+            var sunsetCheck: Bool
 
             if now > sunrise as Date && now < sunset as Date  {
                 print("it's daytime")
+                sunsetCheck = false
             } else {
-                decodedCondition = nightConditionID
                 print ("it's night")
+                sunsetCheck = true
             }
 
+            let weatherModel = WeatherModel(temp: decodedTemp, name: decodedName, condition: decodedCondition, isNight: sunsetCheck)
 
-            let weatherModel = WeatherModel(temp: decodedTemp, name: decodedName, condition: decodedCondition)
-
-            print(weatherModel)
-            print(weatherModel.conditionString)
+            print(weatherModel.symbolName(isNight: sunsetCheck))
             print(weatherModel.tempString)
+            print(weatherModel)
 
             return weatherModel
 
@@ -196,3 +166,36 @@ struct WeatherOperator {
 //            dateFormatter.timeZone = .current
 //            let localSunrise = dateFormatter.string(from: sunrise as Date)
 //            let localSunset = dateFormatter.string(from: sunset as Date)
+
+
+//Jesse: not doing it automatically and only when called?
+//            var nightConditionID: Int {
+//                switch decodedCondition {
+//                case 200..<300:     //thunder > cloud.moon.bolt
+//                    return 901
+//                case 300..<400:     //drizzle > cloud.moon.rain
+//                    return 902
+//                case 500..<600:     //rain > cloud.rain
+//                    return 903
+//                case 600..<700:     //snow > cloud.snow
+//                    return 904
+//                case 700..<800:     //haze > cloud.moon
+//                    return 905
+//                case 800:           //clear > moon stars
+//                    return 906
+//                case 801...802:     //cloud.moon
+//                    return 907
+//                case 803...804:     //cloud
+//                    return 908
+//                default:            //cloud.moon
+//                    return 907
+//                }
+//            }
+
+    //doesn't work > once sun sets it's jumping to the next sunset in the future > in which case: now < sunset
+//            if now > sunset as Date  {
+//                print("it's nighttime and sunny")
+//                decodedCondition = nightConditionID
+//            } else {
+//                print ("it's daytime")
+//            }

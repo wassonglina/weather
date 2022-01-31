@@ -135,8 +135,10 @@ extension WeatherViewController: WeatherManagerDelegate {
         DispatchQueue.main.async {
             self.cityTextLabel.text = currentWeather.name
             self.tempTextLabel.text = currentWeather.tempString
-            self.weatherImageView.image = UIImage(systemName: "\(currentWeather.conditionString)")
+//            self.weatherImageView.image = UIImage(systemName: "\(currentWeather.conditionString)")
+            self.weatherImageView.image = UIImage(systemName: "\(  currentWeather.symbolName(isNight: currentWeather.isNight))")
         }
+
     }
 
 

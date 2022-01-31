@@ -12,61 +12,33 @@ struct WeatherModel {
     let temp: Double
     let name: String
     let condition: Int
+    var isNight: Bool
 
     var tempString: String {
         String(format: "%.0f ºC", temp)
     }
 
-//    func symbolName(isNight: Bool) -> String {
-//        switch condition {
-//        case 200..<300:
-////            return isNight ? "asdfsadf" : "sdf"
-//            if isNight {
-//                return "asdfsadf"
-//            } else {
-//
-//            } "sdf"
-//        case 900:
-//            return "gasdfsadf"
-//        }
-//    }
-
-    var conditionString: String {
+    func symbolName(isNight: Bool) -> String {
         switch condition {
         case 200..<300:
-            return "cloud.bolt"
+            //Ternary Operator > Value = condition? ifTure : ifFalse
+            return isNight ? "cloud.moon.bolt" : "cloud.bolt"
         case 300..<400:
-            return "cloud.drizzle"
+            return isNight ? "cloud.moon.rain" : "cloud.drizzle"
         case 500..<600:
-            return "cloud.rain"
+            return isNight ? "cloud.rain" : "cloud.rain"
         case 600..<700:
-            return "cloud.snow"
+            return isNight ? "cloud.snow" : "cloud.snow"
         case 700..<800:
-            return "sun.haze"
+            return isNight ? "cloud.moon" : "sun.haze"
         case 800:
-            return "sun.max"
+            return isNight ? "moon.stars" : "sun.max"
         case 801...802:
-            return "cloud.sun"
+            return isNight ? "cloud.moon" : "cloud.sun"
         case 803...804:
-            return "cloud"
-        case 901:
-            return "cloud.moon.bolt"
-        case 902:
-            return "cloud.moon.rain"
-        case 903:
-            return "cloud.rain"
-        case 904:
-            return "cloud.snow"
-        case 905:
-            return "cloud.moon"
-        case 906:
-            return "moon.stars"
-        case 907:
-            return "cloud.moon"
-        case 908:
-            return "cloud"
+            return isNight ? "cloud" : "cloud"
         default:
-            return"cloud"
+            return "trash"
         }
     }
 }
