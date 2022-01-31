@@ -89,14 +89,16 @@ struct WeatherOperator {
             let decodedTemp = decodedWeather.main.temp
             let decodedName = decodedWeather.name
             var decodedCondition = decodedWeather.weather[0].id
-
-            //      let decodedSunrise = decodedWeather.sys.sunrise
+            let decodedTimeSunrise = decodedWeather.sys.sunrise
             let decodedTimeSunset = decodedWeather.sys.sunset
 
-            //        let sunrise = NSDate(timeIntervalSince1970: decodedSunrise)
+            let sunrise = NSDate(timeIntervalSince1970: decodedTimeSunrise)
             let sunset = NSDate(timeIntervalSince1970: decodedTimeSunset)
-
             let now = Date()
+
+            print(sunrise)
+            print(sunset)
+            print(now)
 
             //Jesse: not doing it automatically and only when called?
             var nightConditionID: Int {
@@ -105,30 +107,37 @@ struct WeatherOperator {
                     return 901
                 case 300..<400:     //drizzle > cloud.moon.rain
                     return 902
-                case 500..<600:     //drizzle > cloud.moon.rain
+                case 500..<600:     //rain > cloud.rain
                     return 903
-                case 600..<700:
+                case 600..<700:     //snow > cloud.snow
                     return 904
-                case 700..<800:     //sun haze > cloud.moon
+                case 700..<800:     //haze > cloud.moon
                     return 905
-                case 800:           //sun max > moon stars
+                case 800:           //clear > moon stars
                     return 906
-                case 801...802:
+                case 801...802:     //cloud.moon
                     return 907
-                case 803...804:
+                case 803...804:     //cloud
                     return 908
-                default:
-                    return 903
+                default:            //cloud.moon
+                    return 907
                 }
             }
 
-            if now > sunset as Date  {
-                print("it's nighttime and sunny")
-                decodedCondition = nightConditionID
-            } else {
-                print ("it's daytime")
-            }
+                //doesn't work > once sun sets it's jumping to the next sunset in the future > in which case: now < sunset
+//            if now > sunset as Date  {
+//                print("it's nighttime and sunny")
+//                decodedCondition = nightConditionID
+//            } else {
+//                print ("it's daytime")
+//            }
 
+            if now > sunrise as Date && now < sunset as Date  {
+                print("it's daytime")
+            } else {
+                decodedCondition = nightConditionID
+                print ("it's night")
+            }
 
 
             let weatherModel = WeatherModel(temp: decodedTemp, name: decodedName, condition: decodedCondition)

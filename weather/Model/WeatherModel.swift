@@ -17,6 +17,20 @@ struct WeatherModel {
         String(format: "%.0f ºC", temp)
     }
 
+//    func symbolName(isNight: Bool) -> String {
+//        switch condition {
+//        case 200..<300:
+////            return isNight ? "asdfsadf" : "sdf"
+//            if isNight {
+//                return "asdfsadf"
+//            } else {
+//
+//            } "sdf"
+//        case 900:
+//            return "gasdfsadf"
+//        }
+//    }
+
     var conditionString: String {
         switch condition {
         case 200..<300:
