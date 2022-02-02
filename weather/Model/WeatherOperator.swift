@@ -92,17 +92,17 @@ struct WeatherOperator {
             let decodedTimeSunrise = decodedWeather.sys.sunrise
             let decodedTimeSunset = decodedWeather.sys.sunset
 
-            let sunrise = NSDate(timeIntervalSince1970: decodedTimeSunrise)
-            let sunset = NSDate(timeIntervalSince1970: decodedTimeSunset)
+            let sunrise = Date(timeIntervalSince1970: decodedTimeSunrise)
+            let sunset = Date(timeIntervalSince1970: decodedTimeSunset)
             let now = Date()
 
-            print(sunrise)
-            print(sunset)
-            print(now)
+            //            print(sunrise)
+            //            print(sunset)
+            //            print(now)
 
             var sunsetCheck: Bool
 
-            if now > sunrise as Date && now < sunset as Date  {
+            if now > sunrise && now < sunset {
                 print("it's daytime")
                 sunsetCheck = false
             } else {
@@ -112,8 +112,8 @@ struct WeatherOperator {
 
             let weatherModel = WeatherModel(temp: decodedTemp, name: decodedName, condition: decodedCondition, isNight: sunsetCheck)
 
-            print(weatherModel.symbolName(isNight: sunsetCheck))
-            print(weatherModel.tempString)
+            //            print(weatherModel.symbolName(isNight: sunsetCheck))
+            //            print(weatherModel.tempString)
             print(weatherModel)
 
             return weatherModel
@@ -137,16 +137,23 @@ struct WeatherOperator {
             let decodedName = decodedForecast.city.name
             let decodedCondition = decodedForecast.list[0].weather[0].id
 
-            //           let decodedDate = decodedForecast.list[0].dt
+            let forecasts = decodedForecast.list.filter { list in
+                let date = Date(timeIntervalSince1970: list.dt)
+                var components = Calendar.current.dateComponents(in: .current, from: date)
+
+                //return all entries that are from 11-13 o'clock local time -> can't choose one specific time e.g.12 pm because different for every location. however each location will have one entry for 11, 12 or 13 o'clock because of entry every 3 hours
+                return (11...13).contains(components.hour!)
+
+            }
+
+            print("Current Calendar: \(forecasts)")
+
 
             let forecastModel = ForecastModel(temp: decodedTemp, name: decodedName, condition: decodedCondition)
 
-            //            let date = NSDate(timeIntervalSince1970: 1643457600)
-            //            print(date)
-            //
-            //            print(forecastModel)
-            //            print(forecastModel.conditionString)
-            //            print(forecastModel.tempString)
+            print(forecastModel)
+            print(forecastModel.conditionString)
+            print(forecastModel.tempString)
 
             return forecastModel
 
@@ -155,47 +162,5 @@ struct WeatherOperator {
             return nil
         }
     }
-
 }
 
-
-//   let date = Date(timeIntervalSince1970: timeResult)
-//            let dateFormatter = DateFormatter()
-//            dateFormatter.timeStyle = DateFormatter.Style.medium //Set time style
-//            dateFormatter.dateStyle = DateFormatter.Style.medium //Set date style
-//            dateFormatter.timeZone = .current
-//            let localSunrise = dateFormatter.string(from: sunrise as Date)
-//            let localSunset = dateFormatter.string(from: sunset as Date)
-
-
-//Jesse: not doing it automatically and only when called?
-//            var nightConditionID: Int {
-//                switch decodedCondition {
-//                case 200..<300:     //thunder > cloud.moon.bolt
-//                    return 901
-//                case 300..<400:     //drizzle > cloud.moon.rain
-//                    return 902
-//                case 500..<600:     //rain > cloud.rain
-//                    return 903
-//                case 600..<700:     //snow > cloud.snow
-//                    return 904
-//                case 700..<800:     //haze > cloud.moon
-//                    return 905
-//                case 800:           //clear > moon stars
-//                    return 906
-//                case 801...802:     //cloud.moon
-//                    return 907
-//                case 803...804:     //cloud
-//                    return 908
-//                default:            //cloud.moon
-//                    return 907
-//                }
-//            }
-
-    //doesn't work > once sun sets it's jumping to the next sunset in the future > in which case: now < sunset
-//            if now > sunset as Date  {
-//                print("it's nighttime and sunny")
-//                decodedCondition = nightConditionID
-//            } else {
-//                print ("it's daytime")
-//            }

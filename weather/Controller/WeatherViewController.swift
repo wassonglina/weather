@@ -60,6 +60,8 @@ class WeatherViewController: UIViewController {
         cityTextField.backgroundColor = .white
         cityTextField.layer.opacity = 0.6
 
+        cityTextLabel.text = "Some Location"
+
     }
 
     @IBAction func didTapSearch(_ sender: Any) {
