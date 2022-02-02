@@ -20,8 +20,11 @@ struct Forecast: Decodable {
     let list: [List]
 }
 
+protocol DateContaining {
+    var dt: Double { get }
+}
 
-struct List: Decodable {
+struct List: Decodable, DateContaining {
     let dt: Double
     let main: Main
     let weather: [Weather]
@@ -45,5 +48,15 @@ struct Sys: Decodable {
     let sunset: Double
 }
 
+//concept of generics: Generic code enables you to write flexible, reusable functions and types that can work with any type
+func filterNoon<T: DateContaining>(unfilteredList: [T]) -> [T] {
 
+    let filteredList = unfilteredList.filter { item in
+        let date = Date(timeIntervalSince1970: item.dt)
+        let components = Calendar.current.dateComponents(in: .current, from: date)
 
+        return (11...13).contains(components.hour!)
+ //       return components.hour == 12
+    }
+    return filteredList
+}

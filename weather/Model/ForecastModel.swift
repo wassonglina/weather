@@ -10,8 +10,8 @@ import Foundation
 
 struct ForecastModel {
 
-    let temp: Double
     let name: String
+    let temp: Double
     let condition: Int
 
     var tempString: String {

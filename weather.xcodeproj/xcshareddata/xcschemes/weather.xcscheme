@@ -29,6 +29,16 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       region = "DE">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FC077A4B27AB0A7700124280"
+               BuildableName = "weatherTests.xctest"
+               BlueprintName = "weatherTests"
+               ReferencedContainer = "container:weather.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

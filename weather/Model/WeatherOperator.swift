@@ -61,6 +61,7 @@ struct WeatherOperator {
         }
     }
 
+
     func performNetworkRequest(with urlString: String, handler: @escaping (Data) -> Void ) {
 
         if let url = URL(string: urlString) {
@@ -133,23 +134,26 @@ struct WeatherOperator {
 
             let decodedForecast = try decoder.decode(Forecast.self, from: encodedData)
 
-            let decodedTemp = decodedForecast.list[0].main.temp
+            print(decodedForecast)
+
             let decodedName = decodedForecast.city.name
-            let decodedCondition = decodedForecast.list[0].weather[0].id
+    //        let decodedTemp = decodedForecast.list[0].main.temp
+     //       let decodedCondition = decodedForecast.list[0].weather[0].id
 
-            let forecasts = decodedForecast.list.filter { list in
-                let date = Date(timeIntervalSince1970: list.dt)
-                var components = Calendar.current.dateComponents(in: .current, from: date)
+            let filteredList = filterNoon(unfilteredList: decodedForecast.list)
 
-                //return all entries that are from 11-13 o'clock local time -> can't choose one specific time e.g.12 pm because different for every location. however each location will have one entry for 11, 12 or 13 o'clock because of entry every 3 hours
-                return (11...13).contains(components.hour!)
+            print("Current Calendar: \(filteredList)")
 
-            }
+            let dayOfWeek = Date(timeIntervalSince1970: filteredList[0].dt)
+            let components = Calendar.current.dateComponents(in: .current, from: dayOfWeek)
+            print("Weekday: \(components.weekday)")
 
-            print("Current Calendar: \(forecasts)")
+            //filtering only list > name not in list
+            let forecastTemp = filteredList[1].main.temp
+            let forecastCondition = filteredList[1].weather[0].id
+       //   let forecastName = filteredList[0].city.name
 
-
-            let forecastModel = ForecastModel(temp: decodedTemp, name: decodedName, condition: decodedCondition)
+            let forecastModel = ForecastModel(name: decodedName, temp: forecastTemp, condition: forecastCondition)
 
             print(forecastModel)
             print(forecastModel.conditionString)
