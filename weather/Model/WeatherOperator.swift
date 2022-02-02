@@ -96,11 +96,6 @@ struct WeatherOperator {
             let sunrise = Date(timeIntervalSince1970: decodedTimeSunrise)
             let sunset = Date(timeIntervalSince1970: decodedTimeSunset)
             let now = Date()
-
-            //            print(sunrise)
-            //            print(sunset)
-            //            print(now)
-
             var sunsetCheck: Bool
 
             if now > sunrise && now < sunset {
@@ -113,8 +108,7 @@ struct WeatherOperator {
 
             let weatherModel = WeatherModel(temp: decodedTemp, name: decodedName, condition: decodedCondition, isNight: sunsetCheck)
 
-            //            print(weatherModel.symbolName(isNight: sunsetCheck))
-            //            print(weatherModel.tempString)
+
             print(weatherModel)
 
             return weatherModel
@@ -134,27 +128,24 @@ struct WeatherOperator {
 
             let decodedForecast = try decoder.decode(Forecast.self, from: encodedData)
 
-            print(decodedForecast)
-
-            let decodedName = decodedForecast.city.name
-    //        let decodedTemp = decodedForecast.list[0].main.temp
-     //       let decodedCondition = decodedForecast.list[0].weather[0].id
-
             let filteredList = filterNoon(unfilteredList: decodedForecast.list)
 
-            print("Current Calendar: \(filteredList)")
-
-            let dayOfWeek = Date(timeIntervalSince1970: filteredList[0].dt)
-            let components = Calendar.current.dateComponents(in: .current, from: dayOfWeek)
-            print("Weekday: \(components.weekday)")
+//            let dayOfWeek = Date(timeIntervalSince1970: filteredList[0].dt)
+//            let weekday = Calendar.current.component(.weekday, from: dayOfWeek)
+//            let dayFormatter = DateFormatter()
+//            let nameOfDay = dayFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: dayOfWeek) - 1]
+//
+//            print("Weekday: \(weekday)")
+//            print(nameOfDay)
 
             //filtering only list > name not in list
             let forecastTemp = filteredList[1].main.temp
             let forecastCondition = filteredList[1].weather[0].id
-       //   let forecastName = filteredList[0].city.name
+            let foracastDay = filteredList[1].dt
 
-            let forecastModel = ForecastModel(name: decodedName, temp: forecastTemp, condition: forecastCondition)
+            let forecastModel = ForecastModel(day: foracastDay, temp: forecastTemp, condition: forecastCondition)
 
+            print(forecastModel.getDayOfWeek(date: foracastDay))
             print(forecastModel)
             print(forecastModel.conditionString)
             print(forecastModel.tempString)

@@ -26,7 +26,6 @@ class weatherTests: XCTestCase {
 
         //not optimal because function lives everywhere but okay for Linas knowledge right now
         let filteredList = filterNoon(unfilteredList: list)
-
         let expectedList: [ListMock] = [
 
             ListMock(dt: 1643835600.0),
@@ -34,8 +33,6 @@ class weatherTests: XCTestCase {
         ]
 
         XCTAssertEqual(filteredList, expectedList)
-
-     //   XCTAssert(filteredList.count == 2)
     }
 
 }

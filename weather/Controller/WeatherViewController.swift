@@ -147,11 +147,11 @@ extension WeatherViewController: WeatherManagerDelegate {
     func didFetchForecast(with forecastWeather: ForecastModel) {
 
         DispatchQueue.main.async {
-            self.forecast1TextLabel.text = forecastWeather.name
+            self.forecast1TextLabel.text = forecastWeather.getDayOfWeek(date: forecastWeather.day)
             self.cond1ImageView.image = UIImage(systemName: "\(forecastWeather.conditionString)")
             self.temp1TextLabel.text = forecastWeather.tempString
 
-            self.forecast2TextLabel.text = forecastWeather.name
+            self.forecast2TextLabel.text = forecastWeather.getDayOfWeek(date: forecastWeather.day)
             self.cond2ImageView.image = UIImage(systemName: "\(forecastWeather.conditionString)")
             self.temp2TextLabel.text = forecastWeather.tempString
         }
