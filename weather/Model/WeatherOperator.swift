@@ -20,9 +20,6 @@ struct WeatherOperator {
     
     let weatherURL = "https://api.openweathermap.org/data/2.5/weather?&appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
 
-    //only works with lat and lon and not city
-    let forecastURL =  "https://api.openweathermap.org/data/2.5/onecall?&appid=63f43c85a20418a56d7bd2c747992f0e&units=metric&lat=37.762209829748194&lon=-122.41902864360966"
-
     //gives weather of today and next 5 days
     let weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
 
@@ -145,10 +142,7 @@ struct WeatherOperator {
 
             let forecastModel = ForecastModel(day: foracastDay, temp: forecastTemp, condition: forecastCondition)
 
-            print(forecastModel.getDayOfWeek(date: foracastDay))
             print(forecastModel)
-            print(forecastModel.conditionString)
-            print(forecastModel.tempString)
 
             return forecastModel
 

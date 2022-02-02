@@ -41,10 +41,9 @@ struct ForecastModel {
     }
 
 
-    func getDayOfWeek(date: Double) -> String {
+    func getDayOfWeek() -> String {
         let dayFormatter = DateFormatter()
-        let dayOfWeek = Date(timeIntervalSince1970: date)
- //       let weekday = Calendar.current.component(.weekday, from: dayOfWeek)
+        let dayOfWeek = Date(timeIntervalSince1970: day)
         let nameOfDay = dayFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: dayOfWeek) - 1]
         print(nameOfDay)
         return nameOfDay

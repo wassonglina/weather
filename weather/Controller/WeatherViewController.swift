@@ -140,22 +140,22 @@ extension WeatherViewController: WeatherManagerDelegate {
 //            self.weatherImageView.image = UIImage(systemName: "\(currentWeather.conditionString)")
             self.weatherImageView.image = UIImage(systemName: "\(  currentWeather.symbolName(isNight: currentWeather.isNight))")
         }
-
     }
 
 
     func didFetchForecast(with forecastWeather: ForecastModel) {
 
         DispatchQueue.main.async {
-            self.forecast1TextLabel.text = forecastWeather.getDayOfWeek(date: forecastWeather.day)
+            self.forecast1TextLabel.text = forecastWeather.getDayOfWeek()
             self.cond1ImageView.image = UIImage(systemName: "\(forecastWeather.conditionString)")
             self.temp1TextLabel.text = forecastWeather.tempString
 
-            self.forecast2TextLabel.text = forecastWeather.getDayOfWeek(date: forecastWeather.day)
+            self.forecast2TextLabel.text = forecastWeather.getDayOfWeek()
             self.cond2ImageView.image = UIImage(systemName: "\(forecastWeather.conditionString)")
             self.temp2TextLabel.text = forecastWeather.tempString
         }
     }
+
 
     func didCatchError(error: Error) {
         print("There was an error getting the current weather: \(error).")
