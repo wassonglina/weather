@@ -117,7 +117,6 @@ extension WeatherViewController: CLLocationManagerDelegate {
             //            let longitude = location.coordinate.longitude
             //            let altidue = location.altitude
             weatherOperator.createGeoURL(location: location)
-            print(location)
         }
     }
 
@@ -151,21 +150,21 @@ extension WeatherViewController: WeatherManagerDelegate {
 
         DispatchQueue.main.async {
 
-            self.forecast2TextLabel.text = forecastWeather[1].getDayOfWeek()
-            self.cond2ImageView.image = UIImage(systemName: "\(forecastWeather[1].conditionString)")
-            self.temp2TextLabel.text = forecastWeather[1].tempString
+            self.forecast2TextLabel.text = forecastWeather[0].getDayOfWeek()
+            self.cond2ImageView.image = UIImage(systemName: "\(forecastWeather[0].conditionString)")
+            self.temp2TextLabel.text = forecastWeather[0].tempString
 
-            self.forecast3TextLabel.text = forecastWeather[2].getDayOfWeek()
-            self.cond3ImageView.image = UIImage(systemName: "\(forecastWeather[2].conditionString)")
-            self.temp3TextLabel.text = forecastWeather[2].tempString
+            self.forecast3TextLabel.text = forecastWeather[1].getDayOfWeek()
+            self.cond3ImageView.image = UIImage(systemName: "\(forecastWeather[1].conditionString)")
+            self.temp3TextLabel.text = forecastWeather[1].tempString
 
-            self.forecast4TextLabel.text = forecastWeather[3].getDayOfWeek()
-            self.cond4ImageView.image = UIImage(systemName: "\(forecastWeather[3].conditionString)")
-            self.temp4TextLabel.text = forecastWeather[3].tempString
+            self.forecast4TextLabel.text = forecastWeather[2].getDayOfWeek()
+            self.cond4ImageView.image = UIImage(systemName: "\(forecastWeather[2].conditionString)")
+            self.temp4TextLabel.text = forecastWeather[2].tempString
 
-            self.forecast5TextLabel.text = forecastWeather[4].getDayOfWeek()
-            self.cond5ImageView.image = UIImage(systemName: "\(forecastWeather[4].conditionString)")
-            self.temp5TextLabel.text = forecastWeather[4].tempString
+            self.forecast5TextLabel.text = forecastWeather[3].getDayOfWeek()
+            self.cond5ImageView.image = UIImage(systemName: "\(forecastWeather[3].conditionString)")
+            self.temp5TextLabel.text = forecastWeather[3].tempString
         }
     }
 

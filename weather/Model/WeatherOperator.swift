@@ -106,7 +106,6 @@ struct WeatherOperator {
 
             let weatherModel = WeatherModel(temp: decodedTemp, name: decodedName, condition: decodedCondition, isNight: sunsetCheck)
 
-
             print(weatherModel)
 
             return weatherModel
@@ -131,10 +130,19 @@ struct WeatherOperator {
             var x = 0
 
             while x < filteredList.count {
-                let forecastTempX = filteredList[x].main.temp
-                let forecastConditionX = filteredList[x].weather[0].id
-                let foracastDayX = filteredList[x].dt
-                forecastModels.append(ForecastModel(day: foracastDayX, temp: forecastTempX, condition: forecastConditionX))
+                let forecastTemp = filteredList[x].main.temp
+                let forecastCondition = filteredList[x].weather[0].id
+                let foracastDay = filteredList[x].dt
+
+                let today = Date()
+                let foracastDate = Date(timeIntervalSince1970: filteredList[x].dt)
+
+                let weekday = Calendar.current.component(.weekday, from: today)
+                let forecastWeekday = Calendar.current.component(.weekday, from: foracastDate)
+
+                if forecastWeekday != weekday {
+                    forecastModels.append(ForecastModel(day: foracastDay, temp: forecastTemp, condition: forecastCondition))
+                }
                 x += 1
             }
 
