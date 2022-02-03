@@ -10,7 +10,7 @@ import CoreLocation
 
 protocol WeatherManagerDelegate {
     func didFetchWeather(with: WeatherModel)
-    func didFetchForecast(with: ForecastModel)
+    func didFetchForecast(with: [ForecastModel])
     func didCatchError(error: Error)
 }
 
@@ -37,6 +37,7 @@ struct WeatherOperator {
         }
         performNetworkRequest(with: forcastURLString) { data in
             if let forecastWeather = parseJSONForecast(with: data) {
+
                 delegate?.didFetchForecast(with: forecastWeather)
             }
         }
@@ -118,14 +119,40 @@ struct WeatherOperator {
 
 
     //ToDo: run this function in loop until data of every forecast day is retrived
-    func parseJSONForecast(with encodedData: Data) -> ForecastModel? {
+    func parseJSONForecast(with encodedData: Data) -> [ForecastModel]? {
         let decoder = JSONDecoder()
+
+        var forecastModels: [ForecastModel] = []
 
         do {
 
             let decodedForecast = try decoder.decode(Forecast.self, from: encodedData)
-
             let filteredList = filterNoon(unfilteredList: decodedForecast.list)
+            var x = 0
+
+            while x < filteredList.count {
+                let forecastTempX = filteredList[x].main.temp
+                let forecastConditionX = filteredList[x].weather[0].id
+                let foracastDayX = filteredList[x].dt
+                forecastModels.append(ForecastModel(day: foracastDayX, temp: forecastTempX, condition: forecastConditionX))
+                x += 1
+            }
+
+       //TODO: use filteredList.map instead
+
+            print(forecastModels)
+
+            return forecastModels
+
+        } catch {
+            delegate?.didCatchError(error: error)
+            return nil
+        }
+    }
+}
+
+
+
 
 //            let dayOfWeek = Date(timeIntervalSince1970: filteredList[0].dt)
 //            let weekday = Calendar.current.component(.weekday, from: dayOfWeek)
@@ -135,21 +162,4 @@ struct WeatherOperator {
 //            print("Weekday: \(weekday)")
 //            print(nameOfDay)
 
-            //filtering only list > name not in list
-            let forecastTemp = filteredList[1].main.temp
-            let forecastCondition = filteredList[1].weather[0].id
-            let foracastDay = filteredList[1].dt
-
-            let forecastModel = ForecastModel(day: foracastDay, temp: forecastTemp, condition: forecastCondition)
-
-            print(forecastModel)
-
-            return forecastModel
-
-        } catch {
-            delegate?.didCatchError(error: error)
-            return nil
-        }
-    }
-}
-
+//filtering only list > name not in list
