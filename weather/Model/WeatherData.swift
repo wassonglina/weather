@@ -21,11 +21,11 @@ struct Forecast: Decodable {
 }
 
 protocol DateContaining {
-    var dt: Double { get }
+    var dt: Int { get }
 }
 
 struct List: Decodable, DateContaining {
-    let dt: Double
+    let dt: Int
     let main: Main
     let weather: [Weather]
 
@@ -52,7 +52,7 @@ struct Sys: Decodable {
 func filterNoon<T: DateContaining>(unfilteredList: [T]) -> [T] {
 
     let filteredList = unfilteredList.filter { item in
-        let date = Date(timeIntervalSince1970: item.dt)
+        let date = Date(timeIntervalSince1970: Double(item.dt))
         let components = Calendar.current.dateComponents(in: .current, from: date)
 
         return (11...13).contains(components.hour!)

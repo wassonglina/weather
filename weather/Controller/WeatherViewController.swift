@@ -140,7 +140,7 @@ extension WeatherViewController: WeatherManagerDelegate {
             self.weatherImageView.image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight))")
 
             self.forecast1TextLabel.text = "Now" //forecastWeather[0].getDayOfWeek()
-            self.cond1ImageView.image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight))")
+            self.cond1ImageView.image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight)).fill")
             self.temp1TextLabel.text = currentWeather.tempString
         }
     }

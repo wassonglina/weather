@@ -121,32 +121,49 @@ struct WeatherOperator {
     func parseJSONForecast(with encodedData: Data) -> [ForecastModel]? {
         let decoder = JSONDecoder()
 
-        var forecastModels: [ForecastModel] = []
+   //     var forecastModels: [ForecastModel] = []
 
         do {
 
             let decodedForecast = try decoder.decode(Forecast.self, from: encodedData)
             let filteredList = filterNoon(unfilteredList: decodedForecast.list)
-            var x = 0
+//            var x = 0
+//
+//            while x < filteredList.count {
+//                let forecastTemp = filteredList[x].main.temp
+//                let forecastCondition = filteredList[x].weather[0].id
+//                let foracastDay = filteredList[x].dt
+//
+//
+//                let foracastDate = Date(timeIntervalSince1970: Double(filteredList[x].dt))
+//                let weekday = Calendar.current.component(.weekday, from: Date())
+//                let forecastWeekday = Calendar.current.component(.weekday, from: foracastDate)
+//
+//                if forecastWeekday != weekday {
+//                    forecastModels.append(ForecastModel(day: foracastDay, temp: forecastTemp, condition: forecastCondition))
+//                }
+//                x += 1
+//            }
 
-            while x < filteredList.count {
-                let forecastTemp = filteredList[x].main.temp
-                let forecastCondition = filteredList[x].weather[0].id
-                let foracastDay = filteredList[x].dt
+            //TODO: use filteredList.map instead
 
-                let today = Date()
-                let foracastDate = Date(timeIntervalSince1970: filteredList[x].dt)
+            let forecastModels: [ForecastModel] = filteredList.compactMap { list in
+                let forecastTemp = list.main.temp
+                let forecastCondition = list.weather[0].id
+                let foracastDay = list.dt
 
-                let weekday = Calendar.current.component(.weekday, from: today)
+                let foracastDate = Date(timeIntervalSince1970: Double(list.dt))
+                let weekday = Calendar.current.component(.weekday, from: Date())
                 let forecastWeekday = Calendar.current.component(.weekday, from: foracastDate)
 
                 if forecastWeekday != weekday {
-                    forecastModels.append(ForecastModel(day: foracastDay, temp: forecastTemp, condition: forecastCondition))
+                    return ForecastModel(day: foracastDay, temp: forecastTemp, condition: forecastCondition)
+                } else {
+                    return nil
                 }
-                x += 1
             }
 
-       //TODO: use filteredList.map instead
+
 
             print(forecastModels)
 
@@ -159,15 +176,3 @@ struct WeatherOperator {
     }
 }
 
-
-
-
-//            let dayOfWeek = Date(timeIntervalSince1970: filteredList[0].dt)
-//            let weekday = Calendar.current.component(.weekday, from: dayOfWeek)
-//            let dayFormatter = DateFormatter()
-//            let nameOfDay = dayFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: dayOfWeek) - 1]
-//
-//            print("Weekday: \(weekday)")
-//            print(nameOfDay)
-
-//filtering only list > name not in list

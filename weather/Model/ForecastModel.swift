@@ -10,7 +10,7 @@ import Foundation
 
 struct ForecastModel {
 
-    let day: Double
+    let day: Int
     let temp: Double
     let condition: Int
 
@@ -36,20 +36,17 @@ struct ForecastModel {
         case 801..<900:
             return "cloud.fill"
         default:
-            return"cloud"
+            return"cloud.fill"
         }
     }
 
-
     func getDayOfWeek() -> String {
         let dayFormatter = DateFormatter()
-        let dayOfWeek = Date(timeIntervalSince1970: day)
+        let dayOfWeek = Date(timeIntervalSince1970: Double(day))
         let nameOfDay = dayFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: dayOfWeek) - 1]
         print(nameOfDay)
         return nameOfDay
     }
-
-
 
 }
 

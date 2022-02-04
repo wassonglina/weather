@@ -8,8 +8,8 @@
 import Foundation
 
 
-//
-//struct ViewModel: WeatherManagerDelegate {
+
+//struct WeatherViewModel: WeatherManagerDelegate {
 //
 //    func didFetchWeather(with: WeatherModel) {
 //        <#code#>
