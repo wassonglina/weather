@@ -152,8 +152,8 @@ struct WeatherOperator {
                 let forecastCondition = list.weather[0].id
                 let foracastDay = list.dt
 
-                let foracastDate = Date(timeIntervalSince1970: Double(list.dt))
                 let weekday = Calendar.current.component(.weekday, from: Date())
+                let foracastDate = Date(timeIntervalSince1970: Double(list.dt))
                 let forecastWeekday = Calendar.current.component(.weekday, from: foracastDate)
 
                 if forecastWeekday != weekday {
