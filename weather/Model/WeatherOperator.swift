@@ -14,6 +14,7 @@ protocol WeatherManagerDelegate {
     func didCatchError(error: Error)
 }
 
+//filter characters for URL
 extension String {
   func stringByAddingPercentEncodingForRFC3986() -> String? {
     let unreserved = "-._~/?"
@@ -53,9 +54,9 @@ struct WeatherOperator {
         }
     }
 
-    func createGeoURL(location: CLLocation) {
-        let weatherURLString = "\(weatherURL)&lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)"
-        let forcastURLString = "\(weatherForecastURL)&lat=\(location.coordinate.latitude)&lon=\(location.coordinate.longitude)"
+    func createGeoURL(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
+        let weatherURLString = "\(weatherURL)&lat=\(latitude)&lon=\(longitude)"
+        let forcastURLString = "\(weatherForecastURL)&lat=\(latitude)&lon=\(longitude)"
         print(weatherURLString)
         performNetworkRequest(with: weatherURLString) { data in
             if let currentWeather = parseJSONWeather(with: data) {

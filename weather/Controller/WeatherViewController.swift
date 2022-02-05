@@ -128,10 +128,9 @@ extension WeatherViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if weatherLocation == .currentLocation, let location = locations.last {
-            //            let latitude = location.coordinate.latitude
-            //            let longitude = location.coordinate.longitude
-            //            let altidue = location.altitude
-            weatherOperator.createGeoURL(location: location)
+            let latitude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+            weatherOperator.createGeoURL(latitude: latitude, longitude: longitude)
         }
     }
 
