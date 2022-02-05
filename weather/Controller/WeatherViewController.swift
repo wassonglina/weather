@@ -35,11 +35,32 @@ class WeatherViewController: UIViewController {
     @IBOutlet var temp4TextLabel: UILabel!
     @IBOutlet var temp5TextLabel: UILabel!
 
+    @IBOutlet var locationUIButton: UIButton!
 
     var weatherOperator = WeatherOperator()
 
     //Jesse: here or in view did load
     var locationManager: CLLocationManager?
+
+    //Equatable: can be compared for equality using the equal-to operator
+    enum WeatherLocation: Equatable {
+        case currentLocation
+        case city(String)
+    }
+
+    var weatherLocation: WeatherLocation? {
+        didSet {
+            switch weatherLocation {
+            case .currentLocation:
+                locationManager?.requestWhenInUseAuthorization()
+                locationManager?.requestLocation()
+            case .city(let cityname):
+                weatherOperator.createCityURL(city: cityname)
+            case nil:
+                break
+            }
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,37 +81,42 @@ class WeatherViewController: UIViewController {
 
         cityTextLabel.text = "Loading ..."
 
+        //
+        NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
-    //
-    var weatherLocation: WeatherLocation? {
-        didSet {
-            switch weatherLocation {
-            case .currentLocation:
-                locationManager?.requestWhenInUseAuthorization()
-                locationManager?.requestLocation()
-            case .city(let cityname):
-                weatherOperator.createCityURL(city: cityname)
-            case nil:
-                break
-            }
+
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {
+           // if keyboard size is not available for some reason, dont do anything
+           return
+        }
+      // move the root view up by the distance of keyboard height
+      self.view.frame.origin.y = 0 - keyboardSize.height
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+      // move back the root view origin to zero
+      self.view.frame.origin.y = 0
+    }
+
+    @IBAction func didTapSearch(_ sender: UIButton) {
+        weatherLocation = .city(cityTextField.text!) //set case .city
+        cityTextField.endEditing(true)
+        sender.alpha = 0.5
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            sender.alpha = 1.0
         }
     }
 
-    //Equatable: can be compared for equality using the equal-to operator
-    enum WeatherLocation: Equatable {
-        case currentLocation
-        case city(String)
-    }
-
-    @IBAction func didTapSearch(_ sender: Any) {
-        weatherLocation = .city(cityTextField.text!) //set case .city
-        cityTextField.endEditing(true)
-    }
-
-    @IBAction func didTapLocation(_ sender: Any) {
+    @IBAction func didTapLocation(_ sender: UIButton) {
         weatherLocation = .currentLocation
-        print("tap")
+        sender.alpha = 0.5
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            sender.alpha = 1.0
+        }
     }
 }
 

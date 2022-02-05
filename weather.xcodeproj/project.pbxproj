@@ -13,7 +13,6 @@
 		FC35B40727A08B55007AEDFD /* WeatherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC35B40627A08B54007AEDFD /* WeatherData.swift */; };
 		FC35B40927A0BB0F007AEDFD /* WeatherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC35B40827A0BB0F007AEDFD /* WeatherModel.swift */; };
 		FC35B40E27A1FEAA007AEDFD /* BackgroundGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC35B40D27A1FEA9007AEDFD /* BackgroundGradientView.swift */; };
-		FC35B41127A21A9F007AEDFD /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FC35B41027A21A9F007AEDFD /* IQKeyboardManagerSwift */; };
 		FC64E34A27A366A4008C92C3 /* ForecastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC64E34927A366A4008C92C3 /* ForecastModel.swift */; };
 		FC6B70372798B43C00BB08C5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6B70362798B43C00BB08C5 /* AppDelegate.swift */; };
 		FC6B70392798B43C00BB08C5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6B70382798B43C00BB08C5 /* SceneDelegate.swift */; };
@@ -64,7 +63,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FC35B41127A21A9F007AEDFD /* IQKeyboardManagerSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -184,7 +182,6 @@
 			);
 			name = weather;
 			packageProductDependencies = (
-				FC35B41027A21A9F007AEDFD /* IQKeyboardManagerSwift */,
 			);
 			productName = weather;
 			productReference = FC6B70332798B43C00BB08C5 /* weather.app */;
@@ -219,7 +216,6 @@
 			);
 			mainGroup = FC6B702A2798B43C00BB08C5;
 			packageReferences = (
-				FC35B40F27A21A9E007AEDFD /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
 			);
 			productRefGroup = FC6B70342798B43C00BB08C5 /* Products */;
 			projectDirPath = "";
@@ -555,25 +551,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		FC35B40F27A21A9E007AEDFD /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/hackiftekhar/IQKeyboardManager";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 6.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		FC35B41027A21A9F007AEDFD /* IQKeyboardManagerSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = FC35B40F27A21A9E007AEDFD /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
-			productName = IQKeyboardManagerSwift;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FC6B702B2798B43C00BB08C5 /* Project object */;
 }
