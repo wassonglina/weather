@@ -14,6 +14,16 @@ protocol WeatherManagerDelegate {
     func didCatchError(error: Error)
 }
 
+extension String {
+  func stringByAddingPercentEncodingForRFC3986() -> String? {
+    let unreserved = "-._~/?"
+    let allowed = NSMutableCharacterSet.alphanumeric()
+    allowed.addCharacters(in: unreserved)
+    return addingPercentEncoding(withAllowedCharacters: allowed as CharacterSet)
+  }
+}
+
+
 
 struct WeatherOperator {
 
@@ -27,8 +37,8 @@ struct WeatherOperator {
     var delegate: WeatherManagerDelegate?
 
     func createCityURL(city: String) {
-        let weatherURLString = "\(weatherURL)&q=\(city)"
-        let forcastURLString = "\(weatherForecastURL)&q=\(city)"
+        let weatherURLString = "\(weatherURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
+        let forcastURLString = "\(weatherForecastURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
         print(weatherURLString)
         performNetworkRequest(with: weatherURLString) { data in
             if let currentWeather = parseJSONWeather(with: data) {

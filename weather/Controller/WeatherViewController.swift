@@ -48,45 +48,61 @@ class WeatherViewController: UIViewController {
 
         locationManager = CLLocationManager()
         locationManager?.delegate = self
-        locationManager?.requestWhenInUseAuthorization()
-        locationManager?.requestLocation()
+        weatherLocation = .currentLocation  //set case .currentLocation
 
         weatherOperator.delegate = self
 
         forecastUIView.layer.cornerRadius = 10
-        forecastUIView.backgroundColor = .white
-        forecastUIView.layer.opacity = 0.15
+        forecastUIView.backgroundColor = .white.withAlphaComponent(0.15)
 
         cityTextField.backgroundColor = .white
         cityTextField.layer.opacity = 0.6
 
-        cityTextLabel.text = "Some Location"
+        cityTextLabel.text = "Loading ..."
 
+    }
+
+    //
+    var weatherLocation: WeatherLocation? {
+        didSet {
+            switch weatherLocation {
+            case .currentLocation:
+                locationManager?.requestWhenInUseAuthorization()
+                locationManager?.requestLocation()
+            case .city(let cityname):
+                weatherOperator.createCityURL(city: cityname)
+            case nil:
+                break
+            }
+        }
+    }
+
+    //Equatable: can be compared for equality using the equal-to operator
+    enum WeatherLocation: Equatable {
+        case currentLocation
+        case city(String)
     }
 
     @IBAction func didTapSearch(_ sender: Any) {
-        getWeather()
+        weatherLocation = .city(cityTextField.text!) //set case .city
         cityTextField.endEditing(true)
     }
 
-
     @IBAction func didTapLocation(_ sender: Any) {
-        locationManager?.requestLocation()
-    }
-
-
-    func getWeather() {
-        weatherOperator.createCityURL(city: cityTextField.text!)
+        weatherLocation = .currentLocation
+        print("tap")
     }
 }
+
 
 
 //Mark: - UITextFieldDelegate
 
 extension WeatherViewController: UITextFieldDelegate {
 
+    //tapped "Enter" key
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        getWeather()
+        weatherLocation = .city(cityTextField.text!)    //set case .city
         cityTextField.endEditing(true)
         return true
     }
@@ -110,9 +126,8 @@ extension WeatherViewController: UITextFieldDelegate {
 
 extension WeatherViewController: CLLocationManagerDelegate {
 
-    //Jesse: pass in location or only lat and lon?
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.last {
+        if weatherLocation == .currentLocation, let location = locations.last {
             //            let latitude = location.coordinate.latitude
             //            let longitude = location.coordinate.longitude
             //            let altidue = location.altitude
@@ -136,7 +151,7 @@ extension WeatherViewController: WeatherManagerDelegate {
         DispatchQueue.main.async {
             self.cityTextLabel.text = currentWeather.name
             self.tempTextLabel.text = currentWeather.tempString
-//            self.weatherImageView.image = UIImage(systemName: "\(currentWeather.conditionString)")
+            //            self.weatherImageView.image = UIImage(systemName: "\(currentWeather.conditionString)")
             self.weatherImageView.image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight))")
 
             self.forecast1TextLabel.text = "Now" //forecastWeather[0].getDayOfWeek()
@@ -173,9 +188,9 @@ extension WeatherViewController: WeatherManagerDelegate {
         print("There was an error getting the current weather: \(error).")
 
         DispatchQueue.main.async {
-            self.cityTextLabel.text = "Error"
-            self.tempTextLabel.text = "ºC"
-            self.weatherImageView.image = UIImage(systemName: "questionmark")
+            self.cityTextLabel.text = "City not found"
+            self.tempTextLabel.text = ""
+            self.weatherImageView.image = UIImage(systemName: "globe.europe.africa")
         }
     }
 }
