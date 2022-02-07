@@ -85,37 +85,52 @@ class WeatherViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+
+        let tap = UITapGestureRecognizer(target: self, action: #selector(WeatherViewController.didTapScreen))
+
+        view.addGestureRecognizer(tap)
     }
 
+    @objc func didTapScreen() {
+        print("@@", #function)
+        cityTextField.endEditing(true)
+    }
 
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {
-           // if keyboard size is not available for some reason, dont do anything
-           return
+            //return if keyboard size not available
+            return
         }
-      // move the root view up by the distance of keyboard height
-      self.view.frame.origin.y = 0 - keyboardSize.height
+        //JESSE: do programatically and not fix contraints? keyboard height depends on phone
+        self.view.frame.origin.y = 40 - keyboardSize.height
     }
 
     @objc func keyboardWillHide(notification: NSNotification) {
-      // move back the root view origin to zero
-      self.view.frame.origin.y = 0
+        // move back the root view origin to zero
+        self.view.frame.origin.y = 0
     }
 
     @IBAction func didTapSearch(_ sender: UIButton) {
-        weatherLocation = .city(cityTextField.text!) //set case .city
-        cityTextField.endEditing(true)
-        sender.alpha = 0.5
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            sender.alpha = 1.0
+
+        if cityTextField.text?.isEmpty == false {
+            weatherLocation = .city(cityTextField.text!) //set case .city
+            cityTextField.text = ""
+            sender.alpha = 0.2
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                sender.alpha = 1.0
+                self.cityTextField.endEditing(true)
+            }
         }
+
     }
 
     @IBAction func didTapLocation(_ sender: UIButton) {
+        print("@@", #function)
         weatherLocation = .currentLocation
-        sender.alpha = 0.5
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        sender.alpha = 0.2
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             sender.alpha = 1.0
+            self.cityTextField.endEditing(true)
         }
     }
 }
@@ -128,22 +143,13 @@ extension WeatherViewController: UITextFieldDelegate {
 
     //tapped "Enter" key
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        weatherLocation = .city(cityTextField.text!)    //set case .city
-        cityTextField.endEditing(true)
-        return true
-    }
-
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        if cityTextField.text != "" {
-            return true
-        } else {
-            cityTextField.placeholder = "Enter a city"
-            return false
+        print("@@", #function)
+        if cityTextField.text?.isEmpty == false  {
+            weatherLocation = .city(cityTextField.text!)
+            cityTextField.text = ""
+            cityTextField.endEditing(true)
         }
-    }
-
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        cityTextField.text = ""
+        return true
     }
 }
 

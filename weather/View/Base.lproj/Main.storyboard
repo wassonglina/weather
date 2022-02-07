@@ -168,7 +168,7 @@
                                     <action selector="didTapLocation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="I6I-m5-nOe"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="City" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bUA-uA-yrW">
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Search" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bUA-uA-yrW">
                                 <rect key="frame" x="82" y="781" width="250" height="35"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="35" id="a19-fJ-8JO"/>
