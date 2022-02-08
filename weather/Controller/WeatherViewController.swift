@@ -106,7 +106,6 @@ class WeatherViewController: UIViewController {
     }
 
     @objc func keyboardWillHide(notification: NSNotification) {
-        // move back the root view origin to zero
         self.view.frame.origin.y = 0
     }
 
@@ -121,7 +120,6 @@ class WeatherViewController: UIViewController {
                 self.cityTextField.endEditing(true)
             }
         }
-
     }
 
     @IBAction func didTapLocation(_ sender: UIButton) {

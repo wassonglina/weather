@@ -9,6 +9,8 @@ import UIKit
 
 class BackgroundGradientView: UIView {
 
+    let gradientLayer = CAGradientLayer()
+
     init() {
         super.init(frame: .zero)
         setup()
@@ -24,7 +26,6 @@ class BackgroundGradientView: UIView {
         let topColor = UIColor(red: 108/255, green: 125/255, blue: 169/255, alpha: 1)
         let bottomColor =   UIColor(red: 220/255, green: 180/255, blue: 180/255, alpha: 1)
 
-        let gradientLayer = CAGradientLayer()
         gradientLayer.frame = bounds
         gradientLayer.colors = [
             topColor.cgColor,
@@ -32,5 +33,10 @@ class BackgroundGradientView: UIView {
         ]
 
         layer.addSublayer(gradientLayer)
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        gradientLayer.frame = bounds
     }
 }
