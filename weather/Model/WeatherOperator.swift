@@ -113,12 +113,6 @@ struct WeatherOperator {
                 sunsetCheck = true
             }
 
-      //      let forecastCheck = false
-//
-//            let weatherModel = WeatherModel(temp: decodedTemp, condition: decodedCondition, isForecast: false, name: decodedName, isNight: sunsetCheck, day: nil)
-//
-//            print(weatherModel)
-
             return WeatherModel(temp: decodedTemp, condition: decodedCondition, isForecast: false, name: decodedName, isNight: sunsetCheck, day: nil)
 
         } catch {
@@ -130,8 +124,6 @@ struct WeatherOperator {
 
     func parseJSONForecast(with encodedData: Data) -> [WeatherModel]? {
         let decoder = JSONDecoder()
-
-   //     var forecastModels: [ForecastModel] = []
 
         do {
 
@@ -150,9 +142,6 @@ struct WeatherOperator {
                 if forecastWeekday != weekday {
 
                     return WeatherModel(temp: forecastTemp, condition: forecastCondition, isForecast: true, name: nil, isNight: false, day: foracastDay)
-
-//                    return ForecastModel(day: foracastDay, temp: forecastTemp, condition: forecastCondition)
-
                 } else {
                     return nil
                 }

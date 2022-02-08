@@ -13,7 +13,6 @@
 		FC35B40727A08B55007AEDFD /* WeatherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC35B40627A08B54007AEDFD /* WeatherData.swift */; };
 		FC35B40927A0BB0F007AEDFD /* WeatherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC35B40827A0BB0F007AEDFD /* WeatherModel.swift */; };
 		FC35B40E27A1FEAA007AEDFD /* BackgroundGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC35B40D27A1FEA9007AEDFD /* BackgroundGradientView.swift */; };
-		FC64E34A27A366A4008C92C3 /* ForecastModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC64E34927A366A4008C92C3 /* ForecastModel.swift */; };
 		FC6B70372798B43C00BB08C5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6B70362798B43C00BB08C5 /* AppDelegate.swift */; };
 		FC6B70392798B43C00BB08C5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6B70382798B43C00BB08C5 /* SceneDelegate.swift */; };
 		FC6B703B2798B43C00BB08C5 /* WeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6B703A2798B43C00BB08C5 /* WeatherViewController.swift */; };
@@ -40,7 +39,6 @@
 		FC35B40627A08B54007AEDFD /* WeatherData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherData.swift; sourceTree = "<group>"; };
 		FC35B40827A0BB0F007AEDFD /* WeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModel.swift; sourceTree = "<group>"; };
 		FC35B40D27A1FEA9007AEDFD /* BackgroundGradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundGradientView.swift; sourceTree = "<group>"; };
-		FC64E34927A366A4008C92C3 /* ForecastModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastModel.swift; sourceTree = "<group>"; };
 		FC6B70332798B43C00BB08C5 /* weather.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = weather.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC6B70362798B43C00BB08C5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FC6B70382798B43C00BB08C5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -91,7 +89,6 @@
 				FC35B40827A0BB0F007AEDFD /* WeatherModel.swift */,
 				FC35B40627A08B54007AEDFD /* WeatherData.swift */,
 				FC35B40427991BE2007AEDFD /* WeatherOperator.swift */,
-				FC64E34927A366A4008C92C3 /* ForecastModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -267,7 +264,6 @@
 				FC35B40E27A1FEAA007AEDFD /* BackgroundGradientView.swift in Sources */,
 				FC6B70392798B43C00BB08C5 /* SceneDelegate.swift in Sources */,
 				FC35B40927A0BB0F007AEDFD /* WeatherModel.swift in Sources */,
-				FC64E34A27A366A4008C92C3 /* ForecastModel.swift in Sources */,
 				FC35B40727A08B55007AEDFD /* WeatherData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

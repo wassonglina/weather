@@ -48,6 +48,10 @@ class WeatherViewController: UIViewController {
         case city(String)
     }
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
     var weatherLocation: WeatherLocation? {
         didSet {
             switch weatherLocation {
@@ -101,7 +105,7 @@ class WeatherViewController: UIViewController {
             //return if keyboard size not available
             return
         }
-        //JESSE: do programatically and not fix contraints? keyboard height depends on phone
+        //TODO: if constraints programatically > constraintHeight/2 instead of hard coded number
         self.view.frame.origin.y = 40 - keyboardSize.height
     }
 
@@ -181,7 +185,6 @@ extension WeatherViewController: WeatherManagerDelegate {
         DispatchQueue.main.async {
             self.cityTextLabel.text = currentWeather.name
             self.tempTextLabel.text = currentWeather.tempString
-            //            self.weatherImageView.image = UIImage(systemName: "\(currentWeather.conditionString)")
             self.weatherImageView.image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast))")
 
             self.forecast1TextLabel.text = "Now" //forecastWeather[0].getDayOfWeek()

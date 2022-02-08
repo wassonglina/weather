@@ -12,8 +12,8 @@ struct WeatherModel {
     let temp: Double
     let condition: Int
     var isForecast: Bool
-    let name: String?    //weather
-    var isNight: Bool?   //weather
+    let name: String?    //Weather
+    var isNight: Bool?   //Weather
     let day: Int?       //Forecast
 
 
@@ -82,7 +82,6 @@ struct WeatherModel {
         let dayFormatter = DateFormatter()
         let dayOfWeek = Date(timeIntervalSince1970: Double(day!))
         let nameOfDay = dayFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: dayOfWeek) - 1]
-        print(nameOfDay)
         return nameOfDay
     }
 }
