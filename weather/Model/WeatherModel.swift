@@ -10,35 +10,79 @@ import Foundation
 struct WeatherModel {
 
     let temp: Double
-    let name: String
     let condition: Int
-    var isNight: Bool
+    var isForecast: Bool
+    let name: String?    //weather
+    var isNight: Bool?   //weather
+    let day: Int?       //Forecast
+
 
     var tempString: String {
         String(format: "%.0f ºC", temp)
     }
 
-    func symbolName(isNight: Bool) -> String {
+    func symbolName(isNight: Bool, isForecast: Bool) -> String {
         switch condition {
         case 200..<300:
             //Ternary Operator > Value = condition? ifTure : ifFalse
-            return isNight ? "cloud.moon.bolt" : "cloud.bolt"
+            if isForecast {
+                return "cloud.bolt.fill"
+            } else {
+                return isNight ? "cloud.moon.bolt" : "cloud.bolt"
+            }
         case 300..<400:
-            return isNight ? "cloud.moon.rain" : "cloud.drizzle"
+            if isForecast {
+                return "cloud.drizzle.fill"
+            } else {
+                return isNight ? "cloud.moon.rain" : "cloud.drizzle"
+            }
         case 500..<600:
-            return isNight ? "cloud.rain" : "cloud.rain"
+            if isForecast {
+                return "cloud.rain.fill"
+            } else {
+                return isNight ? "cloud.rain" : "cloud.rain"
+            }
         case 600..<700:
-            return isNight ? "cloud.snow" : "cloud.snow"
+            if isForecast {
+                return "cloud.snow.fill"
+            } else {
+                return isNight ? "cloud.snow" : "cloud.snow"
+            }
         case 700..<800:
-            return isNight ? "cloud.moon" : "sun.haze"
+            if isForecast {
+                return "sun.haze.fill"
+            } else {
+                return isNight ? "cloud.moon" : "sun.haze"
+            }
         case 800:
-            return isNight ? "moon.stars" : "sun.max"
+            if isForecast {
+                return "sun.max.fill"
+            } else {
+                return isNight ? "moon.stars" : "sun.max"
+            }
         case 801...802:
-            return isNight ? "cloud.moon" : "cloud.sun"
+            if isForecast {
+                return "cloud.sun.fill"
+            } else {
+                return isNight ? "cloud.moon" : "cloud.sun"
+            }
         case 803...804:
-            return isNight ? "cloud" : "cloud"
+            if isForecast {
+                return "cloud.fill"
+            } else {
+                return isNight ? "cloud" : "cloud"
+            }
         default:
-            return "trash"
+            return "globe.europe.africa"
         }
+    }
+
+
+    func getDayOfWeek() -> String {
+        let dayFormatter = DateFormatter()
+        let dayOfWeek = Date(timeIntervalSince1970: Double(day!))
+        let nameOfDay = dayFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: dayOfWeek) - 1]
+        print(nameOfDay)
+        return nameOfDay
     }
 }

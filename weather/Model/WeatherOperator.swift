@@ -10,7 +10,7 @@ import CoreLocation
 
 protocol WeatherManagerDelegate {
     func didFetchWeather(with: WeatherModel)
-    func didFetchForecast(with: [ForecastModel])
+    func didFetchForecast(with: [WeatherModel])
     func didCatchError(error: Error)
 }
 
@@ -108,18 +108,18 @@ struct WeatherOperator {
             var sunsetCheck: Bool
 
             if now > sunrise && now < sunset {
-                print("it's daytime")
                 sunsetCheck = false
             } else {
-                print ("it's night")
                 sunsetCheck = true
             }
 
-            let weatherModel = WeatherModel(temp: decodedTemp, name: decodedName, condition: decodedCondition, isNight: sunsetCheck)
+      //      let forecastCheck = false
+//
+//            let weatherModel = WeatherModel(temp: decodedTemp, condition: decodedCondition, isForecast: false, name: decodedName, isNight: sunsetCheck, day: nil)
+//
+//            print(weatherModel)
 
-            print(weatherModel)
-
-            return weatherModel
+            return WeatherModel(temp: decodedTemp, condition: decodedCondition, isForecast: false, name: decodedName, isNight: sunsetCheck, day: nil)
 
         } catch {
             delegate?.didCatchError(error: error)
@@ -128,8 +128,7 @@ struct WeatherOperator {
     }
 
 
-    //ToDo: run this function in loop until data of every forecast day is retrived
-    func parseJSONForecast(with encodedData: Data) -> [ForecastModel]? {
+    func parseJSONForecast(with encodedData: Data) -> [WeatherModel]? {
         let decoder = JSONDecoder()
 
    //     var forecastModels: [ForecastModel] = []
@@ -138,27 +137,8 @@ struct WeatherOperator {
 
             let decodedForecast = try decoder.decode(Forecast.self, from: encodedData)
             let filteredList = filterNoon(unfilteredList: decodedForecast.list)
-//            var x = 0
-//
-//            while x < filteredList.count {
-//                let forecastTemp = filteredList[x].main.temp
-//                let forecastCondition = filteredList[x].weather[0].id
-//                let foracastDay = filteredList[x].dt
-//
-//
-//                let foracastDate = Date(timeIntervalSince1970: Double(filteredList[x].dt))
-//                let weekday = Calendar.current.component(.weekday, from: Date())
-//                let forecastWeekday = Calendar.current.component(.weekday, from: foracastDate)
-//
-//                if forecastWeekday != weekday {
-//                    forecastModels.append(ForecastModel(day: foracastDay, temp: forecastTemp, condition: forecastCondition))
-//                }
-//                x += 1
-//            }
 
-            //TODO: use filteredList.map instead
-
-            let forecastModels: [ForecastModel] = filteredList.compactMap { list in
+            let forecastModels: [WeatherModel] = filteredList.compactMap { list in
                 let forecastTemp = list.main.temp
                 let forecastCondition = list.weather[0].id
                 let foracastDay = list.dt
@@ -168,18 +148,16 @@ struct WeatherOperator {
                 let forecastWeekday = Calendar.current.component(.weekday, from: foracastDate)
 
                 if forecastWeekday != weekday {
-                    return ForecastModel(day: foracastDay, temp: forecastTemp, condition: forecastCondition)
+
+                    return WeatherModel(temp: forecastTemp, condition: forecastCondition, isForecast: true, name: nil, isNight: false, day: foracastDay)
+
+//                    return ForecastModel(day: foracastDay, temp: forecastTemp, condition: forecastCondition)
+
                 } else {
                     return nil
                 }
             }
-
-
-
-            print(forecastModels)
-
             return forecastModels
-
         } catch {
             delegate?.didCatchError(error: error)
             return nil
