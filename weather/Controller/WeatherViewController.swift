@@ -49,8 +49,14 @@ class WeatherViewController: UIViewController {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
+        if traitCollection.userInterfaceStyle == .light {
+            return .lightContent
+        } else {
+            return .darkContent
+        }
     }
+
+
 
     var weatherLocation: WeatherLocation? {
         didSet {
@@ -66,6 +72,8 @@ class WeatherViewController: UIViewController {
         }
     }
 
+    //FIX: City Text Field backgroundColor color
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -78,10 +86,9 @@ class WeatherViewController: UIViewController {
         weatherOperator.delegate = self
 
         forecastUIView.layer.cornerRadius = 10
-        forecastUIView.backgroundColor = .white.withAlphaComponent(0.15)
+        forecastUIView.backgroundColor = .systemBackground.withAlphaComponent(0.15)
 
-        cityTextField.backgroundColor = .white
-        cityTextField.layer.opacity = 0.6
+        cityTextField.backgroundColor = .systemBackground.withAlphaComponent(0.3)
 
         cityTextLabel.text = "Loading ..."
 
