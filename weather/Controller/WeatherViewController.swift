@@ -15,8 +15,8 @@ class WeatherViewController: UIViewController {
     @IBOutlet var cityTextLabel: UILabel!
     @IBOutlet var tempTextLabel: UILabel!
     @IBOutlet var weatherImageView: UIImageView!
-    @IBOutlet var forecastView: UIView!
-    @IBOutlet var forecastAnimationView: UIView!
+    @IBOutlet var forecastView: UIView!                 //backView
+    @IBOutlet var forecastAnimationView: UIView!         //frontView
 
     @IBOutlet var forecast1TextLabel: UILabel!
     @IBOutlet var forecast2TextLabel: UILabel!
@@ -42,7 +42,7 @@ class WeatherViewController: UIViewController {
 
     let cornerRadius = CGFloat(10)
 
-    var backgroundGradientView = BackgroundGradientView()
+ //   var backgroundGradientView = BackgroundGradientView()
 
     let anmiationGradientLayer = CAGradientLayer()
 
@@ -97,54 +97,52 @@ class WeatherViewController: UIViewController {
         view.addGestureRecognizer(tap)
 
         forecastView.layer.cornerRadius = cornerRadius
- //       forecastView.backgroundColor = UIColor(white: 1, alpha: 0.15)
         forecastView.backgroundColor = .white.withAlphaComponent(0.15)
 
-//        forecastAnimationView.layer.cornerRadius = cornerRadius
-        forecastAnimationView.backgroundColor = .white.withAlphaComponent(0)
+        forecastAnimationView.layer.cornerRadius = cornerRadius
+        forecastAnimationView.backgroundColor = .white
 
+        let animation = CABasicAnimation(keyPath: "transform.translation.x")
+        //TODO: test from and to value on different devices (view.frame.width)
+        animation.fromValue = -forecastAnimationView.frame.width
+        animation.toValue = forecastAnimationView.frame.width
+        animation.repeatCount = Float.infinity
+        animation.duration = 1.4//color of swiping animation
 
-//        anmiationGradientLayer.colors = [
-//            UIColor.clear.cgColor,
-//            UIColor.white.cgColor,
-//            UIColor.clear.cgColor
-//        ]
-//
-//        anmiationGradientLayer.locations = [0, 0.5, 1]
-//        anmiationGradientLayer.frame = forecastAnimationView.frame
-//        anmiationGradientLayer.cornerRadius = cornerRadius
-//
-//        forecastAnimationView.layer.mask = anmiationGradientLayer
-//
-//     view.layer.addSublayer(anmiationGradientLayer)
-//
-//        let animation = CABasicAnimation(keyPath: "transform.translation.x")
-//        animation.fromValue = -forecastAnimationView.frame.width
-//        animation.toValue = forecastAnimationView.frame.width
-//        animation.repeatCount = Float.infinity
-//        animation.duration = 2
-//
-//        anmiationGradientLayer.add(animation, forKey: "Null")
-
+        anmiationGradientLayer.add(animation, forKey: "Null")
     }
 
-//    override func viewDidLayoutSubviews() {
-//
-//        anmiationGradientLayer.colors = [
-//            UIColor.clear.cgColor,
-//            UIColor.white.cgColor,
-//            UIColor.clear.cgColor
-//        ]
-//
-//        anmiationGradientLayer.locations = [0, 0.5, 1]
-//        anmiationGradientLayer.frame = forecastAnimationView.frame
-//        anmiationGradientLayer.cornerRadius = cornerRadius
-//
-//        forecastAnimationView.layer.mask = anmiationGradientLayer
 
-//     view.layer.addSublayer(anmiationGradientLayer)
+    override func viewDidLayoutSubviews() {
 
-//    }
+        forecastAnimationView.frame = forecastView.frame
+
+        anmiationGradientLayer.colors = [
+            UIColor.clear.cgColor,
+            UIColor.white.cgColor,
+            UIColor.white.cgColor,
+            UIColor.clear.cgColor
+        ]
+
+        //center of each color in gradient colors array
+        anmiationGradientLayer.locations = [0, 0.35, 0.55, 1]
+
+        //change start and end point along x and y for vertical gradient
+        anmiationGradientLayer.startPoint = .init(x: 0.0, y: 0.5)
+        anmiationGradientLayer.endPoint = .init(x: 1.0, y: 0.5)
+
+        //constrain to view the gradient layer will be masked to
+        anmiationGradientLayer.frame = forecastAnimationView.bounds
+
+        // show gradient fade with 45 degrees rotation > move frame up
+        //        let angle = 45 * CGFloat.pi / 180
+        //        gradienLayer.transform = CATransform3DMakeRotation(angle, 0, 0, 1)
+
+        //mask layer to view
+        forecastAnimationView.layer.mask = anmiationGradientLayer
+
+     //        view.layer.addSublayer(anmiationGradientLayer)
+    }
 
 
     @objc func didTapScreen() {
