@@ -15,7 +15,8 @@ class WeatherViewController: UIViewController {
     @IBOutlet var cityTextLabel: UILabel!
     @IBOutlet var tempTextLabel: UILabel!
     @IBOutlet var weatherImageView: UIImageView!
-    @IBOutlet var forecastUIView: UIView!
+    @IBOutlet var forecastView: UIView!
+    @IBOutlet var forecastAnimationView: UIView!
 
     @IBOutlet var forecast1TextLabel: UILabel!
     @IBOutlet var forecast2TextLabel: UILabel!
@@ -39,6 +40,12 @@ class WeatherViewController: UIViewController {
 
     var weatherOperator = WeatherOperator()
 
+    let cornerRadius = CGFloat(10)
+
+    var backgroundGradientView = BackgroundGradientView()
+
+    let anmiationGradientLayer = CAGradientLayer()
+
     //Jesse: here or in view did load
     var locationManager: CLLocationManager?
 
@@ -48,15 +55,10 @@ class WeatherViewController: UIViewController {
         case city(String)
     }
 
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        if traitCollection.userInterfaceStyle == .light {
             return .lightContent
-        } else {
-            return .darkContent
-        }
     }
-
-
 
     var weatherLocation: WeatherLocation? {
         didSet {
@@ -72,8 +74,6 @@ class WeatherViewController: UIViewController {
         }
     }
 
-    //FIX: City Text Field backgroundColor color
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -85,14 +85,9 @@ class WeatherViewController: UIViewController {
 
         weatherOperator.delegate = self
 
-        forecastUIView.layer.cornerRadius = 10
-        forecastUIView.backgroundColor = .systemBackground.withAlphaComponent(0.15)
+        cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
+       cityTextLabel.text = "Loading ..."
 
-        cityTextField.backgroundColor = .systemBackground.withAlphaComponent(0.3)
-
-        cityTextLabel.text = "Loading ..."
-
-        //
         NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -100,7 +95,57 @@ class WeatherViewController: UIViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(WeatherViewController.didTapScreen))
 
         view.addGestureRecognizer(tap)
+
+        forecastView.layer.cornerRadius = cornerRadius
+ //       forecastView.backgroundColor = UIColor(white: 1, alpha: 0.15)
+        forecastView.backgroundColor = .white.withAlphaComponent(0.15)
+
+//        forecastAnimationView.layer.cornerRadius = cornerRadius
+        forecastAnimationView.backgroundColor = .white.withAlphaComponent(0)
+
+
+//        anmiationGradientLayer.colors = [
+//            UIColor.clear.cgColor,
+//            UIColor.white.cgColor,
+//            UIColor.clear.cgColor
+//        ]
+//
+//        anmiationGradientLayer.locations = [0, 0.5, 1]
+//        anmiationGradientLayer.frame = forecastAnimationView.frame
+//        anmiationGradientLayer.cornerRadius = cornerRadius
+//
+//        forecastAnimationView.layer.mask = anmiationGradientLayer
+//
+//     view.layer.addSublayer(anmiationGradientLayer)
+//
+//        let animation = CABasicAnimation(keyPath: "transform.translation.x")
+//        animation.fromValue = -forecastAnimationView.frame.width
+//        animation.toValue = forecastAnimationView.frame.width
+//        animation.repeatCount = Float.infinity
+//        animation.duration = 2
+//
+//        anmiationGradientLayer.add(animation, forKey: "Null")
+
     }
+
+//    override func viewDidLayoutSubviews() {
+//
+//        anmiationGradientLayer.colors = [
+//            UIColor.clear.cgColor,
+//            UIColor.white.cgColor,
+//            UIColor.clear.cgColor
+//        ]
+//
+//        anmiationGradientLayer.locations = [0, 0.5, 1]
+//        anmiationGradientLayer.frame = forecastAnimationView.frame
+//        anmiationGradientLayer.cornerRadius = cornerRadius
+//
+//        forecastAnimationView.layer.mask = anmiationGradientLayer
+
+//     view.layer.addSublayer(anmiationGradientLayer)
+
+//    }
+
 
     @objc func didTapScreen() {
         print("@@", #function)
