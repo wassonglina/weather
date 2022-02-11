@@ -39,9 +39,7 @@ class WeatherOperator {
         let forcastURLString = "\(weatherForecastURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
         print(weatherURLString)
         performNetworkRequest(with: weatherURLString) { data in
-            print("HERE")
             if let currentWeather = self.parseJSONWeather(with: data) {
-              //  print(currentWeather)
                 self.delegate?.didFetchWeather(with: currentWeather)
             }
         }

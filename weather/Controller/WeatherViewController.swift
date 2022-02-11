@@ -176,6 +176,8 @@ extension WeatherViewController: UITextFieldDelegate {
 }
 
 
+
+
 extension WeatherViewController: ViewModelDelegate {
 
     func updateWeatherUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String) {
@@ -191,7 +193,35 @@ extension WeatherViewController: ViewModelDelegate {
         }
     }
 
+    func updateForecastUI(dayOfWeek: String, forecastImage: UIImage, forecastTemp: String) {
+        DispatchQueue.main.async {
+
+            //           self.forecast2TextLabel.text = info[0].dayName
+
+            self.forecast2TextLabel.text = dayOfWeek
+            self.cond2ImageView.image = forecastImage
+            self.temp2TextLabel.text = forecastTemp
+            
+            self.forecast3TextLabel.text = dayOfWeek
+            self.cond3ImageView.image = forecastImage
+            self.temp3TextLabel.text = forecastTemp
+
+            self.forecast4TextLabel.text = dayOfWeek
+            self.cond4ImageView.image = forecastImage
+            self.temp4TextLabel.text = forecastTemp
+
+            self.forecast5TextLabel.text = dayOfWeek
+            self.cond5ImageView.image = forecastImage
+            self.temp5TextLabel.text = forecastTemp
+
+            //Jesse: current Weather and Forecast load at same time but possibility that not. still ok?
+            self.forecastStackView.layer.opacity = 1
+
+            self.forecastAnimationView.isHidden = true
+        }
+    }
 }
+
 
 //Mark: - WeatherManagerDelegate
 

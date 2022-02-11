@@ -11,6 +11,8 @@ import CoreLocation
 
 protocol ViewModelDelegate {
     func updateWeatherUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String)
+
+    func updateForecastUI(dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)
 }
 
 
@@ -68,7 +70,13 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
     }
 
     func didFetchForecast(with: [WeatherModel]) {
-        print("didFetchForecast")
+
+        let dayOfWeek = "Monday"
+    let forecastImage = UIImage(systemName: "sun.max.fill")!
+    let forecastTemp = "13"
+
+        delegate?.updateForecastUI(dayOfWeek: dayOfWeek, forecastImage: forecastImage, forecastTemp: forecastTemp)
+
     }
 
     func didCatchError(error: Error) {
