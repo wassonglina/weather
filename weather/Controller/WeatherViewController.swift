@@ -6,10 +6,10 @@
 //
 
 import UIKit
-import CoreLocation
 
 
 class WeatherViewController: UIViewController {
+
 
     @IBOutlet var cityTextField: UITextField!
     @IBOutlet var cityTextLabel: UILabel!
@@ -42,47 +42,26 @@ class WeatherViewController: UIViewController {
 
     var weatherOperator = WeatherOperator()
 
+    var weatherViewModel = WeatherViewModel()
+
     let cornerRadius = CGFloat(10)
 
     let anmiationGradientLayer = CAGradientLayer()
     let animation = CABasicAnimation(keyPath: "transform.translation.x")
 
-    //Jesse: here or in view did load
-    let locationManager = CLLocationManager()
-
-    //Equatable: can be compared for equality using the equal-to operator
-    enum WeatherLocation: Equatable {
-        case currentLocation
-        case city(String)
-    }
-
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-            return .lightContent
+        return .lightContent
     }
 
-    var weatherLocation: WeatherLocation? {
-        didSet {
-            switch weatherLocation {
-            case .currentLocation:
-                locationManager.requestWhenInUseAuthorization()
-                locationManager.requestLocation()
-            case .city(let cityname):
-                weatherOperator.createCityURL(city: cityname)
-            case nil:
-                break
-            }
-        }
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         cityTextField.delegate = self
-        weatherOperator.delegate = self
 
-        locationManager.delegate = self
-        weatherLocation = .currentLocation  //set case .currentLocation
+        weatherViewModel.delegate = self
+        weatherViewModel.getWeatherLocation()
 
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
 
@@ -92,7 +71,7 @@ class WeatherViewController: UIViewController {
         forecastView.backgroundColor = .white.withAlphaComponent(0.15)
 
         forecastAnimationView.layer.cornerRadius = cornerRadius
-        forecastAnimationView.backgroundColor = .white.withAlphaComponent(0.6)
+        forecastAnimationView.backgroundColor = .white.withAlphaComponent(0.5)
 
         forecastStackView.layer.opacity = 0
 
@@ -106,6 +85,7 @@ class WeatherViewController: UIViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(WeatherViewController.didTapScreen))
         view.addGestureRecognizer(tap)
     }
+
 
     func startAnmiation(){
 
@@ -123,8 +103,6 @@ class WeatherViewController: UIViewController {
         forecastAnimationView.layer.mask = anmiationGradientLayer
     }
 
->>> Refactor a bit and Animate Label
-
     func defineAnimationGradient() {
         anmiationGradientLayer.colors = [
             UIColor.clear.cgColor,
@@ -137,7 +115,6 @@ class WeatherViewController: UIViewController {
         anmiationGradientLayer.endPoint = .init(x: 1.0, y: 0.5)
     }
 
-
     @objc func didTapScreen() {
         print("@@", #function)
         cityTextField.endEditing(true)
@@ -145,7 +122,6 @@ class WeatherViewController: UIViewController {
 
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {
-            //return if keyboard size not available
             return
         }
         //TODO: if constraints programatically > constraintHeight/2 instead of hard coded number
@@ -156,10 +132,11 @@ class WeatherViewController: UIViewController {
         self.view.frame.origin.y = 0
     }
 
+
     @IBAction func didTapSearch(_ sender: UIButton) {
 
         if cityTextField.text?.isEmpty == false {
-            weatherLocation = .city(cityTextField.text!) //set case .city
+            weatherViewModel.getWeatherCity(with: cityTextField.text!)
             cityTextField.text = ""
             sender.alpha = 0.2
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -169,9 +146,10 @@ class WeatherViewController: UIViewController {
         }
     }
 
+    //function to send status to WeatherViewModel
     @IBAction func didTapLocation(_ sender: UIButton) {
         print("@@", #function)
-        weatherLocation = .currentLocation
+        weatherViewModel.getWeatherLocation()
         sender.alpha = 0.2
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             sender.alpha = 1.0
@@ -189,7 +167,7 @@ extension WeatherViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         print("@@", #function)
         if cityTextField.text?.isEmpty == false  {
-            weatherLocation = .city(cityTextField.text!)
+            weatherViewModel.getWeatherCity(with: cityTextField.text!)
             cityTextField.text = ""
             cityTextField.endEditing(true)
         }
@@ -198,79 +176,80 @@ extension WeatherViewController: UITextFieldDelegate {
 }
 
 
-//Mark: - CLLocationManagerDelegate
+extension WeatherViewController: ViewModelDelegate {
 
-extension WeatherViewController: CLLocationManagerDelegate {
+    func updateWeatherUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String) {
 
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if weatherLocation == .currentLocation, let location = locations.last {
-            let latitude = location.coordinate.latitude
-            let longitude = location.coordinate.longitude
-            weatherOperator.createGeoURL(latitude: latitude, longitude: longitude)
+        DispatchQueue.main.async {
+            self.cityTextLabel.text = city
+            self.tempTextLabel.text = temperature
+            self.weatherImageView.image = image
+
+            self.forecast1TextLabel.text = "Now"
+            self.cond1ImageView.image = forecastImage
+            self.temp1TextLabel.text = forecastTemp
         }
     }
 
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("error")
-    }
 }
-
-
 
 //Mark: - WeatherManagerDelegate
 
-extension WeatherViewController: WeatherManagerDelegate {
+//extension WeatherViewController: WeatherManagerDelegate {
+//
+////    func didFetchWeather(with currentWeather: WeatherModel) {
+////
+////        DispatchQueue.main.async {
+////            self.cityTextLabel.text = currentWeather.name
+////            self.tempTextLabel.text = currentWeather.tempString
+////            self.weatherImageView.image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast))")
+////
+////            self.forecast1TextLabel.text = "Now" //forecastWeather[0].getDayOfWeek()
+////            self.cond1ImageView.image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast)).fill")
+////            self.temp1TextLabel.text = currentWeather.tempString
+////        }
+////    }
+//
+//
+//    func didFetchForecast(with forecastWeather: [WeatherModel]) {
+//
+//        DispatchQueue.main.async {
+//            //TODO: Better way to fill in content?
+//            //           self.forecast2TextLabel.text = info[0].dayName
+//
+//            self.forecast2TextLabel.text = forecastWeather[0].getDayOfWeek()
+//            self.cond2ImageView.image = UIImage(systemName: "\(forecastWeather[0].symbolName(isNight: forecastWeather[0].isNight!, isForecast: forecastWeather[0].isForecast))")
+//            self.temp2TextLabel.text = forecastWeather[0].tempString
+//
+//            self.forecast3TextLabel.text = forecastWeather[1].getDayOfWeek()
+//            self.cond3ImageView.image = UIImage(systemName: "\(forecastWeather[1].symbolName(isNight: forecastWeather[1].isNight!, isForecast: forecastWeather[1].isForecast))")
+//            self.temp3TextLabel.text = forecastWeather[1].tempString
+//
+//            self.forecast4TextLabel.text = forecastWeather[2].getDayOfWeek()
+//            self.cond4ImageView.image = UIImage(systemName: "\(forecastWeather[2].symbolName(isNight: forecastWeather[2].isNight!, isForecast: forecastWeather[2].isForecast))")
+//            self.temp4TextLabel.text = forecastWeather[2].tempString
+//
+//            self.forecast5TextLabel.text = forecastWeather[3].getDayOfWeek()
+//            self.cond5ImageView.image = UIImage(systemName: "\(forecastWeather[3].symbolName(isNight: forecastWeather[3].isNight!, isForecast: forecastWeather[3].isForecast))")
+//            self.temp5TextLabel.text = forecastWeather[3].tempString
+//
+//            //Jesse: current Weather and Forecast load at same time but possibility that not. still ok?
+//            self.forecastStackView.layer.opacity = 1
+//
+//            self.forecastAnimationView.isHidden = true
+//        }
+//    }
+//
+//
+//    func didCatchError(error: Error) {
+//        print("There was an error getting the current weather: \(error).")
+//
+//        DispatchQueue.main.async {
+//            self.cityTextLabel.text = "City not found"
+//            self.tempTextLabel.text = ""
+//            self.weatherImageView.image = UIImage(systemName: "globe.europe.africa")
+//        }
+//    }
+//}
 
-    func didFetchWeather(with currentWeather: WeatherModel) {
-
-        DispatchQueue.main.async {
-            self.cityTextLabel.text = currentWeather.name
-            self.tempTextLabel.text = currentWeather.tempString
-            self.weatherImageView.image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast))")
-
-            self.forecast1TextLabel.text = "Now" //forecastWeather[0].getDayOfWeek()
-            self.cond1ImageView.image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast)).fill")
-            self.temp1TextLabel.text = currentWeather.tempString
-        }
-    }
-
-
-    func didFetchForecast(with forecastWeather: [WeatherModel]) {
-
-        DispatchQueue.main.async {
-            //TODO: Better way to fill in content?
-            self.forecast2TextLabel.text = forecastWeather[0].getDayOfWeek()
-            self.cond2ImageView.image = UIImage(systemName: "\(forecastWeather[0].symbolName(isNight: forecastWeather[0].isNight!, isForecast: forecastWeather[0].isForecast))")
-            self.temp2TextLabel.text = forecastWeather[0].tempString
-
-            self.forecast3TextLabel.text = forecastWeather[1].getDayOfWeek()
-            self.cond3ImageView.image = UIImage(systemName: "\(forecastWeather[1].symbolName(isNight: forecastWeather[1].isNight!, isForecast: forecastWeather[1].isForecast))")
-            self.temp3TextLabel.text = forecastWeather[1].tempString
-
-            self.forecast4TextLabel.text = forecastWeather[2].getDayOfWeek()
-            self.cond4ImageView.image = UIImage(systemName: "\(forecastWeather[2].symbolName(isNight: forecastWeather[2].isNight!, isForecast: forecastWeather[2].isForecast))")
-            self.temp4TextLabel.text = forecastWeather[2].tempString
-
-            self.forecast5TextLabel.text = forecastWeather[3].getDayOfWeek()
-            self.cond5ImageView.image = UIImage(systemName: "\(forecastWeather[3].symbolName(isNight: forecastWeather[3].isNight!, isForecast: forecastWeather[3].isForecast))")
-            self.temp5TextLabel.text = forecastWeather[3].tempString
-
-            //Jesse: current Weather and Forecast load at same time but possibility that not. still ok?
-            self.forecastStackView.layer.opacity = 1
-
-            self.forecastAnimationView.isHidden = true
-        }
-    }
-
-
-    func didCatchError(error: Error) {
-        print("There was an error getting the current weather: \(error).")
-
-        DispatchQueue.main.async {
-            self.cityTextLabel.text = "City not found"
-            self.tempTextLabel.text = ""
-            self.weatherImageView.image = UIImage(systemName: "globe.europe.africa")
-        }
-    }
-}
 

@@ -5,7 +5,7 @@
 //  Created by Lina on 1/19/22.
 //
 
-import Foundation
+import UIKit
 import CoreLocation
 
 protocol WeatherManagerDelegate {
@@ -25,15 +25,12 @@ extension String {
 }
 
 
+class WeatherOperator {
 
-struct WeatherOperator {
-
-    
     let weatherURL = "https://api.openweathermap.org/data/2.5/weather?&appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
 
     //gives weather of today and next 5 days
     let weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
-
 
     var delegate: WeatherManagerDelegate?
 
@@ -42,14 +39,16 @@ struct WeatherOperator {
         let forcastURLString = "\(weatherForecastURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
         print(weatherURLString)
         performNetworkRequest(with: weatherURLString) { data in
-            if let currentWeather = parseJSONWeather(with: data) {
-                delegate?.didFetchWeather(with: currentWeather)
+            print("HERE")
+            if let currentWeather = self.parseJSONWeather(with: data) {
+              //  print(currentWeather)
+                self.delegate?.didFetchWeather(with: currentWeather)
             }
         }
         performNetworkRequest(with: forcastURLString) { data in
-            if let forecastWeather = parseJSONForecast(with: data) {
+            if let forecastWeather = self.parseJSONForecast(with: data) {
 
-                delegate?.didFetchForecast(with: forecastWeather)
+                self.delegate?.didFetchForecast(with: forecastWeather)
             }
         }
     }
@@ -59,13 +58,13 @@ struct WeatherOperator {
         let forcastURLString = "\(weatherForecastURL)&lat=\(latitude)&lon=\(longitude)"
         print(weatherURLString)
         performNetworkRequest(with: weatherURLString) { data in
-            if let currentWeather = parseJSONWeather(with: data) {
-                delegate?.didFetchWeather(with: currentWeather)
+            if let currentWeather = self.parseJSONWeather(with: data) {
+                self.delegate?.didFetchWeather(with: currentWeather)
             }
         }
         performNetworkRequest(with: forcastURLString) { data in
-            if let forecastWeather = parseJSONForecast(with: data) {
-                delegate?.didFetchForecast(with: forecastWeather)
+            if let forecastWeather = self.parseJSONForecast(with: data) {
+                self.delegate?.didFetchForecast(with: forecastWeather)
             }
         }
     }
@@ -77,7 +76,7 @@ struct WeatherOperator {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { data, response, error in
                 if error != nil {
-                    delegate?.didCatchError(error: error!)
+                    self.delegate?.didCatchError(error: error!)
                     print("There was an error performing the network request: \(error!).")
                     return
                 }

@@ -37,14 +37,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
+
+        //check how much time passed > update weather and show animation if a lot of time passed
+     //   print("sceneWillEnterForeground")
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
+     //   print("sceneDidEnterBackground")
+        //start timer > when sceneWillEnterForeground check and if enough time passed to reload data? (3h+?)
+
     }
 
 
