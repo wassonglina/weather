@@ -9,7 +9,7 @@ import UIKit
 
 class BackgroundGradientView: UIView {
 
-    let gradientLayer = CAGradientLayer()
+    let backgroundGradientLayer = CAGradientLayer()
 
     let lightColors = [
         UIColor(red: 108/255, green: 125/255, blue: 169/255, alpha: 1).cgColor,
@@ -34,27 +34,27 @@ class BackgroundGradientView: UIView {
     //check style preferencs during setup
     func setup() {
         if traitCollection.userInterfaceStyle == .light {
-            gradientLayer.colors = lightColors
+            backgroundGradientLayer.colors = lightColors
         } else {
-            gradientLayer.colors = darkColors
+            backgroundGradientLayer.colors = darkColors
         }
-        gradientLayer.frame = bounds
-        layer.addSublayer(gradientLayer)
+        backgroundGradientLayer.frame = bounds
+        layer.addSublayer(backgroundGradientLayer)
     }
 
     //clip gradientView to bounds even if view size changes
     override func layoutSubviews() {
         super.layoutSubviews()
-        gradientLayer.frame = bounds
+        backgroundGradientLayer.frame = bounds
     }
 
     //check if style preferencs change while app is running
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         if traitCollection.userInterfaceStyle == .light {
-            gradientLayer.colors = lightColors
+            backgroundGradientLayer.colors = lightColors
         } else {
-            gradientLayer.colors = darkColors
+            backgroundGradientLayer.colors = darkColors
         }
     }
 }

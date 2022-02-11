@@ -44,14 +44,11 @@ class WeatherViewController: UIViewController {
 
     let cornerRadius = CGFloat(10)
 
-    var backgroundGradientView = BackgroundGradientView()
-
     let anmiationGradientLayer = CAGradientLayer()
-
     let animation = CABasicAnimation(keyPath: "transform.translation.x")
 
     //Jesse: here or in view did load
-    var locationManager: CLLocationManager?
+    let locationManager = CLLocationManager()
 
     //Equatable: can be compared for equality using the equal-to operator
     enum WeatherLocation: Equatable {
@@ -68,8 +65,8 @@ class WeatherViewController: UIViewController {
         didSet {
             switch weatherLocation {
             case .currentLocation:
-                locationManager?.requestWhenInUseAuthorization()
-                locationManager?.requestLocation()
+                locationManager.requestWhenInUseAuthorization()
+                locationManager.requestLocation()
             case .city(let cityname):
                 weatherOperator.createCityURL(city: cityname)
             case nil:
@@ -82,23 +79,14 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
 
         cityTextField.delegate = self
-
-        locationManager = CLLocationManager()
-        locationManager?.delegate = self
-        weatherLocation = .currentLocation  //set case .currentLocation
-
         weatherOperator.delegate = self
 
+        locationManager.delegate = self
+        weatherLocation = .currentLocation  //set case .currentLocation
+
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
-       cityTextLabel.text = "Loading ..."
 
-        NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-
-        NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-
-        let tap = UITapGestureRecognizer(target: self, action: #selector(WeatherViewController.didTapScreen))
-
-        view.addGestureRecognizer(tap)
+        cityTextLabel.text = "Loading ..."
 
         forecastView.layer.cornerRadius = cornerRadius
         forecastView.backgroundColor = .white.withAlphaComponent(0.15)
@@ -106,43 +94,47 @@ class WeatherViewController: UIViewController {
         forecastAnimationView.layer.cornerRadius = cornerRadius
         forecastAnimationView.backgroundColor = .white.withAlphaComponent(0.6)
 
+        forecastStackView.layer.opacity = 0
+
+        startAnmiation()
+        defineAnimationGradient()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+
+        let tap = UITapGestureRecognizer(target: self, action: #selector(WeatherViewController.didTapScreen))
+        view.addGestureRecognizer(tap)
+    }
+
+    func startAnmiation(){
 
         //TODO: test from and to value on different devices (view.frame.width)
         animation.fromValue = -forecastAnimationView.frame.width
         animation.toValue = forecastAnimationView.frame.width
         animation.repeatCount = Float.infinity
         animation.duration = 1.7
-
         anmiationGradientLayer.add(animation, forKey: "Null")
-
-        forecastStackView.layer.opacity = 0
-
     }
 
     override func viewDidLayoutSubviews() {
-
         forecastAnimationView.frame = forecastView.frame
+        anmiationGradientLayer.frame = forecastAnimationView.bounds
+        forecastAnimationView.layer.mask = anmiationGradientLayer
+    }
 
+>>> Refactor a bit and Animate Label
+
+    func defineAnimationGradient() {
         anmiationGradientLayer.colors = [
             UIColor.clear.cgColor,
             UIColor.white.cgColor,
             UIColor.white.cgColor,
             UIColor.clear.cgColor
         ]
-
-        //center of each color in gradient colors array
         anmiationGradientLayer.locations = [0, 0.48, 0.52, 1]
-
-        //change start and end point along x and y for vertical gradient
         anmiationGradientLayer.startPoint = .init(x: 0.0, y: 0.5)
         anmiationGradientLayer.endPoint = .init(x: 1.0, y: 0.5)
-
-        //constrain to view the gradient layer will be masked to
-        anmiationGradientLayer.frame = forecastAnimationView.bounds
-
-        //mask layer to view
-        forecastAnimationView.layer.mask = anmiationGradientLayer
-
     }
 
 
@@ -189,7 +181,6 @@ class WeatherViewController: UIViewController {
 }
 
 
-
 //Mark: - UITextFieldDelegate
 
 extension WeatherViewController: UITextFieldDelegate {
@@ -229,7 +220,6 @@ extension WeatherViewController: CLLocationManagerDelegate {
 //Mark: - WeatherManagerDelegate
 
 extension WeatherViewController: WeatherManagerDelegate {
-
 
     func didFetchWeather(with currentWeather: WeatherModel) {
 
