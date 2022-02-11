@@ -31,8 +31,8 @@ class BackgroundGradientView: UIView {
         setup()
     }
 
+    //check style preferencs during setup
     func setup() {
-
         if traitCollection.userInterfaceStyle == .light {
             gradientLayer.colors = lightColors
         } else {
@@ -42,11 +42,13 @@ class BackgroundGradientView: UIView {
         layer.addSublayer(gradientLayer)
     }
 
+    //clip gradientView to bounds even if view size changes
     override func layoutSubviews() {
         super.layoutSubviews()
         gradientLayer.frame = bounds
     }
 
+    //check if style preferencs change while app is running
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         if traitCollection.userInterfaceStyle == .light {

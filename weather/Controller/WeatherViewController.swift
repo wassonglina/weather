@@ -36,15 +36,19 @@ class WeatherViewController: UIViewController {
     @IBOutlet var temp4TextLabel: UILabel!
     @IBOutlet var temp5TextLabel: UILabel!
 
+    @IBOutlet var forecastStackView: UIStackView!
+
     @IBOutlet var locationUIButton: UIButton!
 
     var weatherOperator = WeatherOperator()
 
     let cornerRadius = CGFloat(10)
 
- //   var backgroundGradientView = BackgroundGradientView()
+    var backgroundGradientView = BackgroundGradientView()
 
     let anmiationGradientLayer = CAGradientLayer()
+
+    let animation = CABasicAnimation(keyPath: "transform.translation.x")
 
     //Jesse: here or in view did load
     var locationManager: CLLocationManager?
@@ -100,18 +104,20 @@ class WeatherViewController: UIViewController {
         forecastView.backgroundColor = .white.withAlphaComponent(0.15)
 
         forecastAnimationView.layer.cornerRadius = cornerRadius
-        forecastAnimationView.backgroundColor = .white
+        forecastAnimationView.backgroundColor = .white.withAlphaComponent(0.6)
 
-        let animation = CABasicAnimation(keyPath: "transform.translation.x")
+
         //TODO: test from and to value on different devices (view.frame.width)
         animation.fromValue = -forecastAnimationView.frame.width
         animation.toValue = forecastAnimationView.frame.width
         animation.repeatCount = Float.infinity
-        animation.duration = 1.4//color of swiping animation
+        animation.duration = 1.7
 
         anmiationGradientLayer.add(animation, forKey: "Null")
-    }
 
+        forecastStackView.layer.opacity = 0
+
+    }
 
     override func viewDidLayoutSubviews() {
 
@@ -125,7 +131,7 @@ class WeatherViewController: UIViewController {
         ]
 
         //center of each color in gradient colors array
-        anmiationGradientLayer.locations = [0, 0.35, 0.55, 1]
+        anmiationGradientLayer.locations = [0, 0.48, 0.52, 1]
 
         //change start and end point along x and y for vertical gradient
         anmiationGradientLayer.startPoint = .init(x: 0.0, y: 0.5)
@@ -134,14 +140,9 @@ class WeatherViewController: UIViewController {
         //constrain to view the gradient layer will be masked to
         anmiationGradientLayer.frame = forecastAnimationView.bounds
 
-        // show gradient fade with 45 degrees rotation > move frame up
-        //        let angle = 45 * CGFloat.pi / 180
-        //        gradienLayer.transform = CATransform3DMakeRotation(angle, 0, 0, 1)
-
         //mask layer to view
         forecastAnimationView.layer.mask = anmiationGradientLayer
 
-     //        view.layer.addSublayer(anmiationGradientLayer)
     }
 
 
@@ -247,7 +248,6 @@ extension WeatherViewController: WeatherManagerDelegate {
     func didFetchForecast(with forecastWeather: [WeatherModel]) {
 
         DispatchQueue.main.async {
-
             //TODO: Better way to fill in content?
             self.forecast2TextLabel.text = forecastWeather[0].getDayOfWeek()
             self.cond2ImageView.image = UIImage(systemName: "\(forecastWeather[0].symbolName(isNight: forecastWeather[0].isNight!, isForecast: forecastWeather[0].isForecast))")
@@ -264,6 +264,11 @@ extension WeatherViewController: WeatherManagerDelegate {
             self.forecast5TextLabel.text = forecastWeather[3].getDayOfWeek()
             self.cond5ImageView.image = UIImage(systemName: "\(forecastWeather[3].symbolName(isNight: forecastWeather[3].isNight!, isForecast: forecastWeather[3].isForecast))")
             self.temp5TextLabel.text = forecastWeather[3].tempString
+
+            //Jesse: current Weather and Forecast load at same time but possibility that not. still ok?
+            self.forecastStackView.layer.opacity = 1
+
+            self.forecastAnimationView.isHidden = true
         }
     }
 

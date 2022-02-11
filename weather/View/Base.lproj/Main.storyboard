@@ -68,7 +68,7 @@
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WVP-Ck-lez" userLabel="Animation View">
-                                <rect key="frame" x="53" y="313" width="282.66666666666674" height="216.66666666666669"/>
+                                <rect key="frame" x="53" y="445.00000000000006" width="282.66666666666674" height="216.66666666666669"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemPinkColor"/>
                             </view>
@@ -81,7 +81,7 @@
                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="IEy-er-Ylh">
                                                 <rect key="frame" x="0.0" y="0.0" width="242.66666666666666" height="27.333333333333332"/>
                                                 <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Monday" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jVk-da-1hl">
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Now" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jVk-da-1hl">
                                                         <rect key="frame" x="0.0" y="0.0" width="115.33333333333333" height="27.333333333333332"/>
                                                         <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="20"/>
                                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -286,6 +286,7 @@
                         <outlet property="forecast4TextLabel" destination="fMS-Un-kCr" id="CS0-Fm-0fA"/>
                         <outlet property="forecast5TextLabel" destination="j1j-Eq-FBS" id="5pA-rr-q2t"/>
                         <outlet property="forecastAnimationView" destination="WVP-Ck-lez" id="Fmc-vY-43X"/>
+                        <outlet property="forecastStackView" destination="tQC-9T-69t" id="BFh-6q-evM"/>
                         <outlet property="forecastView" destination="pF2-Wx-93C" id="Tu6-GJ-UZh"/>
                         <outlet property="locationUIButton" destination="CD1-ax-HTa" id="Qy1-Nv-1Nj"/>
                         <outlet property="temp1TextLabel" destination="Icw-jm-zTQ" id="mrr-yy-g0i"/>
