@@ -12,11 +12,11 @@ class WeatherViewController: UIViewController {
 
 
     @IBOutlet var cityTextField: UITextField!
-    @IBOutlet var cityTextLabel: UILabel!
+    @IBOutlet var cityTextLabel: UILabel!               //back View
     @IBOutlet var tempTextLabel: UILabel!
     @IBOutlet var weatherImageView: UIImageView!
-    @IBOutlet var forecastView: UIView!                 //backView
-    @IBOutlet var forecastAnimationView: UIView!         //frontView
+    @IBOutlet var forecastView: UIView!                 //back View
+    @IBOutlet var forecastAnimationView: UIView!         //front View
 
     @IBOutlet var forecast1TextLabel: UILabel!
     @IBOutlet var forecast2TextLabel: UILabel!
@@ -39,6 +39,8 @@ class WeatherViewController: UIViewController {
     @IBOutlet var forecastStackView: UIStackView!
 
     @IBOutlet var locationUIButton: UIButton!
+
+    let cityAnimationLabel = UILabel()       //front View
 
     var weatherOperator = WeatherOperator()
 
@@ -63,18 +65,32 @@ class WeatherViewController: UIViewController {
 
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
 
+        cityTextLabel.textColor = .white.withAlphaComponent(0.15)
         cityTextLabel.text = "Loading ..."
+
+        tempTextLabel.isHidden = true
+        weatherImageView.isHidden = true
+
+        cityAnimationLabel.textColor = .white.withAlphaComponent(0.75)
+        cityAnimationLabel.text = cityTextLabel.text
+        cityAnimationLabel.font = cityTextLabel.font
+        cityAnimationLabel.textAlignment = cityTextLabel.textAlignment
+//        cityAnimationLabel.backgroundColor = .red.withAlphaComponent(0.7)
 
         forecastView.layer.cornerRadius = cornerRadius
         forecastView.backgroundColor = .white.withAlphaComponent(0.15)
+        forecastStackView.layer.opacity = 0
 
         forecastAnimationView.layer.cornerRadius = cornerRadius
         forecastAnimationView.backgroundColor = .white.withAlphaComponent(0.45)
 
-        forecastStackView.layer.opacity = 0
-
         animationView.defineAnimationGradient()
-        animationView.startAnmiation(layerInfo: forecastAnimationView)
+        animationView.startAnmiation(with: forecastAnimationView)
+
+        animationView.defineLabelGradient()
+   //     animationView.startAnmiation2(with: cityAnimationLabel)
+
+        view.addSubview(cityAnimationLabel)
 
         NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
 
@@ -82,12 +98,23 @@ class WeatherViewController: UIViewController {
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(WeatherViewController.didTapScreen))
         view.addGestureRecognizer(tap)
+
     }
+
 
     override func viewDidLayoutSubviews() {
         forecastAnimationView.frame = forecastView.frame
-        animationView.anmiationGradientLayer.frame = forecastAnimationView.bounds
-        forecastAnimationView.layer.mask = animationView.anmiationGradientLayer
+        animationView.forecastGradientLayer.frame = forecastAnimationView.bounds
+        forecastAnimationView.layer.mask = animationView.forecastGradientLayer
+
+        cityAnimationLabel.frame = cityTextLabel.frame
+        animationView.labelGradientLayer.frame = cityAnimationLabel.bounds
+        cityAnimationLabel.layer.mask = animationView.labelGradientLayer
+
+        //Jesse: when func called in ViewDidLoad just gradient and no animation
+//        animationView.defineLabelGradient()
+        animationView.startAnmiation2(with: cityAnimationLabel)
+
     }
 
 
@@ -190,9 +217,14 @@ extension WeatherViewController: ViewModelDelegate {
 
             //Jesse: current Weather and Forecast load at same time but possibility that not. still ok?
             self.forecastStackView.layer.opacity = 1
+            self.cityTextLabel.textColor = .white
+            self.tempTextLabel.isHidden = false
+            self.weatherImageView.isHidden = false
+
 
             //TODO: Stop animation instead of hiding
             self.forecastAnimationView.isHidden = true
+            self.cityAnimationLabel.isHidden = true
         }
     }
 }
