@@ -63,6 +63,7 @@ class WeatherOperator {
         performNetworkRequest(with: forcastURLString) { data in
             if let forecastWeather = self.parseJSONForecast(with: data) {
                 self.delegate?.didFetchForecast(with: forecastWeather)
+                print(forecastWeather)
             }
         }
     }

@@ -175,8 +175,7 @@ extension WeatherViewController: UITextFieldDelegate {
     }
 }
 
-
-
+//Mark: - ViewModelDelegate
 
 extension WeatherViewController: ViewModelDelegate {
 
@@ -193,26 +192,25 @@ extension WeatherViewController: ViewModelDelegate {
         }
     }
 
-    func updateForecastUI(dayOfWeek: String, forecastImage: UIImage, forecastTemp: String) {
+    func updateForecastUI(VCForecast: [(dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)]) {
+
         DispatchQueue.main.async {
 
-            //           self.forecast2TextLabel.text = info[0].dayName
+            self.forecast2TextLabel.text = VCForecast[0].dayOfWeek
+            self.cond2ImageView.image = VCForecast[0].forecastImage
+            self.temp2TextLabel.text = VCForecast[0].forecastTemp
 
-            self.forecast2TextLabel.text = dayOfWeek
-            self.cond2ImageView.image = forecastImage
-            self.temp2TextLabel.text = forecastTemp
-            
-            self.forecast3TextLabel.text = dayOfWeek
-            self.cond3ImageView.image = forecastImage
-            self.temp3TextLabel.text = forecastTemp
+            self.forecast3TextLabel.text = VCForecast[1].dayOfWeek
+            self.cond3ImageView.image = VCForecast[1].forecastImage
+            self.temp3TextLabel.text = VCForecast[1].forecastTemp
 
-            self.forecast4TextLabel.text = dayOfWeek
-            self.cond4ImageView.image = forecastImage
-            self.temp4TextLabel.text = forecastTemp
+            self.forecast4TextLabel.text = VCForecast[2].dayOfWeek
+            self.cond4ImageView.image = VCForecast[2].forecastImage
+            self.temp4TextLabel.text = VCForecast[2].forecastTemp
 
-            self.forecast5TextLabel.text = dayOfWeek
-            self.cond5ImageView.image = forecastImage
-            self.temp5TextLabel.text = forecastTemp
+            self.forecast5TextLabel.text = VCForecast[3].dayOfWeek
+            self.cond5ImageView.image = VCForecast[3].forecastImage
+            self.temp5TextLabel.text = VCForecast[3].forecastTemp
 
             //Jesse: current Weather and Forecast load at same time but possibility that not. still ok?
             self.forecastStackView.layer.opacity = 1
@@ -222,64 +220,5 @@ extension WeatherViewController: ViewModelDelegate {
     }
 }
 
-
-//Mark: - WeatherManagerDelegate
-
-//extension WeatherViewController: WeatherManagerDelegate {
-//
-////    func didFetchWeather(with currentWeather: WeatherModel) {
-////
-////        DispatchQueue.main.async {
-////            self.cityTextLabel.text = currentWeather.name
-////            self.tempTextLabel.text = currentWeather.tempString
-////            self.weatherImageView.image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast))")
-////
-////            self.forecast1TextLabel.text = "Now" //forecastWeather[0].getDayOfWeek()
-////            self.cond1ImageView.image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast)).fill")
-////            self.temp1TextLabel.text = currentWeather.tempString
-////        }
-////    }
-//
-//
-//    func didFetchForecast(with forecastWeather: [WeatherModel]) {
-//
-//        DispatchQueue.main.async {
-//            //TODO: Better way to fill in content?
-//            //           self.forecast2TextLabel.text = info[0].dayName
-//
-//            self.forecast2TextLabel.text = forecastWeather[0].getDayOfWeek()
-//            self.cond2ImageView.image = UIImage(systemName: "\(forecastWeather[0].symbolName(isNight: forecastWeather[0].isNight!, isForecast: forecastWeather[0].isForecast))")
-//            self.temp2TextLabel.text = forecastWeather[0].tempString
-//
-//            self.forecast3TextLabel.text = forecastWeather[1].getDayOfWeek()
-//            self.cond3ImageView.image = UIImage(systemName: "\(forecastWeather[1].symbolName(isNight: forecastWeather[1].isNight!, isForecast: forecastWeather[1].isForecast))")
-//            self.temp3TextLabel.text = forecastWeather[1].tempString
-//
-//            self.forecast4TextLabel.text = forecastWeather[2].getDayOfWeek()
-//            self.cond4ImageView.image = UIImage(systemName: "\(forecastWeather[2].symbolName(isNight: forecastWeather[2].isNight!, isForecast: forecastWeather[2].isForecast))")
-//            self.temp4TextLabel.text = forecastWeather[2].tempString
-//
-//            self.forecast5TextLabel.text = forecastWeather[3].getDayOfWeek()
-//            self.cond5ImageView.image = UIImage(systemName: "\(forecastWeather[3].symbolName(isNight: forecastWeather[3].isNight!, isForecast: forecastWeather[3].isForecast))")
-//            self.temp5TextLabel.text = forecastWeather[3].tempString
-//
-//            //Jesse: current Weather and Forecast load at same time but possibility that not. still ok?
-//            self.forecastStackView.layer.opacity = 1
-//
-//            self.forecastAnimationView.isHidden = true
-//        }
-//    }
-//
-//
-//    func didCatchError(error: Error) {
-//        print("There was an error getting the current weather: \(error).")
-//
-//        DispatchQueue.main.async {
-//            self.cityTextLabel.text = "City not found"
-//            self.tempTextLabel.text = ""
-//            self.weatherImageView.image = UIImage(systemName: "globe.europe.africa")
-//        }
-//    }
-//}
 
 

@@ -12,9 +12,10 @@ import CoreLocation
 protocol ViewModelDelegate {
     func updateWeatherUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String)
 
-    func updateForecastUI(dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)
+    func updateForecastUI(VCForecast: [
+        (dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)
+    ])
 }
-
 
 class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDelegate {
 
@@ -69,15 +70,28 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         delegate?.updateWeatherUI(city: city, temperature: temp, image: image, forecastImage: conditionImage, forecastTemp: forecastTemp)
     }
 
-    func didFetchForecast(with: [WeatherModel]) {
+    func didFetchForecast(with forecastWeather: [WeatherModel]) {
 
-        let dayOfWeek = "Monday"
-    let forecastImage = UIImage(systemName: "sun.max.fill")!
-    let forecastTemp = "13"
+        let firstDay = forecastWeather[0].getDayOfWeek()
+        let firstImage = UIImage(systemName: "\(forecastWeather[0].symbolName(isNight: forecastWeather[0].isNight!, isForecast: forecastWeather[0].isForecast))")!
+        let firstTemp = forecastWeather[0].tempString
 
-        delegate?.updateForecastUI(dayOfWeek: dayOfWeek, forecastImage: forecastImage, forecastTemp: forecastTemp)
+        let secondsDay = forecastWeather[1].getDayOfWeek()
+        let secondImage = UIImage(systemName: "\(forecastWeather[1].symbolName(isNight: forecastWeather[1].isNight!, isForecast: forecastWeather[1].isForecast))")!
+        let secondTemp = forecastWeather[1].tempString
+
+        let thirdDay = forecastWeather[2].getDayOfWeek()
+        let thirdImage = UIImage(systemName: "\(forecastWeather[2].symbolName(isNight: forecastWeather[2].isNight!, isForecast: forecastWeather[2].isForecast))")!
+        let thirdTemp = forecastWeather[2].tempString
+
+        let fourthDay = forecastWeather[3].getDayOfWeek()
+        let fourthImage = UIImage(systemName: "\(forecastWeather[3].symbolName(isNight: forecastWeather[3].isNight!, isForecast: forecastWeather[3].isForecast))")!
+        let fourthTemp = forecastWeather[3].tempString
+
+        delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp), (dayOfWeek: secondsDay, forecastImage: secondImage, forecastTemp: secondTemp), (dayOfWeek: thirdDay, forecastImage: thirdImage, forecastTemp: thirdTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage, forecastTemp: fourthTemp)])
 
     }
+
 
     func didCatchError(error: Error) {
         print("didCatchError")

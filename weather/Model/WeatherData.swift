@@ -48,6 +48,8 @@ struct Sys: Decodable {
     let sunset: Double
 }
 
+
+//TODO: MOVE INTO TESTS
 //concept of generics: Generic code enables you to write flexible, reusable functions and types that can work with any type
 func filterNoon<T: DateContaining>(unfilteredList: [T]) -> [T] {
 
