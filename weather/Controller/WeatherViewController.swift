@@ -46,9 +46,7 @@ class WeatherViewController: UIViewController {
 
     let cornerRadius = CGFloat(10)
 
-    let anmiationGradientLayer = CAGradientLayer()
-    let animation = CABasicAnimation(keyPath: "transform.translation.x")
-
+    let animationView = AnimationView()
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -71,12 +69,12 @@ class WeatherViewController: UIViewController {
         forecastView.backgroundColor = .white.withAlphaComponent(0.15)
 
         forecastAnimationView.layer.cornerRadius = cornerRadius
-        forecastAnimationView.backgroundColor = .white.withAlphaComponent(0.5)
+        forecastAnimationView.backgroundColor = .white.withAlphaComponent(0.45)
 
         forecastStackView.layer.opacity = 0
 
-        startAnmiation()
-        defineAnimationGradient()
+        animationView.defineAnimationGradient()
+        animationView.startAnmiation(layerInfo: forecastAnimationView)
 
         NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
 
@@ -86,34 +84,12 @@ class WeatherViewController: UIViewController {
         view.addGestureRecognizer(tap)
     }
 
-
-    func startAnmiation(){
-
-        //TODO: test from and to value on different devices (view.frame.width)
-        animation.fromValue = -forecastAnimationView.frame.width
-        animation.toValue = forecastAnimationView.frame.width
-        animation.repeatCount = Float.infinity
-        animation.duration = 1.7
-        anmiationGradientLayer.add(animation, forKey: "Null")
-    }
-
     override func viewDidLayoutSubviews() {
         forecastAnimationView.frame = forecastView.frame
-        anmiationGradientLayer.frame = forecastAnimationView.bounds
-        forecastAnimationView.layer.mask = anmiationGradientLayer
+        animationView.anmiationGradientLayer.frame = forecastAnimationView.bounds
+        forecastAnimationView.layer.mask = animationView.anmiationGradientLayer
     }
 
-    func defineAnimationGradient() {
-        anmiationGradientLayer.colors = [
-            UIColor.clear.cgColor,
-            UIColor.white.cgColor,
-            UIColor.white.cgColor,
-            UIColor.clear.cgColor
-        ]
-        anmiationGradientLayer.locations = [0, 0.48, 0.52, 1]
-        anmiationGradientLayer.startPoint = .init(x: 0.0, y: 0.5)
-        anmiationGradientLayer.endPoint = .init(x: 1.0, y: 0.5)
-    }
 
     @objc func didTapScreen() {
         print("@@", #function)
@@ -215,6 +191,7 @@ extension WeatherViewController: ViewModelDelegate {
             //Jesse: current Weather and Forecast load at same time but possibility that not. still ok?
             self.forecastStackView.layer.opacity = 1
 
+            //TODO: Stop animation instead of hiding
             self.forecastAnimationView.isHidden = true
         }
     }

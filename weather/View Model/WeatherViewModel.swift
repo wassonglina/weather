@@ -97,7 +97,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         print("didCatchError")
     }
 
-    //function to send status to WeatherViewModel
+    //send status to WeatherViewModel
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
 
         if weatherLocation == .currentLocation, let location = locations.first {
