@@ -79,7 +79,6 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
             print("denied")
           //  getWeatherCity(with: "Sydney")
         case .notDetermined:
-            print("notDetermined")
             locationManager.requestWhenInUseAuthorization()
         case .restricted:
             print("restricted")

@@ -104,9 +104,11 @@ class WeatherViewController: UIViewController {
 
         //only if location manager is not authorized
         let auth = weatherViewModel.locationManager.authorizationStatus
-
+        print(auth)
         if auth == .notDetermined || auth == .denied || auth == .restricted {
             weatherViewModel.getWeatherCity(with: "Honolulu")
+        } else if auth == .authorizedWhenInUse || auth == .authorizedAlways {
+            weatherViewModel.weatherLocation = .currentLocation
         }
 
 
