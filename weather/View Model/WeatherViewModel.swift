@@ -11,7 +11,7 @@ import CoreLocation
 
 protocol ViewModelDelegate {
     func updateWeatherUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String)
-    func showAlert(with alert: UIAlertController)
+    func presentAuthAlert(with alert: UIAlertController)
     func updateForecastUI(VCForecast: [
         (dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)
     ])
@@ -51,14 +51,6 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         }
     }
 
-    //TODO: Optimize functions
-    func getWeatherCity(with cityname: String) {
-        weatherLocation = .city(cityname)
-    }
-
-    func getWeatherLocation() {
-        weatherLocation = .currentLocation
-    }
 
     func didCatchError(error: Error) {
         print(#function)
@@ -66,32 +58,29 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
     }
 
 
-    func checkAuthStatus() {
+    // handleAuthCase
+    func handleAuthCase() {
         switch locationManager.authorizationStatus {
         case .authorizedAlways:
-            print("authorizedAlways")
-            getWeatherLocation()
+         //   getWeatherLocation()
+            weatherLocation = .currentLocation
         case .authorizedWhenInUse:
-            print("authorizedWhenInUse")
-            getWeatherLocation()
+          //  getWeatherLocation()
+            weatherLocation = .currentLocation
         case .denied:
-            print("denied")
             createAlert()
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
         case .restricted:
             createAlert()
-            print("restricted")
         default:
             print("location authorization status is unknown")
         }
     }
 
 
-
     func createAlert(){
-
-        let alert = UIAlertController(title: "No location available", message: "Please allow access to your current location.", preferredStyle: .alert)
+        let alert = UIAlertController(title: "You're still not in Honolulu?", message: "Allow access to your location in settings.", preferredStyle: .alert)
 
         let settingsAction = UIAlertAction(title: "Settings", style: .default) { _ in
             let settingsUrl = NSURL(string: UIApplication.openSettingsURLString)
@@ -101,17 +90,17 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         }
         alert.addAction(UIAlertAction(title: "Cancel", style: .default))
         alert.addAction(settingsAction)
-        delegate?.showAlert(with: alert)
+        delegate?.presentAuthAlert(with: alert)
     }
 
 
     //called in viwDidLoad
-    func getLocationForAuthStatus() {
+    func checkAuthStatus() {
         let auth = locationManager.authorizationStatus      //created twice?
         if auth == .authorizedWhenInUse || auth == .authorizedAlways {
             weatherLocation = .currentLocation
         } else if auth == .notDetermined || auth == .denied || auth == .restricted {
-            getWeatherCity(with: "Honolulu")
+            weatherOperator.createCityURL(city: "Honolulu")
         }
     }
 
@@ -125,7 +114,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
                 runCount += 1
                 if runCount == 5 {
                     timer.invalidate()
-                    self.checkAuthStatus()
+                    self.handleAuthCase()
                 }
             }
         }
@@ -146,13 +135,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-
-        //fails first time
-        self.weatherLocation = .currentLocation
-
-        //        > Change an app’s location auth in Settings > Privacy > Location Services, or in Settings > (the app) >              Location Services.
-        //        > Turn location services on or off globally in Settings > Privacy > Location Services.
-        //        > Choose Reset Location & Privacy in Settings > General > Reset.
+        self.weatherLocation = .currentLocation          //fails first time
     }
 
 
