@@ -55,7 +55,6 @@ class AnimationView: UIView {
 
 
     func startAnmiation(with layer: UIView){
-        print(#function)
 
         //TODO: test from and to value on different devices (view.frame.width)
         animation.fromValue = -layer.frame.width

@@ -11,11 +11,12 @@ import CoreLocation
 
 protocol ViewModelDelegate {
     func updateWeatherUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String)
-
+    func showAlert(with alert: UIAlertController)
     func updateForecastUI(VCForecast: [
         (dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)
     ])
 }
+
 
 class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDelegate {
 
@@ -41,7 +42,6 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         didSet {
             switch weatherLocation {
             case .currentLocation:
-                locationManager.requestWhenInUseAuthorization() //still need this here?
                 locationManager.requestLocation()
             case .city(let cityname):
                 weatherOperator.createCityURL(city: cityname)
@@ -66,8 +66,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
     }
 
 
-    func getLocationAuthStatus() {
-
+    func checkAuthStatus() {
         switch locationManager.authorizationStatus {
         case .authorizedAlways:
             print("authorizedAlways")
@@ -77,18 +76,62 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
             getWeatherLocation()
         case .denied:
             print("denied")
-          //  getWeatherCity(with: "Sydney")
+            createAlert()
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
         case .restricted:
+            createAlert()
             print("restricted")
-           // getWeatherCity(with: "Sydney")
         default:
             print("location authorization status is unknown")
         }
     }
 
-    //send status to WeatherViewModel
+
+
+    func createAlert(){
+
+        let alert = UIAlertController(title: "No location available", message: "Please allow access to your current location.", preferredStyle: .alert)
+
+        let settingsAction = UIAlertAction(title: "Settings", style: .default) { _ in
+            let settingsUrl = NSURL(string: UIApplication.openSettingsURLString)
+            if let url = settingsUrl {
+                UIApplication.shared.open(url as URL)
+            }
+        }
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default))
+        alert.addAction(settingsAction)
+        delegate?.showAlert(with: alert)
+    }
+
+
+    //called in viwDidLoad
+    func getLocationForAuthStatus() {
+        let auth = locationManager.authorizationStatus      //created twice?
+        if auth == .authorizedWhenInUse || auth == .authorizedAlways {
+            weatherLocation = .currentLocation
+        } else if auth == .notDetermined || auth == .denied || auth == .restricted {
+            getWeatherCity(with: "Honolulu")
+        }
+    }
+
+    //called 5s after getting Honolulu weather
+    func startAuthTimer() {
+        let auth = locationManager.authorizationStatus        //created twice?
+        if auth == .notDetermined {
+            var runCount = 0
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                print(runCount)
+                runCount += 1
+                if runCount == 5 {
+                    timer.invalidate()
+                    self.checkAuthStatus()
+                }
+            }
+        }
+    }
+
+
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if weatherLocation == .currentLocation, let location = locations.first {
             let latitude = location.coordinate.latitude
@@ -103,6 +146,10 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+
+        //fails first time
+        self.weatherLocation = .currentLocation
+
         //        > Change an app’s location auth in Settings > Privacy > Location Services, or in Settings > (the app) >              Location Services.
         //        > Turn location services on or off globally in Settings > Privacy > Location Services.
         //        > Choose Reset Location & Privacy in Settings > General > Reset.
@@ -143,5 +190,3 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp), (dayOfWeek: secondsDay, forecastImage: secondImage, forecastTemp: secondTemp), (dayOfWeek: thirdDay, forecastImage: thirdImage, forecastTemp: thirdTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage, forecastTemp: fourthTemp)])
     }
 }
-
-
