@@ -45,18 +45,17 @@ class AnimationView: UIView {
     }
 
     func startAnmiation2(with layer: UILabel){
-
         //TODO: test from and to value on different devices (view.frame.width)
         animation2.fromValue = -layer.frame.width
         animation2.toValue = layer.frame.width
         animation2.repeatCount = Float.infinity
         animation2.duration = 1.7
         labelGradientLayer.add(animation2, forKey: "Null")
-        print("xx")
     }
 
 
     func startAnmiation(with layer: UIView){
+        print(#function)
 
         //TODO: test from and to value on different devices (view.frame.width)
         animation.fromValue = -layer.frame.width

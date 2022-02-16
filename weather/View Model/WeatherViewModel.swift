@@ -19,11 +19,12 @@ protocol ViewModelDelegate {
 
 class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDelegate {
 
-    let locationManager = CLLocationManager()
+    var locationManager = CLLocationManager()
 
     var delegate: ViewModelDelegate?
 
     let weatherOperator = WeatherOperator()
+
 
     override init() {
         super.init()
@@ -40,7 +41,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         didSet {
             switch weatherLocation {
             case .currentLocation:
-                locationManager.requestWhenInUseAuthorization()
+                locationManager.requestWhenInUseAuthorization() //still need this here?
                 locationManager.requestLocation()
             case .city(let cityname):
                 weatherOperator.createCityURL(city: cityname)
@@ -50,6 +51,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         }
     }
 
+    //TODO: Optimize functions
     func getWeatherCity(with cityname: String) {
         weatherLocation = .city(cityname)
     }
@@ -57,6 +59,56 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
     func getWeatherLocation() {
         weatherLocation = .currentLocation
     }
+
+    func didCatchError(error: Error) {
+        print(#function)
+        print("didCatchError")
+    }
+
+
+    func getLocationAuthStatus() {
+
+        switch locationManager.authorizationStatus {
+        case .authorizedAlways:
+            print("authorizedAlways")
+            getWeatherLocation()
+        case .authorizedWhenInUse:
+            print("authorizedWhenInUse")
+            getWeatherLocation()
+        case .denied:
+            print("denied")
+          //  getWeatherCity(with: "Sydney")
+        case .notDetermined:
+            print("notDetermined")
+            locationManager.requestWhenInUseAuthorization()
+        case .restricted:
+            print("restricted")
+           // getWeatherCity(with: "Sydney")
+        default:
+            print("location authorization status is unknown")
+        }
+    }
+
+    //send status to WeatherViewModel
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if weatherLocation == .currentLocation, let location = locations.first {
+            let latitude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+            weatherOperator.createGeoURL(latitude: latitude, longitude: longitude)
+        }
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("There was an error with the location authorization.")
+        print(#function)
+    }
+
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        //        > Change an app’s location auth in Settings > Privacy > Location Services, or in Settings > (the app) >              Location Services.
+        //        > Turn location services on or off globally in Settings > Privacy > Location Services.
+        //        > Choose Reset Location & Privacy in Settings > General > Reset.
+    }
+
 
     func didFetchWeather(with currentWeather: WeatherModel) {
 
@@ -69,6 +121,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
 
         delegate?.updateWeatherUI(city: city, temperature: temp, image: image, forecastImage: conditionImage, forecastTemp: forecastTemp)
     }
+
 
     func didFetchForecast(with forecastWeather: [WeatherModel]) {
 
@@ -89,31 +142,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         let fourthTemp = forecastWeather[3].tempString
 
         delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp), (dayOfWeek: secondsDay, forecastImage: secondImage, forecastTemp: secondTemp), (dayOfWeek: thirdDay, forecastImage: thirdImage, forecastTemp: thirdTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage, forecastTemp: fourthTemp)])
-
     }
-
-
-    func didCatchError(error: Error) {
-        print("didCatchError")
-    }
-
-    //send status to WeatherViewModel
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-
-        if weatherLocation == .currentLocation, let location = locations.first {
-            let latitude = location.coordinate.latitude
-            let longitude = location.coordinate.longitude
-            weatherOperator.createGeoURL(latitude: latitude, longitude: longitude)
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("error")
-    }
-
-
-
-
-
-
 }
+
+

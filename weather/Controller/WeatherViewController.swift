@@ -61,7 +61,7 @@ class WeatherViewController: UIViewController {
         cityTextField.delegate = self
 
         weatherViewModel.delegate = self
-        weatherViewModel.getWeatherLocation()
+        //      weatherViewModel.getWeatherLocation()
 
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
 
@@ -75,7 +75,7 @@ class WeatherViewController: UIViewController {
         cityAnimationLabel.text = cityTextLabel.text
         cityAnimationLabel.font = cityTextLabel.font
         cityAnimationLabel.textAlignment = cityTextLabel.textAlignment
-//        cityAnimationLabel.backgroundColor = .red.withAlphaComponent(0.7)
+        //        cityAnimationLabel.backgroundColor = .red.withAlphaComponent(0.7)
 
         forecastView.layer.cornerRadius = cornerRadius
         forecastView.backgroundColor = .white.withAlphaComponent(0.15)
@@ -87,10 +87,12 @@ class WeatherViewController: UIViewController {
         animationView.defineAnimationGradient()
         animationView.startAnmiation(with: forecastAnimationView)
 
-        animationView.defineLabelGradient()
-   //     animationView.startAnmiation2(with: cityAnimationLabel)
+        //      animationView.defineLabelGradient()
+        animationView.startAnmiation2(with: cityAnimationLabel)
+        //        print(cityAnimationLabel.frame)
 
         view.addSubview(cityAnimationLabel)
+
 
         NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
 
@@ -99,10 +101,31 @@ class WeatherViewController: UIViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(WeatherViewController.didTapScreen))
         view.addGestureRecognizer(tap)
 
+
+        //only if location manager is not authorized
+        let auth = weatherViewModel.locationManager.authorizationStatus
+
+        if auth == .notDetermined || auth == .denied || auth == .restricted {
+            weatherViewModel.getWeatherCity(with: "Honolulu")
+        }
+
+
+    }
+
+    //TODO: where and when call animation func
+    
+    override func viewWillAppear(_ animated: Bool) {
+        animationView.defineAnimationGradient()
+        animationView.startAnmiation(with: forecastAnimationView)
+
+        animationView.defineLabelGradient()
+        //      animationView.startAnmiation2(with: cityAnimationLabel)
     }
 
 
     override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
         forecastAnimationView.frame = forecastView.frame
         animationView.forecastGradientLayer.frame = forecastAnimationView.bounds
         forecastAnimationView.layer.mask = animationView.forecastGradientLayer
@@ -112,9 +135,8 @@ class WeatherViewController: UIViewController {
         cityAnimationLabel.layer.mask = animationView.labelGradientLayer
 
         //Jesse: when func called in ViewDidLoad just gradient and no animation
-//        animationView.defineLabelGradient()
+        //        animationView.defineLabelGradient()
         animationView.startAnmiation2(with: cityAnimationLabel)
-
     }
 
 
@@ -225,6 +247,20 @@ extension WeatherViewController: ViewModelDelegate {
             //TODO: Stop animation instead of hiding
             self.forecastAnimationView.isHidden = true
             self.cityAnimationLabel.isHidden = true
+
+            self.startAuthTimer()
+        }
+    }
+
+    func startAuthTimer() {
+        var runCount = 0
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+            print(runCount)
+            runCount += 1
+            if runCount == 4 {
+                timer.invalidate()
+                self.weatherViewModel.getLocationAuthStatus()
+           }
         }
     }
 }
