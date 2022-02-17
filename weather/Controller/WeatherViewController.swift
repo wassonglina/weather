@@ -194,9 +194,13 @@ extension WeatherViewController: UITextFieldDelegate {
 
 extension WeatherViewController: ViewModelDelegate {
 
-    func presentAuthAlert(with alert: UIAlertController) {
+    func presentAuthAlert(with title: String, with message: String, with cancel: UIAlertAction, with action: UIAlertAction) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(action)
+        alert.addAction(cancel)
         present(alert, animated: true)
     }
+
 
     func updateWeatherUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String) {
 
@@ -244,6 +248,9 @@ extension WeatherViewController: ViewModelDelegate {
 
             //if auth .notDetermined start 5s timer then ask permission
             self.weatherViewModel.startAuthTimer()
+
+            self.weatherViewModel.getFarenheit()
+
         }
     }
 

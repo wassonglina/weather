@@ -21,6 +21,7 @@ struct WeatherModel {
         String(format: "%.0f ºC", temp)
     }
 
+
     func symbolName(isNight: Bool, isForecast: Bool) -> String {
         switch condition {
         case 200..<300:

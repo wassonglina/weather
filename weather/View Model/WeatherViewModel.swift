@@ -11,7 +11,9 @@ import CoreLocation
 
 protocol ViewModelDelegate {
     func updateWeatherUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String)
-    func presentAuthAlert(with alert: UIAlertController)
+
+    func presentAuthAlert(with title: String, with message: String, with cancel: UIAlertAction, with action: UIAlertAction)
+
     func updateForecastUI(VCForecast: [
         (dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)
     ])
@@ -38,6 +40,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         case city(String)
     }
 
+
     var weatherLocation: WeatherLocation? {
         didSet {
             switch weatherLocation {
@@ -51,14 +54,11 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         }
     }
 
-
     func didCatchError(error: Error) {
         print(#function)
         print("didCatchError")
     }
 
-
-    // handleAuthCase
     func handleAuthCase() {
         switch locationManager.authorizationStatus {
         case .authorizedAlways:
@@ -79,22 +79,22 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
     }
 
 
-    func createAlert(){
-        let alert = UIAlertController(title: "You're still not in Honolulu?", message: "Allow access to your location in settings.", preferredStyle: .alert)
 
-        let settingsAction = UIAlertAction(title: "Settings", style: .default) { _ in
+    func createAlert(){
+        let title = "You're still not in Honolulu?"
+        let message = "Allow access to your location in settings."
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default)
+        let settingsAction = UIAlertAction(title: "Settings", style: .cancel) { _ in
             let settingsUrl = NSURL(string: UIApplication.openSettingsURLString)
             if let url = settingsUrl {
                 UIApplication.shared.open(url as URL)
             }
         }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default))
-        alert.addAction(settingsAction)
-        delegate?.presentAuthAlert(with: alert)
+        delegate?.presentAuthAlert(with: title, with: message, with: cancelAction, with: settingsAction)
     }
 
 
-    //called in viwDidLoad
+    //called in viewDidLoad
     func checkAuthStatus() {
         let auth = locationManager.authorizationStatus      //created twice?
         if auth == .authorizedWhenInUse || auth == .authorizedAlways {
@@ -104,7 +104,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         }
     }
 
-    //called 5s after getting Honolulu weather
+    //called when app opened for first time
     func startAuthTimer() {
         let auth = locationManager.authorizationStatus        //created twice?
         if auth == .notDetermined {
@@ -119,7 +119,6 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
             }
         }
     }
-
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if weatherLocation == .currentLocation, let location = locations.first {
@@ -171,5 +170,14 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         let fourthTemp = forecastWeather[3].tempString
 
         delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp), (dayOfWeek: secondsDay, forecastImage: secondImage, forecastTemp: secondTemp), (dayOfWeek: thirdDay, forecastImage: thirdImage, forecastTemp: thirdTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage, forecastTemp: fourthTemp)])
+    }
+
+
+  //  >> change temp to C or F depending on users settings:
+
+    func getFarenheit() {
+        let myFormatter = MeasurementFormatter()
+        let temperature = Measurement(value: 12, unit: UnitTemperature.celsius)
+        print(myFormatter.string(from: temperature))
     }
 }
