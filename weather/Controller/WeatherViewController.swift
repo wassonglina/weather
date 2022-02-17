@@ -249,7 +249,7 @@ extension WeatherViewController: ViewModelDelegate {
             //if auth .notDetermined start 5s timer then ask permission
             self.weatherViewModel.startAuthTimer()
 
-            self.weatherViewModel.getFarenheit()
+  //          self.weatherViewModel.getFarenheit()
 
         }
     }

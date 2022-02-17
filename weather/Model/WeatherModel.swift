@@ -17,8 +17,20 @@ struct WeatherModel {
     let day: Int?       //Forecast
 
 
-    var tempString: String {
-        String(format: "%.0f ºC", temp)
+    func getDayOfWeek() -> String {
+        let dayFormatter = DateFormatter()
+        let dayOfWeek = Date(timeIntervalSince1970: Double(day!))
+        let nameOfDay = dayFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: dayOfWeek) - 1]
+        return nameOfDay
+    }
+
+
+    func getTempUnit(with: Double) -> String {
+        let formatter = MeasurementFormatter()
+        formatter.numberFormatter.maximumFractionDigits = 0
+        formatter.numberFormatter.roundingMode = .up
+        let tempUnit = Measurement(value: with, unit: UnitTemperature.celsius)
+        return (formatter.string(from: tempUnit))
     }
 
 
@@ -78,11 +90,4 @@ struct WeatherModel {
         }
     }
 
-
-    func getDayOfWeek() -> String {
-        let dayFormatter = DateFormatter()
-        let dayOfWeek = Date(timeIntervalSince1970: Double(day!))
-        let nameOfDay = dayFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: dayOfWeek) - 1]
-        return nameOfDay
-    }
 }
