@@ -39,6 +39,12 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Animation" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y5P-gx-qBx">
+                                <rect key="frame" x="40" y="144" width="310" height="64.333333333333314"/>
+                                <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="47"/>
+                                <color key="textColor" red="0.60636755080000004" green="1" blue="0.8579959774" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CD1-ax-HTa">
                                 <rect key="frame" x="35" y="734" width="25" height="25"/>
                                 <constraints>
@@ -237,8 +243,10 @@
                             <constraint firstItem="bUA-uA-yrW" firstAttribute="top" secondItem="pF2-Wx-93C" secondAttribute="bottom" constant="60" id="14R-T0-JFr"/>
                             <constraint firstItem="2MH-Xn-Pn9" firstAttribute="width" secondItem="EbK-hb-Hce" secondAttribute="width" id="4dg-dg-App"/>
                             <constraint firstItem="Zz7-b8-QaU" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="54W-5O-UKG"/>
+                            <constraint firstItem="Y5P-gx-qBx" firstAttribute="trailing" secondItem="Mwt-Rg-Oaz" secondAttribute="trailing" id="6Oe-aa-dpE"/>
                             <constraint firstItem="D2d-ct-E9Q" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="80" id="7Oz-fg-fMf"/>
                             <constraint firstItem="Mwt-Rg-Oaz" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="9NR-gt-zB1"/>
+                            <constraint firstItem="Y5P-gx-qBx" firstAttribute="bottom" secondItem="Mwt-Rg-Oaz" secondAttribute="bottom" id="C4P-fD-Mva"/>
                             <constraint firstItem="jkG-8N-2VF" firstAttribute="centerY" secondItem="bUA-uA-yrW" secondAttribute="centerY" id="DH7-X1-4ct"/>
                             <constraint firstItem="pF2-Wx-93C" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="DiP-Kg-6UX"/>
                             <constraint firstItem="Zz7-b8-QaU" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="E9z-0N-11R"/>
@@ -269,10 +277,13 @@
                             <constraint firstItem="QAb-dU-JIi" firstAttribute="width" secondItem="Zz7-b8-QaU" secondAttribute="width" id="mTP-a2-L16"/>
                             <constraint firstItem="6wa-us-iQd" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="sKN-52-wsn"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="rYG-Rw-MVp" secondAttribute="trailing" constant="60" id="sYa-sS-Q36"/>
+                            <constraint firstItem="Y5P-gx-qBx" firstAttribute="leading" secondItem="Mwt-Rg-Oaz" secondAttribute="leading" id="uOI-tX-jlY"/>
                             <constraint firstItem="Icw-jm-zTQ" firstAttribute="width" secondItem="Zz7-b8-QaU" secondAttribute="width" id="xYa-H8-rIE"/>
+                            <constraint firstItem="Y5P-gx-qBx" firstAttribute="top" secondItem="Mwt-Rg-Oaz" secondAttribute="top" id="ye5-nO-aUf"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="animationLabel" destination="Y5P-gx-qBx" id="Wei-WP-Y19"/>
                         <outlet property="cityTextField" destination="bUA-uA-yrW" id="Yud-PV-4dI"/>
                         <outlet property="cityTextLabel" destination="Mwt-Rg-Oaz" id="96S-ot-0Yr"/>
                         <outlet property="cond1ImageView" destination="efm-U2-GtY" id="Yko-4z-s4D"/>
@@ -289,6 +300,7 @@
                         <outlet property="forecastStackView" destination="tQC-9T-69t" id="BFh-6q-evM"/>
                         <outlet property="forecastView" destination="pF2-Wx-93C" id="Tu6-GJ-UZh"/>
                         <outlet property="locationUIButton" destination="CD1-ax-HTa" id="Qy1-Nv-1Nj"/>
+                        <outlet property="searchButton" destination="jkG-8N-2VF" id="22s-3S-8eN"/>
                         <outlet property="temp1TextLabel" destination="Icw-jm-zTQ" id="mrr-yy-g0i"/>
                         <outlet property="temp2TextLabel" destination="3HW-Qx-KHo" id="u41-5B-V6z"/>
                         <outlet property="temp3TextLabel" destination="xNS-lW-90T" id="VL0-uQ-5ka"/>
@@ -300,7 +312,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="136.80000000000001" y="130.04926108374386"/>
+            <point key="canvasLocation" x="-229" y="97"/>
         </scene>
     </scenes>
     <resources>

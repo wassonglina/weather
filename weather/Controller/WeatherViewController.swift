@@ -17,6 +17,7 @@ class WeatherViewController: UIViewController {
     @IBOutlet var weatherImageView: UIImageView!
     @IBOutlet var forecastView: UIView!                 //back View
     @IBOutlet var forecastAnimationView: UIView!         //front View
+    @IBOutlet var animationLabel: UILabel!
 
     @IBOutlet var forecast1TextLabel: UILabel!
     @IBOutlet var forecast2TextLabel: UILabel!
@@ -38,9 +39,10 @@ class WeatherViewController: UIViewController {
 
     @IBOutlet var forecastStackView: UIStackView!
 
+    @IBOutlet var searchButton: UIButton!
     @IBOutlet var locationUIButton: UIButton!
 
-    let cityAnimationLabel = UILabel()       //front View
+//    let cityAnimationLabel = UILabel()       //front View
 
     var weatherOperator = WeatherOperator()
 
@@ -54,9 +56,18 @@ class WeatherViewController: UIViewController {
         return .lightContent
     }
 
+//    //Disable/Enable SearchButton if text field is empty or !empty
+//    var showSearchButton: Bool {
+//        searchButton.isEnabled
+//        cityTextField.text?.isEmpty == false
+//    }
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        print(#function)
+//        searchButton.isEnabled = false
 
         cityTextField.delegate = self
         weatherViewModel.delegate = self
@@ -71,11 +82,10 @@ class WeatherViewController: UIViewController {
         tempTextLabel.isHidden = true
         weatherImageView.isHidden = true
 
-        cityAnimationLabel.textColor = .white.withAlphaComponent(0.75)
-        cityAnimationLabel.text = cityTextLabel.text
-        cityAnimationLabel.font = cityTextLabel.font
-        cityAnimationLabel.textAlignment = cityTextLabel.textAlignment
-        //        cityAnimationLabel.backgroundColor = .red.withAlphaComponent(0.7)
+        animationLabel.textColor = .white.withAlphaComponent(0.65)
+        animationLabel.text = cityTextLabel.text
+        animationLabel.font = cityTextLabel.font
+        animationLabel.textAlignment = cityTextLabel.textAlignment
 
         forecastView.layer.cornerRadius = cornerRadius
         forecastView.backgroundColor = .white.withAlphaComponent(0.15)
@@ -83,15 +93,6 @@ class WeatherViewController: UIViewController {
 
         forecastAnimationView.layer.cornerRadius = cornerRadius
         forecastAnimationView.backgroundColor = .white.withAlphaComponent(0.45)
-
-        animationView.defineAnimationGradient()
-        animationView.startAnmiation(with: forecastAnimationView)
-
-        //      animationView.defineLabelGradient()
-        animationView.startAnmiation2(with: cityAnimationLabel)
-        //        print(cityAnimationLabel.frame)
-
-        view.addSubview(cityAnimationLabel)
 
         NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
 
@@ -104,31 +105,28 @@ class WeatherViewController: UIViewController {
     //TODO: where and when call animation func
     
     override func viewWillAppear(_ animated: Bool) {
+
+        print(#function)
+
         animationView.defineAnimationGradient()
         animationView.startAnmiation(with: forecastAnimationView)
 
         animationView.defineLabelGradient()
-        //      animationView.startAnmiation2(with: cityAnimationLabel)
-
+        animationView.startAnmiation2(with: animationLabel)
     }
-
-
-
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        forecastAnimationView.frame = forecastView.frame
+        print(#function)
+
+        forecastAnimationView.frame = forecastView.frame        //animation only starts after subview is layed out
         animationView.forecastGradientLayer.frame = forecastAnimationView.bounds
         forecastAnimationView.layer.mask = animationView.forecastGradientLayer
 
-        cityAnimationLabel.frame = cityTextLabel.frame
-        animationView.labelGradientLayer.frame = cityAnimationLabel.bounds
-        cityAnimationLabel.layer.mask = animationView.labelGradientLayer
-
-        //Jesse: when func called in ViewDidLoad just gradient and no animation
-        //        animationView.defineLabelGradient()
-        animationView.startAnmiation2(with: cityAnimationLabel)
+        animationLabel.frame = cityTextLabel.frame
+        animationView.labelGradientLayer.frame = animationLabel.bounds
+        animationLabel.layer.mask = animationView.labelGradientLayer
     }
 
 
@@ -244,12 +242,10 @@ extension WeatherViewController: ViewModelDelegate {
 
             //TODO: Stop animation instead of hiding
             self.forecastAnimationView.isHidden = true
-            self.cityAnimationLabel.isHidden = true
+            self.animationLabel.isHidden = true
 
             //if auth .notDetermined start 5s timer then ask permission
             self.weatherViewModel.startAuthTimer()
-
-  //          self.weatherViewModel.getFarenheit()
 
         }
     }
