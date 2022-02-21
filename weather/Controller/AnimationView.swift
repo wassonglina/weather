@@ -10,12 +10,10 @@ import UIKit
 class AnimationView: UIView {
 
     let forecastGradientLayer = CAGradientLayer()
-
     let labelGradientLayer = CAGradientLayer()
 
-    let animation = CABasicAnimation(keyPath: "transform.translation.x")
-
-    let animation2 = CABasicAnimation(keyPath: "transform.translation.x")
+    let animationForecast = CABasicAnimation(keyPath: "transform.translation.x")
+    let animationLabel = CABasicAnimation(keyPath: "transform.translation.x")
 
 
     //TODO: only one function
@@ -32,7 +30,7 @@ class AnimationView: UIView {
     }
 
 
-    func defineAnimationGradient() {
+    func defineForecastGradient() {
         forecastGradientLayer.colors = [
             UIColor.clear.cgColor,
             UIColor.white.cgColor,
@@ -44,24 +42,24 @@ class AnimationView: UIView {
         forecastGradientLayer.endPoint = .init(x: 1.0, y: 0.5)
     }
 
-    func startAnmiation2(with layer: UILabel){
+    func startAnmiationLabel(with layer: UILabel){
         //TODO: test from and to value on different devices (view.frame.width)
-        animation2.fromValue = -layer.frame.width
-        animation2.toValue = layer.frame.width
-        animation2.repeatCount = Float.infinity
-        animation2.duration = 1.7
-        labelGradientLayer.add(animation2, forKey: "Null")
+        animationLabel.fromValue = -layer.frame.width
+        animationLabel.toValue = layer.frame.width
+        animationLabel.repeatCount = Float.infinity
+        animationLabel.duration = 1.7
+        labelGradientLayer.add(animationLabel, forKey: "Null")
     }
 
 
-    func startAnmiation(with layer: UIView){
+    func startAnmiationForecast(with layer: UIView){
 
         //TODO: test from and to value on different devices (view.frame.width)
-        animation.fromValue = -layer.frame.width
-        animation.toValue = layer.frame.width
-        animation.repeatCount = Float.infinity
-        animation.duration = 1.7
-        forecastGradientLayer.add(animation, forKey: "Null")
+        animationForecast.fromValue = -layer.frame.width
+        animationForecast.toValue = layer.frame.width
+        animationForecast.repeatCount = Float.infinity
+        animationForecast.duration = 1.7
+        forecastGradientLayer.add(animationForecast, forKey: "Null")
     }
 
 

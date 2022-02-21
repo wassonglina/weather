@@ -42,8 +42,6 @@ class WeatherViewController: UIViewController {
     @IBOutlet var searchButton: UIButton!
     @IBOutlet var locationUIButton: UIButton!
 
-//    let cityAnimationLabel = UILabel()       //front View
-
     var weatherOperator = WeatherOperator()
 
     var weatherViewModel = WeatherViewModel()
@@ -56,18 +54,12 @@ class WeatherViewController: UIViewController {
         return .lightContent
     }
 
-//    //Disable/Enable SearchButton if text field is empty or !empty
-//    var showSearchButton: Bool {
-//        searchButton.isEnabled
-//        cityTextField.text?.isEmpty == false
-//    }
-
-
     override func viewDidLoad() {
         super.viewDidLoad()
-
         print(#function)
-//        searchButton.isEnabled = false
+
+        searchButton?.isUserInteractionEnabled = false
+        searchButton?.alpha = 0.4
 
         cityTextField.delegate = self
         weatherViewModel.delegate = self
@@ -75,6 +67,7 @@ class WeatherViewController: UIViewController {
         weatherViewModel.checkAuthStatus()
 
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
+        cityTextField.enablesReturnKeyAutomatically = true
 
         cityTextLabel.textColor = .white.withAlphaComponent(0.15)
         cityTextLabel.text = "Loading ..."
@@ -101,26 +94,18 @@ class WeatherViewController: UIViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(WeatherViewController.didTapScreen))
         view.addGestureRecognizer(tap)
     }
-
-    //TODO: where and when call animation func
     
     override func viewWillAppear(_ animated: Bool) {
-
-        print(#function)
-
-        animationView.defineAnimationGradient()
-        animationView.startAnmiation(with: forecastAnimationView)
+        animationView.defineForecastGradient()
+        animationView.startAnmiationForecast(with: forecastAnimationView)
 
         animationView.defineLabelGradient()
-        animationView.startAnmiation2(with: animationLabel)
+        animationView.startAnmiationLabel(with: animationLabel)
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
-        print(#function)
-
-        forecastAnimationView.frame = forecastView.frame        //animation only starts after subview is layed out
+        forecastAnimationView.frame = forecastView.frame
         animationView.forecastGradientLayer.frame = forecastAnimationView.bounds
         forecastAnimationView.layer.mask = animationView.forecastGradientLayer
 
@@ -131,7 +116,6 @@ class WeatherViewController: UIViewController {
 
 
     @objc func didTapScreen() {
-        print("@@", #function)
         cityTextField.endEditing(true)
     }
 
@@ -147,20 +131,6 @@ class WeatherViewController: UIViewController {
         self.view.frame.origin.y = 0
     }
 
-
-    @IBAction func didTapSearch(_ sender: UIButton) {
-
-        if cityTextField.text?.isEmpty == false {
-            weatherViewModel.weatherLocation = .city(cityTextField.text!)
-            cityTextField.text = ""
-            sender.alpha = 0.2
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                sender.alpha = 1.0
-                self.cityTextField.endEditing(true)
-            }
-        }
-    }
-
     @IBAction func didTapLocation(_ sender: UIButton) {
         print("@@", #function)
         weatherViewModel.handleAuthCase()      //check auth status and handle case
@@ -170,19 +140,47 @@ class WeatherViewController: UIViewController {
             self.cityTextField.endEditing(true)
         }
     }
+
+    @IBAction func didTapSearch(_ sender: UIButton) {
+        if cityTextField.text?.isEmpty == false {
+            passTextReset()
+        }
+    }
+
+    func passTextReset() {
+        weatherViewModel.weatherLocation = .city(cityTextField.text!)
+        searchButton?.isUserInteractionEnabled = false
+        searchButton?.alpha = 0.3
+        cityTextField.text = ""
+        cityTextField.endEditing(true)
+    }
 }
 
-
 //Mark: - UITextFieldDelegate
-
 extension WeatherViewController: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         print("@@", #function)
         if cityTextField.text?.isEmpty == false  {
-            weatherViewModel.weatherLocation = .city(cityTextField.text!)
-            cityTextField.text = ""
-            cityTextField.endEditing(true)
+            passTextReset()
+        }
+        return true
+    }
+
+
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        print(#function)
+
+        let text = (textField.text! as NSString).replacingCharacters(in: range, with: string)
+
+        if !text.isEmpty {
+            searchButton.isUserInteractionEnabled = true
+            searchButton.alpha = 1
+            print("text field not empty")
+        } else {
+            searchButton.isUserInteractionEnabled = false
+            searchButton.alpha = 0.3
+            print("text field is empty")
         }
         return true
     }
@@ -249,7 +247,6 @@ extension WeatherViewController: ViewModelDelegate {
 
         }
     }
-
 }
 
 
