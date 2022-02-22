@@ -17,6 +17,8 @@ protocol ViewModelDelegate {
     func updateForecastUI(VCForecast: [
         (dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)
     ])
+
+    func didCatchError()
 }
 
 
@@ -55,8 +57,10 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
     }
 
     func didCatchError(error: Error) {
+        delegate?.didCatchError()
         print(#function)
         print("didCatchError")
+
     }
 
     func handleAuthCase() {

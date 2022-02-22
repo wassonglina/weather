@@ -28,7 +28,6 @@ struct List: Decodable, DateContaining {
     let dt: Int
     let main: Main
     let weather: [Weather]
-
 }
 
 struct Main: Decodable {
@@ -49,8 +48,8 @@ struct Sys: Decodable {
 }
 
 
-//TODO: MOVE INTO TESTS
-//concept of generics: Generic code enables you to write flexible, reusable functions and types that can work with any type
+//TODO:Date containing  extensions .filterNoon
+//Generics > flexible, reusable functions and types
 func filterNoon<T: DateContaining>(unfilteredList: [T]) -> [T] {
 
     let filteredList = unfilteredList.filter { item in
@@ -62,3 +61,7 @@ func filterNoon<T: DateContaining>(unfilteredList: [T]) -> [T] {
     }
     return filteredList
 }
+
+//extension Array where Element: DateContaining {
+//    func filterNoon() -> 
+//}

@@ -29,7 +29,7 @@ class WeatherOperator {
 
     let weatherURL = "https://api.openweathermap.org/data/2.5/weather?&appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
 
-    //gives weather of today and next 5 days
+    //gives weather of today and next 5 days of every 3h
     let weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
 
     var delegate: WeatherManagerDelegate?
@@ -67,7 +67,6 @@ class WeatherOperator {
         }
     }
 
-
     func performNetworkRequest(with urlString: String, handler: @escaping (Data) -> Void ) {
 
         if let url = URL(string: urlString) {
@@ -86,29 +85,18 @@ class WeatherOperator {
         }
     }
 
-
     func parseJSONWeather(with encodedData: Data) -> WeatherModel? {
         let decoder = JSONDecoder()
 
         do {
-
             let decodedWeather = try decoder.decode(WeatherDataModel.self, from: encodedData)
             let decodedTemp = decodedWeather.main.temp
             let decodedName = decodedWeather.name
             let decodedCondition = decodedWeather.weather[0].id
-            let decodedTimeSunrise = decodedWeather.sys.sunrise
-            let decodedTimeSunset = decodedWeather.sys.sunset
+            let sunrise = Date(timeIntervalSince1970: decodedWeather.sys.sunrise)
+            let sunset = Date(timeIntervalSince1970: decodedWeather.sys.sunset)
 
-            let sunrise = Date(timeIntervalSince1970: decodedTimeSunrise)
-            let sunset = Date(timeIntervalSince1970: decodedTimeSunset)
-            let now = Date()
-            var sunsetCheck: Bool
-
-            if now > sunrise && now < sunset {
-                sunsetCheck = false
-            } else {
-                sunsetCheck = true
-            }
+            let sunsetCheck = checkForNight(with: sunrise, with: sunset)
 
             return WeatherModel(temp: decodedTemp, condition: decodedCondition, isForecast: false, name: decodedName, isNight: sunsetCheck, day: nil)
 
@@ -137,7 +125,6 @@ class WeatherOperator {
                 let forecastWeekday = Calendar.current.component(.weekday, from: foracastDate)
 
                 if forecastWeekday != weekday {
-
                     return WeatherModel(temp: forecastTemp, condition: forecastCondition, isForecast: true, name: nil, isNight: false, day: foracastDay)
                 } else {
                     return nil
@@ -149,5 +136,15 @@ class WeatherOperator {
             return nil
         }
     }
+
+    func checkForNight(with sunrise: Date, with sunset: Date) -> Bool {
+        let now = Date()
+        if now > sunrise && now < sunset {
+            return false
+        } else {
+            return true
+        }
+    }
+
 }
 

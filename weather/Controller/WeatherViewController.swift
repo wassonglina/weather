@@ -67,6 +67,7 @@ class WeatherViewController: UIViewController {
         weatherViewModel.checkAuthStatus()
 
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
+        cityTextField.keyboardType = .asciiCapable
         cityTextField.enablesReturnKeyAutomatically = true
 
         cityTextLabel.textColor = .white.withAlphaComponent(0.15)
@@ -176,11 +177,9 @@ extension WeatherViewController: UITextFieldDelegate {
         if !text.isEmpty {
             searchButton.isUserInteractionEnabled = true
             searchButton.alpha = 1
-            print("text field not empty")
         } else {
             searchButton.isUserInteractionEnabled = false
             searchButton.alpha = 0.3
-            print("text field is empty")
         }
         return true
     }
@@ -196,7 +195,6 @@ extension WeatherViewController: ViewModelDelegate {
         alert.addAction(cancel)
         present(alert, animated: true)
     }
-
 
     func updateWeatherUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String) {
 
@@ -231,12 +229,11 @@ extension WeatherViewController: ViewModelDelegate {
             self.cond5ImageView.image = VCForecast[3].forecastImage
             self.temp5TextLabel.text = VCForecast[3].forecastTemp
 
-            //Jesse: current Weather and Forecast load at same time but possibility that not. still ok?
+            //TODO: current Weather and Forecast might not load simultaniously > fix
             self.forecastStackView.layer.opacity = 1
             self.cityTextLabel.textColor = .white
             self.tempTextLabel.isHidden = false
             self.weatherImageView.isHidden = false
-
 
             //TODO: Stop animation instead of hiding
             self.forecastAnimationView.isHidden = true
@@ -244,7 +241,16 @@ extension WeatherViewController: ViewModelDelegate {
 
             //if auth .notDetermined start 5s timer then ask permission
             self.weatherViewModel.startAuthTimer()
+        }
+    }
 
+    func didCatchError() {
+
+        DispatchQueue.main.async {
+            self.cityTextLabel.text = "City not found"
+            self.tempTextLabel.isHidden = true
+            self.weatherImageView.isHidden = true
+            self.forecastStackView.layer.opacity = 0
         }
     }
 }
