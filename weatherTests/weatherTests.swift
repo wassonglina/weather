@@ -43,22 +43,19 @@ class weatherTests: XCTestCase {
 
     func testDay() {
         let sunrise = Date.now.addingTimeInterval(-28800)     //sunrise 8h ago
-        let sunset = Date.now.addingTimeInterval(3600)       //sunset in 1h
-        let isNight = weatherOperator.checkForNight(with: sunrise, with: sunset)
+        let sunset = Date.now.addingTimeInterval(10800)       //sunset in 3h
 
-        XCTAssertEqual(isNight, false)
+        let sunOrMoon = Date().isBetween(with: sunrise, with: sunset)
+
+        XCTAssertEqual(sunOrMoon, false)
     }
-
 
     func testNight() {
         let sunrise = Date.now.addingTimeInterval(7200)    //sunrise in 2h
         let sunset = Date.now.addingTimeInterval(-18000)     //sunset 5h ago
-        let isNight = weatherOperator.checkForNight(with: sunrise, with: sunset)
 
-        XCTAssertEqual(isNight, true)
+        let sunOrMoon = Date().isBetween(with: sunrise, with: sunset)
+
+        XCTAssertEqual(sunOrMoon, true)
     }
-
-
-
-
 }

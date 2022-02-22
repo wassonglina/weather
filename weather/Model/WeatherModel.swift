@@ -83,7 +83,7 @@ struct WeatherModel {
             if isForecast {
                 return "cloud.fill"
             } else {
-                return isNight ? "cloud" : "cloud"
+                return isNight ? "cloud.moon" : "cloud"
             }
         default:
             return "globe.europe.africa"

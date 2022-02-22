@@ -16,12 +16,12 @@ protocol WeatherManagerDelegate {
 
 //filter characters for URL
 extension String {
-  func stringByAddingPercentEncodingForRFC3986() -> String? {
-    let unreserved = "-._~/?"
-    let allowed = NSMutableCharacterSet.alphanumeric()
-    allowed.addCharacters(in: unreserved)
-    return addingPercentEncoding(withAllowedCharacters: allowed as CharacterSet)
-  }
+    func stringByAddingPercentEncodingForRFC3986() -> String? {
+        let unreserved = "-._~/?"
+        let allowed = NSMutableCharacterSet.alphanumeric()
+        allowed.addCharacters(in: unreserved)
+        return addingPercentEncoding(withAllowedCharacters: allowed as CharacterSet)
+    }
 }
 
 
@@ -96,9 +96,9 @@ class WeatherOperator {
             let sunrise = Date(timeIntervalSince1970: decodedWeather.sys.sunrise)
             let sunset = Date(timeIntervalSince1970: decodedWeather.sys.sunset)
 
-            let sunsetCheck = checkForNight(with: sunrise, with: sunset)
+            let sunOrMoon = Date().isBetween(with: sunrise, with: sunset)
 
-            return WeatherModel(temp: decodedTemp, condition: decodedCondition, isForecast: false, name: decodedName, isNight: sunsetCheck, day: nil)
+            return WeatherModel(temp: decodedTemp, condition: decodedCondition, isForecast: false, name: decodedName, isNight: sunOrMoon, day: nil)
 
         } catch {
             delegate?.didCatchError(error: error)
@@ -136,15 +136,4 @@ class WeatherOperator {
             return nil
         }
     }
-
-    func checkForNight(with sunrise: Date, with sunset: Date) -> Bool {
-        let now = Date()
-        if now > sunrise && now < sunset {
-            return false
-        } else {
-            return true
-        }
-    }
-
 }
-

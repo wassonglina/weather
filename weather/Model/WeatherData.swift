@@ -48,8 +48,7 @@ struct Sys: Decodable {
 }
 
 
-//TODO:Date containing  extensions .filterNoon
-//Generics > flexible, reusable functions and types
+//Generics > flexible, reusable functions and types > [T]
 func filterNoon<T: DateContaining>(unfilteredList: [T]) -> [T] {
 
     let filteredList = unfilteredList.filter { item in
