@@ -16,14 +16,12 @@ struct WeatherModel {
     var isNight: Bool?   //Weather
     let day: Int?       //Forecast
 
-
     func getDayOfWeek() -> String {
         let dayFormatter = DateFormatter()
         let dayOfWeek = Date(timeIntervalSince1970: Double(day!))
         let nameOfDay = dayFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: dayOfWeek) - 1]
         return nameOfDay
     }
-
 
     func getTempUnit(with: Double) -> String {
         let formatter = MeasurementFormatter()
@@ -32,7 +30,6 @@ struct WeatherModel {
         let tempUnit = Measurement(value: with, unit: UnitTemperature.celsius)
         return (formatter.string(from: tempUnit))
     }
-
 
     func symbolName(isNight: Bool, isForecast: Bool) -> String {
         switch condition {
@@ -89,5 +86,4 @@ struct WeatherModel {
             return "globe.europe.africa"
         }
     }
-
 }

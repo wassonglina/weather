@@ -13,13 +13,6 @@ struct ListMock: DateContaining, Equatable {
 }
 
 
-struct TimesOfDayMock: Equatable {
-    let dt : Int
-}
-
-    let weatherOperator = WeatherOperator()
-
-
 class weatherTests: XCTestCase {
 
     func testForecastFilter() {
@@ -44,18 +37,16 @@ class weatherTests: XCTestCase {
     func testDay() {
         let sunrise = Date.now.addingTimeInterval(-28800)     //sunrise 8h ago
         let sunset = Date.now.addingTimeInterval(10800)       //sunset in 3h
+        let isNight = Date().isBetween(with: sunrise, with: sunset)
 
-        let sunOrMoon = Date().isBetween(with: sunrise, with: sunset)
-
-        XCTAssertEqual(sunOrMoon, false)
+        XCTAssertEqual(isNight, false)
     }
 
     func testNight() {
         let sunrise = Date.now.addingTimeInterval(7200)    //sunrise in 2h
         let sunset = Date.now.addingTimeInterval(-18000)     //sunset 5h ago
+        let isNight = Date().isBetween(with: sunrise, with: sunset)
 
-        let sunOrMoon = Date().isBetween(with: sunrise, with: sunset)
-
-        XCTAssertEqual(sunOrMoon, true)
+        XCTAssertEqual(isNight, true)
     }
 }

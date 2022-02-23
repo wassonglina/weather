@@ -144,11 +144,11 @@ class WeatherViewController: UIViewController {
 
     @IBAction func didTapSearch(_ sender: UIButton) {
         if cityTextField.text?.isEmpty == false {
-            passTextReset()
+            handleTextField()
         }
     }
 
-    func passTextReset() {
+    func handleTextField() {
         weatherViewModel.weatherLocation = .city(cityTextField.text!)
         searchButton?.isUserInteractionEnabled = false
         searchButton?.alpha = 0.3
@@ -161,19 +161,15 @@ class WeatherViewController: UIViewController {
 extension WeatherViewController: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        print("@@", #function)
         if cityTextField.text?.isEmpty == false  {
-            passTextReset()
+            handleTextField()
         }
         return true
     }
 
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        print(#function)
-
         let text = (textField.text! as NSString).replacingCharacters(in: range, with: string)
-
         if !text.isEmpty {
             searchButton.isUserInteractionEnabled = true
             searchButton.alpha = 1

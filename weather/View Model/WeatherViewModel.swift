@@ -25,11 +25,11 @@ protocol ViewModelDelegate {
 class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDelegate {
 
     var locationManager = CLLocationManager()
-
     var delegate: ViewModelDelegate?
-
     let weatherOperator = WeatherOperator()
-
+//    let auth: locationManager.authorizationStatus?
+    var timer: Timer?
+    let randomLocation = ["Honolulu", "Hobart", "Pattani", "Manaus", "Stavanger", "Taipei", "Dhaka"]
 
     override init() {
         super.init()
@@ -42,13 +42,14 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         case city(String)
     }
 
-
     var weatherLocation: WeatherLocation? {
         didSet {
             switch weatherLocation {
             case .currentLocation:
+                timer?.invalidate()
                 locationManager.requestLocation()
             case .city(let cityname):
+                timer?.invalidate()
                 weatherOperator.createCityURL(city: cityname)
             case nil:
                 break
@@ -60,16 +61,13 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         delegate?.didCatchError()
         print(#function)
         print("didCatchError")
-
     }
 
     func handleAuthCase() {
         switch locationManager.authorizationStatus {
         case .authorizedAlways:
-         //   getWeatherLocation()
             weatherLocation = .currentLocation
         case .authorizedWhenInUse:
-          //  getWeatherLocation()
             weatherLocation = .currentLocation
         case .denied:
             createAlert()
@@ -82,9 +80,18 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         }
     }
 
+    //called in viewDidLoad
+    func checkAuthStatus() {
+       let auth = locationManager.authorizationStatus      //created twice?
+        if auth == .authorizedWhenInUse || auth == .authorizedAlways {
+            weatherLocation = .currentLocation
+        } else if auth == .notDetermined || auth == .denied || auth == .restricted {
+            weatherOperator.createCityURL(city: randomLocation.randomElement()!)
+        }
+    }
 
     func createAlert(){
-        let title = "You're still not in Honolulu?"
+        let title = "Would you like the weather for your current location?"
         let message = "Allow access to your location in settings."
         let cancelAction = UIAlertAction(title: "Cancel", style: .default)
         let settingsAction = UIAlertAction(title: "Settings", style: .cancel) { _ in
@@ -96,20 +103,9 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         delegate?.presentAuthAlert(with: title, with: message, with: cancelAction, with: settingsAction)
     }
 
-
-    //called in viewDidLoad
-    func checkAuthStatus() {
-        let auth = locationManager.authorizationStatus      //created twice?
-        if auth == .authorizedWhenInUse || auth == .authorizedAlways {
-            weatherLocation = .currentLocation
-        } else if auth == .notDetermined || auth == .denied || auth == .restricted {
-            weatherOperator.createCityURL(city: "Honolulu")
-        }
-    }
-
     //called when app opened for first time
     func startAuthTimer() {
-        let auth = locationManager.authorizationStatus        //created twice?
+       let auth = locationManager.authorizationStatus        //created twice?
         if auth == .notDetermined {
             var runCount = 0
             Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
@@ -151,8 +147,9 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         let forecastTemp = currentWeather.getTempUnit(with: currentWeather.temp)
 
         delegate?.updateWeatherUI(city: city, temperature: temp, image: image, forecastImage: conditionImage, forecastTemp: forecastTemp)
-    }
 
+        startTimer()
+    }
 
     func didFetchForecast(with forecastWeather: [WeatherModel]) {
 
@@ -175,5 +172,21 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp), (dayOfWeek: secondsDay, forecastImage: secondImage, forecastTemp: secondTemp), (dayOfWeek: thirdDay, forecastImage: thirdImage, forecastTemp: thirdTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage, forecastTemp: fourthTemp)])
     }
 
+    func startTimer() {
+        var x = 1
+
+        DispatchQueue.main.async {
+            self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                print(x)
+                x += 1
+
+                //TODO: what to fecht if location restricted?
+                if x == 900 {
+                    self.checkAuthStatus()
+
+                }
+            }
+        }
+    }
 }
 

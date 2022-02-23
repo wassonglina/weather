@@ -95,10 +95,9 @@ class WeatherOperator {
             let decodedCondition = decodedWeather.weather[0].id
             let sunrise = Date(timeIntervalSince1970: decodedWeather.sys.sunrise)
             let sunset = Date(timeIntervalSince1970: decodedWeather.sys.sunset)
+            let answer = Date().isBetween(with: sunrise, with: sunset)
 
-            let sunOrMoon = Date().isBetween(with: sunrise, with: sunset)
-
-            return WeatherModel(temp: decodedTemp, condition: decodedCondition, isForecast: false, name: decodedName, isNight: sunOrMoon, day: nil)
+            return WeatherModel(temp: decodedTemp, condition: decodedCondition, isForecast: false, name: decodedName, isNight: answer, day: nil)
 
         } catch {
             delegate?.didCatchError(error: error)
