@@ -55,6 +55,18 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         }
     }
 
+
+
+    func getWeatherLastLocation() {
+        if let location = locationManager.location {
+            let latitude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+            weatherOperator.createGeoURL(with: latitude, with: longitude)
+        } else {
+            checkAuthStatus()
+        }
+    }
+
     func didCatchError(error: Error) {
         delegate?.didCatchError()
         print(#function)
@@ -120,22 +132,22 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+
         if weatherLocation == .currentLocation, let location = locations.first {
             let latitude = location.coordinate.latitude
             let longitude = location.coordinate.longitude
-            weatherOperator.createGeoURL(latitude: latitude, longitude: longitude)
+            weatherOperator.createGeoURL(with: latitude, with: longitude)
         }
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("There was an error with the location authorization.")
         print(#function)
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         self.weatherLocation = .currentLocation          //fails first time
+        print(#function)
     }
-
 
     func didFetchWeather(with currentWeather: WeatherModel) {
 
@@ -177,7 +189,6 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         var x = 1
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                print("Update Weather: \(x)")
                 x += 1
                 //TODO: what to fecht if location restricted?
                 if x >= 900 {

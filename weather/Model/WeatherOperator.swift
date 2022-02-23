@@ -51,7 +51,7 @@ class WeatherOperator {
         }
     }
 
-    func createGeoURL(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
+    func createGeoURL(with latitude: CLLocationDegrees, with longitude: CLLocationDegrees) {
         let weatherURLString = "\(weatherURL)&lat=\(latitude)&lon=\(longitude)"
         let forcastURLString = "\(weatherForecastURL)&lat=\(latitude)&lon=\(longitude)"
         print(weatherURLString)

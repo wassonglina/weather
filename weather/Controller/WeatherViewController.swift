@@ -64,7 +64,7 @@ class WeatherViewController: UIViewController {
         cityTextField.delegate = self
         weatherViewModel.delegate = self
 
-        weatherViewModel.checkAuthStatus()
+        useLastLocation()
 
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
         cityTextField.keyboardType = .asciiCapable
@@ -95,8 +95,7 @@ class WeatherViewController: UIViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.didTapScreen))
         view.addGestureRecognizer(tap)
 
-
-        NotificationCenter.default.addObserver(self, selector: #selector(self.prepareUI), name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.useLastLocation), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -118,13 +117,21 @@ class WeatherViewController: UIViewController {
         animationLabel.layer.mask = animationView.labelGradientLayer
     }
 
+    //move into WVM?
+    @objc func useLastLocation() {
+        //use last saved location: might be inaccurate but faster response time
+        print(#function)
+        if weatherViewModel.locationManager.location != nil {
+            weatherViewModel.getWeatherLastLocation()
+        } else {
+            weatherViewModel.checkAuthStatus()
+        }
+    }
+
     @objc func didTapScreen() {
         cityTextField.endEditing(true)
     }
 
-    @objc func prepareUI(_ notification: Notification) {
-        weatherViewModel.checkAuthStatus()
-    }
 
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {
@@ -214,7 +221,6 @@ extension WeatherViewController: ViewModelDelegate {
     func updateForecastUI(VCForecast: [(dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)]) {
 
         DispatchQueue.main.async {
-
             self.forecast2TextLabel.text = VCForecast[0].dayOfWeek
             self.cond2ImageView.image = VCForecast[0].forecastImage
             self.temp2TextLabel.text = VCForecast[0].forecastTemp
@@ -236,10 +242,7 @@ extension WeatherViewController: ViewModelDelegate {
             self.cityTextLabel.textColor = .white
             self.tempTextLabel.isHidden = false
             self.weatherImageView.isHidden = false
-
-            //TODO: Stop animation instead of hiding
-            self.forecastAnimationView.isHidden = true
-            self.animationLabel.isHidden = true
+            self.stopAnimation()
 
             //if auth .notDetermined start 5s timer then ask permission
             self.weatherViewModel.startAuthTimer()
@@ -252,7 +255,15 @@ extension WeatherViewController: ViewModelDelegate {
             self.tempTextLabel.isHidden = true
             self.weatherImageView.isHidden = true
             self.forecastStackView.layer.opacity = 0
+            self.cityTextLabel.textColor = .white
+            self.stopAnimation()
         }
+    }
+
+    func stopAnimation() {
+        //TODO: Stop animation instead of hiding
+        self.forecastAnimationView.isHidden = true
+        self.animationLabel.isHidden = true
     }
 }
 
