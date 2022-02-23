@@ -88,14 +88,17 @@ class WeatherViewController: UIViewController {
         forecastAnimationView.layer.cornerRadius = cornerRadius
         forecastAnimationView.backgroundColor = .white.withAlphaComponent(0.45)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(WeatherViewController.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
 
-        let tap = UITapGestureRecognizer(target: self, action: #selector(WeatherViewController.didTapScreen))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.didTapScreen))
         view.addGestureRecognizer(tap)
+
+
+        NotificationCenter.default.addObserver(self, selector: #selector(self.prepareUI), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         animationView.defineForecastGradient()
         animationView.startAnmiationForecast(with: forecastAnimationView)
@@ -115,9 +118,12 @@ class WeatherViewController: UIViewController {
         animationLabel.layer.mask = animationView.labelGradientLayer
     }
 
-
     @objc func didTapScreen() {
         cityTextField.endEditing(true)
+    }
+
+    @objc func prepareUI(_ notification: Notification) {
+        weatherViewModel.checkAuthStatus()
     }
 
     @objc func keyboardWillShow(notification: NSNotification) {
@@ -134,7 +140,7 @@ class WeatherViewController: UIViewController {
 
     @IBAction func didTapLocation(_ sender: UIButton) {
         print("@@", #function)
-        weatherViewModel.handleAuthCase()      //check auth status and handle case
+        weatherViewModel.handleAuthCase()
         sender.alpha = 0.2
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             sender.alpha = 1.0
@@ -241,7 +247,6 @@ extension WeatherViewController: ViewModelDelegate {
     }
 
     func didCatchError() {
-
         DispatchQueue.main.async {
             self.cityTextLabel.text = "City not found"
             self.tempTextLabel.isHidden = true

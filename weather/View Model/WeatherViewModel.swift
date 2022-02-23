@@ -27,7 +27,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
     var locationManager = CLLocationManager()
     var delegate: ViewModelDelegate?
     let weatherOperator = WeatherOperator()
-//    let auth: locationManager.authorizationStatus?
+    //    let auth: locationManager.authorizationStatus?
     var timer: Timer?
     let randomLocation = ["Honolulu", "Hobart", "Pattani", "Manaus", "Stavanger", "Taipei", "Dhaka"]
 
@@ -46,10 +46,8 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         didSet {
             switch weatherLocation {
             case .currentLocation:
-                timer?.invalidate()
                 locationManager.requestLocation()
             case .city(let cityname):
-                timer?.invalidate()
                 weatherOperator.createCityURL(city: cityname)
             case nil:
                 break
@@ -70,6 +68,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         case .authorizedWhenInUse:
             weatherLocation = .currentLocation
         case .denied:
+            print("location denied")
             createAlert()
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
@@ -82,7 +81,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
 
     //called in viewDidLoad
     func checkAuthStatus() {
-       let auth = locationManager.authorizationStatus      //created twice?
+        let auth = locationManager.authorizationStatus      //created twice?
         if auth == .authorizedWhenInUse || auth == .authorizedAlways {
             weatherLocation = .currentLocation
         } else if auth == .notDetermined || auth == .denied || auth == .restricted {
@@ -91,7 +90,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
     }
 
     func createAlert(){
-        let title = "Would you like the weather for your current location?"
+        let title = "Get weather for your current location?"
         let message = "Allow access to your location in settings."
         let cancelAction = UIAlertAction(title: "Cancel", style: .default)
         let settingsAction = UIAlertAction(title: "Settings", style: .cancel) { _ in
@@ -105,13 +104,14 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
 
     //called when app opened for first time
     func startAuthTimer() {
-       let auth = locationManager.authorizationStatus        //created twice?
+        let auth = locationManager.authorizationStatus        //created twice?
         if auth == .notDetermined {
-            var runCount = 0
+            var x = 1
+
             Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                print(runCount)
-                runCount += 1
-                if runCount == 5 {
+                print("Check Auth: \(x)")
+                x += 1
+                if x >= 6 {
                     timer.invalidate()
                     self.handleAuthCase()
                 }
@@ -173,17 +173,16 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
     }
 
     func startTimer() {
+        timer?.invalidate()
         var x = 1
-
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                print(x)
+                print("Update Weather: \(x)")
                 x += 1
-
                 //TODO: what to fecht if location restricted?
-                if x == 900 {
+                if x >= 900 {
+                    timer.invalidate()
                     self.checkAuthStatus()
-
                 }
             }
         }
