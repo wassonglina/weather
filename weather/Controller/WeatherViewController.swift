@@ -64,7 +64,7 @@ class WeatherViewController: UIViewController {
         cityTextField.delegate = self
         weatherViewModel.delegate = self
 
-        weatherViewModel.getLocationForAuthStatus()
+        weatherViewModel.getLocationBasedOnUserPreference()
 
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
         cityTextField.keyboardType = .asciiCapable
@@ -120,7 +120,8 @@ class WeatherViewController: UIViewController {
     }
 
     @objc func didEnterForeground() {
-        weatherViewModel.getLocationForAuthStatus()
+
+       weatherViewModel.getLocationBasedOnUserPreference()
     }
 
     @objc func didTapScreen() {
@@ -140,6 +141,9 @@ class WeatherViewController: UIViewController {
     }
 
     @IBAction func didTapLocation(_ sender: UIButton) {
+
+        weatherViewModel.cityString = nil
+
         weatherViewModel.handleAuthCase()
         sender.alpha = 0.2
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -155,6 +159,9 @@ class WeatherViewController: UIViewController {
     }
 
     func handleTextField() {
+
+        weatherViewModel.cityString = cityTextField.text!
+
         weatherViewModel.weatherLocation = .city(cityTextField.text!)
         searchButton?.isUserInteractionEnabled = false
         searchButton?.alpha = 0.3
@@ -234,7 +241,7 @@ extension WeatherViewController: ViewModelDelegate {
             self.cityTextLabel.textColor = .white
             self.tempTextLabel.isHidden = false
             self.weatherImageView.isHidden = false
-            self.stopAnimation()
+            self.hideAnimation()
 
             //if auth .notDetermined start 5s timer then ask permission
             self.weatherViewModel.startAuthTimer()
@@ -248,11 +255,11 @@ extension WeatherViewController: ViewModelDelegate {
             self.weatherImageView.isHidden = true
             self.forecastStackView.layer.opacity = 0
             self.cityTextLabel.textColor = .white
-            self.stopAnimation()
+            self.hideAnimation()
         }
     }
 
-    func stopAnimation() {
+    func hideAnimation() {
         //TODO: Stop animation instead of hiding
         self.forecastAnimationView.isHidden = true
         self.animationLabel.isHidden = true

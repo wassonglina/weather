@@ -31,6 +31,9 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
     var timer: Timer?
     let randomLocation = ["Honolulu", "Hobart", "Pattani", "Manaus", "Stavanger", "Taipei", "Dhaka"]
 
+    var cityString: String?
+
+
     override init() {
         super.init()
         weatherOperator.delegate = self
@@ -59,7 +62,10 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         }
     }
 
-     func handleAuthCase() {
+    func handleAuthCase() {
+
+        // case useLocation
+
         switch locationManager.authorizationStatus {
         case .authorizedAlways:
             weatherLocation = .currentLocation
@@ -77,15 +83,28 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         }
     }
 
+    //   >> UI timer called twice >> update counter stops
+
+
     //called in viewDidLoad
-    func getLocationForAuthStatus() {
-        let auth = locationManager.authorizationStatus      //created twice?
-        if auth == .authorizedWhenInUse || auth == .authorizedAlways {
-            weatherLocation = .currentLocation
-        } else if auth == .notDetermined || auth == .denied || auth == .restricted {
-            weatherOperator.createCityURL(city: randomLocation.randomElement()!)
+    func getLocationBasedOnUserPreference() {
+
+        print(#function)
+
+        if let myCity = cityString {
+            print(myCity)
+            weatherOperator.createCityURL(city: myCity)
+        } else {
+            print("no City")
+            let auth = locationManager.authorizationStatus      //created twice?
+            if auth == .authorizedWhenInUse || auth == .authorizedAlways {
+                weatherLocation = .currentLocation
+            } else if auth == .notDetermined || auth == .denied || auth == .restricted {
+                weatherOperator.createCityURL(city: randomLocation.randomElement()!)
+            }
         }
     }
+
 
     func createAlert(){
         let title = "Get weather for your current location?"
@@ -156,10 +175,10 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
                 x += 1
-                //TODO: what to fecht if location restricted?
-                if x >= 900 {
+                print(x)
+                if x >= 10 {
                     timer.invalidate()
-                    self.getLocationForAuthStatus()
+                    self.getLocationBasedOnUserPreference()
                 }
             }
         }
