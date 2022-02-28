@@ -22,7 +22,7 @@ protocol ViewModelDelegate {
 }
 
 
-class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDelegate {
+class WeatherViewModel: NSObject, WeatherManagerDelegate {
 
     var locationManager = CLLocationManager()
     var delegate: ViewModelDelegate?
@@ -35,6 +35,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         super.init()
         weatherOperator.delegate = self
         locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers    //faster response + more energy efficient
     }
 
     enum WeatherLocation: Equatable {
@@ -46,7 +47,10 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         didSet {
             switch weatherLocation {
             case .currentLocation:
-                locationManager.requestLocation()
+                // call stopUpdatingLocation for new initial event when startUpdatingLocation is called
+                locationManager.stopUpdatingLocation()
+                locationManager.startUpdatingLocation()
+                print("start updating location")
             case .city(let cityname):
                 weatherOperator.createCityURL(city: cityname)
             case nil:
@@ -55,25 +59,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         }
     }
 
-
-
-    func getWeatherLastLocation() {
-        if let location = locationManager.location {
-            let latitude = location.coordinate.latitude
-            let longitude = location.coordinate.longitude
-            weatherOperator.createGeoURL(with: latitude, with: longitude)
-        } else {
-            checkAuthStatus()
-        }
-    }
-
-    func didCatchError(error: Error) {
-        delegate?.didCatchError()
-        print(#function)
-        print("didCatchError")
-    }
-
-    func handleAuthCase() {
+     func handleAuthCase() {
         switch locationManager.authorizationStatus {
         case .authorizedAlways:
             weatherLocation = .currentLocation
@@ -92,7 +78,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
     }
 
     //called in viewDidLoad
-    func checkAuthStatus() {
+    func getLocationForAuthStatus() {
         let auth = locationManager.authorizationStatus      //created twice?
         if auth == .authorizedWhenInUse || auth == .authorizedAlways {
             weatherLocation = .currentLocation
@@ -114,43 +100,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         delegate?.presentAuthAlert(with: title, with: message, with: cancelAction, with: settingsAction)
     }
 
-    //called when app opened for first time
-    func startAuthTimer() {
-        let auth = locationManager.authorizationStatus        //created twice?
-        if auth == .notDetermined {
-            var x = 1
-
-            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                print("Check Auth: \(x)")
-                x += 1
-                if x >= 6 {
-                    timer.invalidate()
-                    self.handleAuthCase()
-                }
-            }
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-
-        if weatherLocation == .currentLocation, let location = locations.first {
-            let latitude = location.coordinate.latitude
-            let longitude = location.coordinate.longitude
-            weatherOperator.createGeoURL(with: latitude, with: longitude)
-        }
-    }
-
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(#function)
-    }
-
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        self.weatherLocation = .currentLocation          //fails first time
-        print(#function)
-    }
-
     func didFetchWeather(with currentWeather: WeatherModel) {
-
         let city = currentWeather.name!
         let temp = currentWeather.getTempUnit(with: currentWeather.temp)
         let image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast))")!
@@ -160,11 +110,10 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
 
         delegate?.updateWeatherUI(city: city, temperature: temp, image: image, forecastImage: conditionImage, forecastTemp: forecastTemp)
 
-        startTimer()
+        startUpdateTimer()
     }
 
     func didFetchForecast(with forecastWeather: [WeatherModel]) {
-
         let firstDay = forecastWeather[0].getDayOfWeek()
         let firstImage = UIImage(systemName: "\(forecastWeather[0].symbolName(isNight: forecastWeather[0].isNight!, isForecast: forecastWeather[0].isForecast))")!
         let firstTemp = forecastWeather[0].getTempUnit(with: forecastWeather[0].temp)
@@ -184,7 +133,24 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
         delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp), (dayOfWeek: secondsDay, forecastImage: secondImage, forecastTemp: secondTemp), (dayOfWeek: thirdDay, forecastImage: thirdImage, forecastTemp: thirdTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage, forecastTemp: fourthTemp)])
     }
 
-    func startTimer() {
+    //called when app opened for first time
+    func startAuthTimer() {
+        let auth = locationManager.authorizationStatus        //created twice?
+        if auth == .notDetermined {
+            var x = 1
+
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                print("Check Auth: \(x)")
+                x += 1
+                if x >= 6 {
+                    timer.invalidate()
+                    self.handleAuthCase()
+                }
+            }
+        }
+    }
+
+    func startUpdateTimer() {
         timer?.invalidate()
         var x = 1
         DispatchQueue.main.async {
@@ -193,10 +159,38 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate, CLLocationManagerDeleg
                 //TODO: what to fecht if location restricted?
                 if x >= 900 {
                     timer.invalidate()
-                    self.checkAuthStatus()
+                    self.getLocationForAuthStatus()
                 }
             }
         }
+    }
+
+    func didCatchError(error: Error) {
+        delegate?.didCatchError()
+        print(#function)
+        print("didCatchError")
+    }
+}
+
+
+extension WeatherViewModel: CLLocationManagerDelegate {
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if weatherLocation == .currentLocation, let location = locations.first {
+            let latitude = location.coordinate.latitude
+            let longitude = location.coordinate.longitude
+            weatherOperator.createGeoURL(with: latitude, with: longitude)
+            print(#function)
+        }
+    }
+
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        self.weatherLocation = .currentLocation          //fails first time
+        print(#function)
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(#function)
     }
 }
 

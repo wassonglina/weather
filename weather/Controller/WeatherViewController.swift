@@ -64,7 +64,7 @@ class WeatherViewController: UIViewController {
         cityTextField.delegate = self
         weatherViewModel.delegate = self
 
-        useLastLocation()
+        weatherViewModel.getLocationForAuthStatus()
 
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
         cityTextField.keyboardType = .asciiCapable
@@ -95,7 +95,9 @@ class WeatherViewController: UIViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.didTapScreen))
         view.addGestureRecognizer(tap)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(self.useLastLocation), name: UIApplication.willEnterForegroundNotification, object: nil)
+        //update weather when app enters foreground
+        NotificationCenter.default.addObserver(self, selector: #selector(self.didEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -117,21 +119,13 @@ class WeatherViewController: UIViewController {
         animationLabel.layer.mask = animationView.labelGradientLayer
     }
 
-    //move into WVM?
-    @objc func useLastLocation() {
-        //use last saved location: might be inaccurate but faster response time
-        print(#function)
-        if weatherViewModel.locationManager.location != nil {
-            weatherViewModel.getWeatherLastLocation()
-        } else {
-            weatherViewModel.checkAuthStatus()
-        }
+    @objc func didEnterForeground() {
+        weatherViewModel.getLocationForAuthStatus()
     }
 
     @objc func didTapScreen() {
         cityTextField.endEditing(true)
     }
-
 
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {
@@ -146,7 +140,6 @@ class WeatherViewController: UIViewController {
     }
 
     @IBAction func didTapLocation(_ sender: UIButton) {
-        print("@@", #function)
         weatherViewModel.handleAuthCase()
         sender.alpha = 0.2
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -179,7 +172,6 @@ extension WeatherViewController: UITextFieldDelegate {
         }
         return true
     }
-
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let text = (textField.text! as NSString).replacingCharacters(in: range, with: string)
@@ -264,6 +256,7 @@ extension WeatherViewController: ViewModelDelegate {
         //TODO: Stop animation instead of hiding
         self.forecastAnimationView.isHidden = true
         self.animationLabel.isHidden = true
+
     }
 }
 
