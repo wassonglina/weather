@@ -83,7 +83,6 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         }
     }
 
-    //called in viewDidLoad
     func getLocationBasedOnUserPreference() {
         print(#function)
 
@@ -100,7 +99,6 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         }
     }
 
-
     func getWeatherWithCoordinates() {
         print(#function)
         if let location = locationManager.location {
@@ -109,6 +107,16 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         }
     }
 
+    func userDidTapLocation() {
+        handleAuthCase()
+        optionalCity = nil
+    }
+
+    func userDidEnterCity(with name: String) {
+        weatherLocation = .city(name)
+        optionalCity = name
+        print(optionalCity!)
+    }
 
     func createAlert(){
         let title = "Get weather for your current location?"

@@ -64,8 +64,8 @@ class WeatherViewController: UIViewController {
         cityTextField.delegate = self
         weatherViewModel.delegate = self
 
-        //TODO: call function only in willEnterForeground? othersie called twice and all other functions
-  //      weatherViewModel.getLocationBasedOnUserPreference()
+        //TODO: call function only in willEnterForeground? otherwise called twice and all other functions
+        weatherViewModel.getLocationBasedOnUserPreference()
 
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
         cityTextField.keyboardType = .asciiCapable
@@ -122,7 +122,7 @@ class WeatherViewController: UIViewController {
 
     @objc func willEnterForeground() {
         print(#function)
-       weatherViewModel.getLocationBasedOnUserPreference()
+        weatherViewModel.getLocationBasedOnUserPreference()
     }
 
     @objc func didTapScreen() {
@@ -142,12 +142,7 @@ class WeatherViewController: UIViewController {
     }
 
     @IBAction func didTapLocation(_ sender: UIButton) {
-
-        weatherViewModel.optionalCity = nil
-
-        //create WMW.didTapLocation func instead
-        weatherViewModel.handleAuthCase()
-
+        weatherViewModel.userDidTapLocation()
         sender.alpha = 0.2
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             sender.alpha = 1.0
@@ -156,20 +151,17 @@ class WeatherViewController: UIViewController {
     }
 
     @IBAction func didTapSearch(_ sender: UIButton) {
-        if cityTextField.text?.isEmpty == false {
-            handleTextField()
-        }
+        handleTextField()
     }
 
     func handleTextField() {
-
-        weatherViewModel.optionalCity = cityTextField.text!
-
-        weatherViewModel.weatherLocation = .city(cityTextField.text!)
-        searchButton?.isUserInteractionEnabled = false
-        searchButton?.alpha = 0.3
-        cityTextField.text = ""
-        cityTextField.endEditing(true)
+        if cityTextField.text?.isEmpty == false {
+            weatherViewModel.userDidEnterCity(with: cityTextField.text!)
+            searchButton?.isUserInteractionEnabled = false
+            searchButton?.alpha = 0.3
+            cityTextField.text = ""
+            cityTextField.endEditing(true)
+        }
     }
 }
 
@@ -177,9 +169,7 @@ class WeatherViewController: UIViewController {
 extension WeatherViewController: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if cityTextField.text?.isEmpty == false  {
-            handleTextField()
-        }
+        handleTextField()
         return true
     }
 
