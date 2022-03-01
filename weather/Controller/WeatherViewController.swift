@@ -145,9 +145,9 @@ class WeatherViewController: UIViewController {
 
         weatherViewModel.optionalCity = nil
 
+        //create WMW.didTapLocation func instead
         weatherViewModel.handleAuthCase()
 
-        //didTapLocation >>
         sender.alpha = 0.2
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             sender.alpha = 1.0
@@ -245,9 +245,6 @@ extension WeatherViewController: ViewModelDelegate {
             self.tempTextLabel.isHidden = false
             self.weatherImageView.isHidden = false
             self.hideAnimation()
-
-            //if auth .notDetermined start 5s timer then ask permission
-            self.weatherViewModel.startAuthTimer()
         }
     }
 

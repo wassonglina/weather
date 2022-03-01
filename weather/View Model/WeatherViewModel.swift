@@ -50,13 +50,8 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         didSet {
             switch weatherLocation {
             case .currentLocation:
-                // call stopUpdatingLocation for new initial event when startUpdatingLocation is called
-                //function called twice bc start and stop are changes
-                //        locationManager.stopUpdatingLocation()
-
                 locationManager.startUpdatingLocation()
-
-                //         locationManager.requestLocation()
+                getWeatherWithCoordinates()
                 print("case location")
             case .city(let cityname):
                 locationManager.stopUpdatingLocation()
@@ -70,14 +65,11 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
 
 
     func handleAuthCase() {
-
         switch locationManager.authorizationStatus {
         case .authorizedAlways:
             weatherLocation = .currentLocation
-            //get weather
         case .authorizedWhenInUse:
             weatherLocation = .currentLocation
-            //get weather
         case .denied:
             print("auth denied")
             createAlert()
@@ -107,6 +99,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
             }
         }
     }
+
 
     func getWeatherWithCoordinates() {
         print(#function)
@@ -140,7 +133,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
 
         delegate?.updateWeatherUI(city: city, temperature: temp, image: image, forecastImage: conditionImage, forecastTemp: forecastTemp)
 
-        startUpdateTimer()
+        //startUpdateTimer()
     }
 
     func didFetchForecast(with forecastWeather: [WeatherModel]) {
@@ -163,39 +156,22 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp), (dayOfWeek: secondsDay, forecastImage: secondImage, forecastTemp: secondTemp), (dayOfWeek: thirdDay, forecastImage: thirdImage, forecastTemp: thirdTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage, forecastTemp: fourthTemp)])
     }
 
-    //called when app opened for first time
-    func startAuthTimer() {
-        print(#function)
-        let auth = locationManager.authorizationStatus        //created twice?
-        if auth == .notDetermined {
-            var x = 1
-            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                print("Check Auth: \(x)")
-                x += 1
-                if x >= 6 {
-                    timer.invalidate()
-                    self.handleAuthCase()
-                }
-            }
-        }
-    }
 
-
-    func startUpdateTimer() {
-        print(#function)
-        timer?.invalidate()     //called twice: location stop and start > need to invalidate timer?
-        var x = 1
-        DispatchQueue.main.async {
-            self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                x += 1
-                print("Update time: \(x)")
-                if x >= 10 {
-                    timer.invalidate()
-                    self.getLocationBasedOnUserPreference()
-                }
-            }
-        }
-    }
+//    func startUpdateTimer() {
+//        print(#function)
+//        timer?.invalidate()     //called twice: location stop and start > need to invalidate timer?
+//        var x = 1
+//        DispatchQueue.main.async {
+//            self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+//                x += 1
+//                print("Update time: \(x)")
+//                if x >= 10 {
+//                    timer.invalidate()
+//                    self.getLocationBasedOnUserPreference()
+//                }
+//            }
+//        }
+//    }
 
     func didCatchError(error: Error) {
         delegate?.didCatchError()
