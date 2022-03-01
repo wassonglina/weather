@@ -132,8 +132,6 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         let forecastTemp = currentWeather.getTempUnit(with: currentWeather.temp)
 
         delegate?.updateWeatherUI(city: city, temperature: temp, image: image, forecastImage: conditionImage, forecastTemp: forecastTemp)
-
-        //startUpdateTimer()
     }
 
     func didFetchForecast(with forecastWeather: [WeatherModel]) {
@@ -155,23 +153,6 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
 
         delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp), (dayOfWeek: secondsDay, forecastImage: secondImage, forecastTemp: secondTemp), (dayOfWeek: thirdDay, forecastImage: thirdImage, forecastTemp: thirdTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage, forecastTemp: fourthTemp)])
     }
-
-
-//    func startUpdateTimer() {
-//        print(#function)
-//        timer?.invalidate()     //called twice: location stop and start > need to invalidate timer?
-//        var x = 1
-//        DispatchQueue.main.async {
-//            self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-//                x += 1
-//                print("Update time: \(x)")
-//                if x >= 10 {
-//                    timer.invalidate()
-//                    self.getLocationBasedOnUserPreference()
-//                }
-//            }
-//        }
-//    }
 
     func didCatchError(error: Error) {
         delegate?.didCatchError()
