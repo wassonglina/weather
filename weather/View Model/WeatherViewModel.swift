@@ -31,7 +31,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
     var timer: Timer?
     let randomLocation = ["Honolulu", "Hobart", "Pattani", "Manaus", "Stavanger", "Taipei", "Dhaka"]
 
-    var cityString: String?
+    var optionalCity: String?
 
 
     override init() {
@@ -51,31 +51,39 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
             switch weatherLocation {
             case .currentLocation:
                 // call stopUpdatingLocation for new initial event when startUpdatingLocation is called
-                locationManager.stopUpdatingLocation()
+                //function called twice bc start and stop are changes
+                //        locationManager.stopUpdatingLocation()
+
                 locationManager.startUpdatingLocation()
-                print("start updating location")
+
+                //         locationManager.requestLocation()
+                print("case location")
             case .city(let cityname):
+                locationManager.stopUpdatingLocation()
                 weatherOperator.createCityURL(city: cityname)
+                print("case city")
             case nil:
                 break
             }
         }
     }
 
-    func handleAuthCase() {
 
-        // case useLocation
+    func handleAuthCase() {
 
         switch locationManager.authorizationStatus {
         case .authorizedAlways:
             weatherLocation = .currentLocation
+            //get weather
         case .authorizedWhenInUse:
             weatherLocation = .currentLocation
+            //get weather
         case .denied:
-            print("location denied")
+            print("auth denied")
             createAlert()
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
+            print("auth not determined")
         case .restricted:
             createAlert()
         default:
@@ -83,25 +91,28 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         }
     }
 
-    //   >> UI timer called twice >> update counter stops
-
-
     //called in viewDidLoad
     func getLocationBasedOnUserPreference() {
-
         print(#function)
 
-        if let myCity = cityString {
-            print(myCity)
-            weatherOperator.createCityURL(city: myCity)
+        if let existingCity = optionalCity {
+            print(existingCity)
+            weatherOperator.createCityURL(city: existingCity)
         } else {
-            print("no City")
-            let auth = locationManager.authorizationStatus      //created twice?
+            let auth = locationManager.authorizationStatus
             if auth == .authorizedWhenInUse || auth == .authorizedAlways {
                 weatherLocation = .currentLocation
             } else if auth == .notDetermined || auth == .denied || auth == .restricted {
                 weatherOperator.createCityURL(city: randomLocation.randomElement()!)
             }
+        }
+    }
+
+    func getWeatherWithCoordinates() {
+        print(#function)
+        if let location = locationManager.location {
+            let coordinates = location.coordinate
+            weatherOperator.createGeoURL(with: coordinates)
         }
     }
 
@@ -154,10 +165,10 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
 
     //called when app opened for first time
     func startAuthTimer() {
+        print(#function)
         let auth = locationManager.authorizationStatus        //created twice?
         if auth == .notDetermined {
             var x = 1
-
             Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
                 print("Check Auth: \(x)")
                 x += 1
@@ -169,13 +180,15 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         }
     }
 
+
     func startUpdateTimer() {
-        timer?.invalidate()
+        print(#function)
+        timer?.invalidate()     //called twice: location stop and start > need to invalidate timer?
         var x = 1
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
                 x += 1
-                print(x)
+                print("Update time: \(x)")
                 if x >= 10 {
                     timer.invalidate()
                     self.getLocationBasedOnUserPreference()
@@ -195,12 +208,8 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
 extension WeatherViewModel: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if weatherLocation == .currentLocation, let location = locations.first {
-            let latitude = location.coordinate.latitude
-            let longitude = location.coordinate.longitude
-            weatherOperator.createGeoURL(with: latitude, with: longitude)
-            print(#function)
-        }
+        getWeatherWithCoordinates()
+        print(#function)
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {

@@ -64,7 +64,8 @@ class WeatherViewController: UIViewController {
         cityTextField.delegate = self
         weatherViewModel.delegate = self
 
-        weatherViewModel.getLocationBasedOnUserPreference()
+        //TODO: call function only in willEnterForeground? othersie called twice and all other functions
+  //      weatherViewModel.getLocationBasedOnUserPreference()
 
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
         cityTextField.keyboardType = .asciiCapable
@@ -96,7 +97,7 @@ class WeatherViewController: UIViewController {
         view.addGestureRecognizer(tap)
 
         //update weather when app enters foreground
-        NotificationCenter.default.addObserver(self, selector: #selector(self.didEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
 
     }
 
@@ -119,8 +120,8 @@ class WeatherViewController: UIViewController {
         animationLabel.layer.mask = animationView.labelGradientLayer
     }
 
-    @objc func didEnterForeground() {
-
+    @objc func willEnterForeground() {
+        print(#function)
        weatherViewModel.getLocationBasedOnUserPreference()
     }
 
@@ -142,9 +143,11 @@ class WeatherViewController: UIViewController {
 
     @IBAction func didTapLocation(_ sender: UIButton) {
 
-        weatherViewModel.cityString = nil
+        weatherViewModel.optionalCity = nil
 
         weatherViewModel.handleAuthCase()
+
+        //didTapLocation >>
         sender.alpha = 0.2
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             sender.alpha = 1.0
@@ -160,7 +163,7 @@ class WeatherViewController: UIViewController {
 
     func handleTextField() {
 
-        weatherViewModel.cityString = cityTextField.text!
+        weatherViewModel.optionalCity = cityTextField.text!
 
         weatherViewModel.weatherLocation = .city(cityTextField.text!)
         searchButton?.isUserInteractionEnabled = false
@@ -266,6 +269,3 @@ extension WeatherViewController: ViewModelDelegate {
 
     }
 }
-
-
-
