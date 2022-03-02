@@ -27,28 +27,24 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
     var locationManager = CLLocationManager()
     var delegate: ViewModelDelegate?
     let weatherOperator = WeatherOperator()
-    //    let auth: locationManager.authorizationStatus?
     var timer: Timer?
     let randomLocation = ["Honolulu", "Hobart", "Pattani", "Manaus", "Stavanger", "Taipei", "Dhaka"]
-
-    var optionalCity: String?
-
 
     override init() {
         super.init()
         weatherOperator.delegate = self
         locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers    //faster response + more energy efficient
+        locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers    //faster response + energy efficient
     }
 
-    enum WeatherLocation: Equatable {
+    enum PreferedLocationSource: Equatable {
         case currentLocation
         case city(String)
     }
 
-    var weatherLocation: WeatherLocation? {
+    var preferedLocationSource: PreferedLocationSource? {
         didSet {
-            switch weatherLocation {
+            switch preferedLocationSource {
             case .currentLocation:
                 locationManager.startUpdatingLocation()
                 getWeatherWithCoordinates()
@@ -63,13 +59,12 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         }
     }
 
-
     func handleAuthCase() {
         switch locationManager.authorizationStatus {
         case .authorizedAlways:
-            weatherLocation = .currentLocation
+            preferedLocationSource = .currentLocation
         case .authorizedWhenInUse:
-            weatherLocation = .currentLocation
+            preferedLocationSource = .currentLocation
         case .denied:
             print("auth denied")
             createAlert()
@@ -79,43 +74,45 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         case .restricted:
             createAlert()
         default:
-            print("location authorization status is unknown")
+            print("auth status unknown")
         }
     }
 
     func getLocationBasedOnUserPreference() {
         print(#function)
-
-        if let existingCity = optionalCity {
-            print(existingCity)
-            weatherOperator.createCityURL(city: existingCity)
-        } else {
+        switch preferedLocationSource {
+        case .currentLocation:
             let auth = locationManager.authorizationStatus
             if auth == .authorizedWhenInUse || auth == .authorizedAlways {
-                weatherLocation = .currentLocation
+                preferedLocationSource = .currentLocation
             } else if auth == .notDetermined || auth == .denied || auth == .restricted {
                 weatherOperator.createCityURL(city: randomLocation.randomElement()!)
             }
+        case .city(let name):
+            weatherOperator.createCityURL(city: name)
+        case nil:
+            break
         }
     }
 
+
     func getWeatherWithCoordinates() {
-        print(#function)
         if let location = locationManager.location {
             let coordinates = location.coordinate
             weatherOperator.createGeoURL(with: coordinates)
         }
     }
 
-    func userDidTapLocation() {
+    func didTapLocation() {
         handleAuthCase()
-        optionalCity = nil
     }
 
-    func userDidEnterCity(with name: String) {
-        weatherLocation = .city(name)
-        optionalCity = name
-        print(optionalCity!)
+    func willEnterForeground() {
+        getLocationBasedOnUserPreference()
+    }
+
+    func didEnterCity(with name: String) {
+        preferedLocationSource = .city(name)
     }
 
     func createAlert(){
@@ -178,7 +175,7 @@ extension WeatherViewModel: CLLocationManagerDelegate {
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        self.weatherLocation = .currentLocation          //fails first time
+        self.preferedLocationSource = .currentLocation          //fails first time
         print(#function)
     }
 

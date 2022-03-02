@@ -35,9 +35,9 @@ class WeatherOperator {
     var delegate: WeatherManagerDelegate?
 
     func createCityURL(city: String) {
+        print(#function)
         let weatherURLString = "\(weatherURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
         let forcastURLString = "\(weatherForecastURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
-        print("City URL")
         performNetworkRequest(with: weatherURLString) { data in
             
             if let currentWeather = self.parseJSONWeather(with: data) {
@@ -53,11 +53,11 @@ class WeatherOperator {
     }
 
     func createGeoURL(with coordinates: CLLocationCoordinate2D) {
+        print(#function)
         let lat = coordinates.latitude
         let long = coordinates.longitude
         let weatherURLString = "\(weatherURL)&lat=\(lat)&lon=\(long)"
         let forcastURLString = "\(weatherForecastURL)&lat=\(lat)&lon=\(long)"
-        print("Coordinate URL")
         performNetworkRequest(with: weatherURLString) { data in
             if let currentWeather = self.parseJSONWeather(with: data) {
                 self.delegate?.didFetchWeather(with: currentWeather)

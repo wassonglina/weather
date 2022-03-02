@@ -122,7 +122,7 @@ class WeatherViewController: UIViewController {
 
     @objc func willEnterForeground() {
         print(#function)
-        weatherViewModel.getLocationBasedOnUserPreference()
+        weatherViewModel.willEnterForeground()
     }
 
     @objc func didTapScreen() {
@@ -142,7 +142,7 @@ class WeatherViewController: UIViewController {
     }
 
     @IBAction func didTapLocation(_ sender: UIButton) {
-        weatherViewModel.userDidTapLocation()
+        weatherViewModel.didTapLocation()
         sender.alpha = 0.2
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             sender.alpha = 1.0
@@ -156,7 +156,7 @@ class WeatherViewController: UIViewController {
 
     func handleTextField() {
         if cityTextField.text?.isEmpty == false {
-            weatherViewModel.userDidEnterCity(with: cityTextField.text!)
+            weatherViewModel.didEnterCity(with: cityTextField.text!)
             searchButton?.isUserInteractionEnabled = false
             searchButton?.alpha = 0.3
             cityTextField.text = ""
@@ -229,7 +229,7 @@ extension WeatherViewController: ViewModelDelegate {
             self.cond5ImageView.image = VCForecast[3].forecastImage
             self.temp5TextLabel.text = VCForecast[3].forecastTemp
 
-            //TODO: current Weather and Forecast might not load simultaniously > fix
+            //TODO: Current Weather and Forecast might not load simultaniously > fix
             self.forecastStackView.layer.opacity = 1
             self.cityTextLabel.textColor = .white
             self.tempTextLabel.isHidden = false
