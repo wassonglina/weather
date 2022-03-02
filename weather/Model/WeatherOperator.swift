@@ -46,7 +46,6 @@ class WeatherOperator {
         }
         performNetworkRequest(with: forcastURLString) { data in
             if let forecastWeather = self.parseJSONForecast(with: data) {
-
                 self.delegate?.didFetchForecast(with: forecastWeather)
             }
         }
@@ -77,7 +76,7 @@ class WeatherOperator {
             let task = session.dataTask(with: url) { data, response, error in
                 if error != nil {
                     self.delegate?.didCatchError(error: error!)
-                    print("There was an error performing the network request: \(error!).")
+                    print("Error performing network request")
                     return
                 }
                 if let weatherData = data {

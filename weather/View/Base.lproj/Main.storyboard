@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_0" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -236,6 +236,14 @@
                                     <constraint firstAttribute="width" constant="140" id="aQC-iz-2KC"/>
                                 </constraints>
                             </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="wifi.slash" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="dQh-T5-Fcx">
+                                <rect key="frame" x="135" y="248.66666666666666" width="120" height="97.666666666666657"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="120" id="QVw-7N-d2a"/>
+                                    <constraint firstAttribute="height" constant="100" id="glT-mo-tHu"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" red="0.69996215930000005" green="0.79827084449999997" blue="0.81591272839999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -255,6 +263,7 @@
                             <constraint firstItem="xNS-lW-90T" firstAttribute="width" secondItem="Zz7-b8-QaU" secondAttribute="width" id="MhP-if-Wbk"/>
                             <constraint firstItem="6wa-us-iQd" firstAttribute="bottom" secondItem="8bC-Xf-vdC" secondAttribute="bottom" id="NWo-ca-3jl"/>
                             <constraint firstItem="j1j-Eq-FBS" firstAttribute="width" secondItem="EbK-hb-Hce" secondAttribute="width" id="NZb-5r-G2a"/>
+                            <constraint firstItem="dQh-T5-Fcx" firstAttribute="top" secondItem="Mwt-Rg-Oaz" secondAttribute="bottom" constant="40" id="Nyg-47-LWe"/>
                             <constraint firstItem="D2d-ct-E9Q" firstAttribute="top" secondItem="Mwt-Rg-Oaz" secondAttribute="bottom" constant="60" id="S9L-UB-LnQ"/>
                             <constraint firstItem="jVk-da-1hl" firstAttribute="width" secondItem="EbK-hb-Hce" secondAttribute="width" id="SAS-mN-XR8"/>
                             <constraint firstItem="6wa-us-iQd" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Urf-aS-0MW"/>
@@ -275,6 +284,7 @@
                             <constraint firstItem="bUA-uA-yrW" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="kOd-dD-rhm"/>
                             <constraint firstItem="Mwt-Rg-Oaz" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="100" id="mDh-kB-B0c"/>
                             <constraint firstItem="QAb-dU-JIi" firstAttribute="width" secondItem="Zz7-b8-QaU" secondAttribute="width" id="mTP-a2-L16"/>
+                            <constraint firstItem="dQh-T5-Fcx" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="q0f-qm-oPB"/>
                             <constraint firstItem="6wa-us-iQd" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="sKN-52-wsn"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="rYG-Rw-MVp" secondAttribute="trailing" constant="60" id="sYa-sS-Q36"/>
                             <constraint firstItem="Y5P-gx-qBx" firstAttribute="leading" secondItem="Mwt-Rg-Oaz" secondAttribute="leading" id="uOI-tX-jlY"/>
@@ -291,6 +301,7 @@
                         <outlet property="cond3ImageView" destination="RTQ-Fx-r3V" id="zwO-IT-YIE"/>
                         <outlet property="cond4ImageView" destination="ALy-Me-XQG" id="ju3-vn-xUz"/>
                         <outlet property="cond5ImageView" destination="463-bf-BUg" id="By9-Vw-9ze"/>
+                        <outlet property="errorImageview" destination="dQh-T5-Fcx" id="mgt-Ak-33L"/>
                         <outlet property="forecast1TextLabel" destination="jVk-da-1hl" id="OrG-SI-YpR"/>
                         <outlet property="forecast2TextLabel" destination="2MH-Xn-Pn9" id="c2f-NS-dxd"/>
                         <outlet property="forecast3TextLabel" destination="nWJ-MP-cd6" id="d9f-Nt-g1G"/>
@@ -322,6 +333,7 @@
         <image name="location" catalog="system" width="128" height="118"/>
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <image name="sun.max.fill" catalog="system" width="128" height="124"/>
+        <image name="wifi.slash" catalog="system" width="128" height="102"/>
         <systemColor name="systemGreenColor">
             <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

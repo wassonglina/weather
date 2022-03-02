@@ -18,6 +18,8 @@ class WeatherViewController: UIViewController {
     @IBOutlet var forecastView: UIView!                 //back View
     @IBOutlet var forecastAnimationView: UIView!         //front View
     @IBOutlet var animationLabel: UILabel!
+    @IBOutlet var errorImageview: UIImageView!
+
 
     @IBOutlet var forecast1TextLabel: UILabel!
     @IBOutlet var forecast2TextLabel: UILabel!
@@ -43,12 +45,10 @@ class WeatherViewController: UIViewController {
     @IBOutlet var locationUIButton: UIButton!
 
     var weatherOperator = WeatherOperator()
-
     var weatherViewModel = WeatherViewModel()
-
     let cornerRadius = CGFloat(10)
-
     let animationView = AnimationView()
+    let textLoadingAnmination = "Loading ..."
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -64,7 +64,6 @@ class WeatherViewController: UIViewController {
         cityTextField.delegate = self
         weatherViewModel.delegate = self
 
-        //TODO: call function only in willEnterForeground? otherwise called twice and all other functions
         weatherViewModel.getLocationBasedOnUserPreference()
 
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
@@ -72,40 +71,42 @@ class WeatherViewController: UIViewController {
         cityTextField.enablesReturnKeyAutomatically = true
 
         cityTextLabel.textColor = .white.withAlphaComponent(0.15)
-        cityTextLabel.text = "Loading ..."
+        cityTextLabel.text = textLoadingAnmination
 
         tempTextLabel.isHidden = true
         weatherImageView.isHidden = true
+        errorImageview.isHidden = true
+        forecastStackView.isHidden = true
+
+        forecastView.backgroundColor = .white.withAlphaComponent(0.15)
+        forecastView.layer.cornerRadius = cornerRadius
 
         animationLabel.textColor = .white.withAlphaComponent(0.65)
         animationLabel.text = cityTextLabel.text
         animationLabel.font = cityTextLabel.font
         animationLabel.textAlignment = cityTextLabel.textAlignment
 
-        forecastView.layer.cornerRadius = cornerRadius
-        forecastView.backgroundColor = .white.withAlphaComponent(0.15)
-        forecastStackView.layer.opacity = 0
-
         forecastAnimationView.layer.cornerRadius = cornerRadius
         forecastAnimationView.backgroundColor = .white.withAlphaComponent(0.45)
+
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.didTapScreen))
+        view.addGestureRecognizer(tap)
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
 
-        let tap = UITapGestureRecognizer(target: self, action: #selector(self.didTapScreen))
-        view.addGestureRecognizer(tap)
-
-        //update weather when app enters foreground
         NotificationCenter.default.addObserver(self, selector: #selector(self.willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(self.didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
 
     }
 
     override func viewWillAppear(_ animated: Bool) {
+        print(#function)
         animationView.defineForecastGradient()
-        animationView.startAnmiationForecast(with: forecastAnimationView)
-
         animationView.defineLabelGradient()
+        animationView.startAnmiationForecast(with: forecastAnimationView)
         animationView.startAnmiationLabel(with: animationLabel)
     }
 
@@ -125,6 +126,11 @@ class WeatherViewController: UIViewController {
         weatherViewModel.willEnterForeground()
     }
 
+    @objc func didBecomeActive() {
+        print(#function)
+        weatherViewModel.didBecomeActive()
+    }
+
     @objc func didTapScreen() {
         cityTextField.endEditing(true)
     }
@@ -141,7 +147,22 @@ class WeatherViewController: UIViewController {
         self.view.frame.origin.y = 0
     }
 
+    func showLoadingAnimation() {
+        forecastAnimationView.isHidden = false
+        animationLabel.isHidden = false
+        forecastStackView.isHidden = true
+        tempTextLabel.isHidden = true
+        weatherImageView.isHidden = true
+        cityTextLabel.text = textLoadingAnmination
+        cityTextLabel.textColor = .white.withAlphaComponent(0.15)
+        animationView.startAnmiationForecast(with: forecastAnimationView)
+        animationView.startAnmiationLabel(with: animationLabel)
+    }
+
     @IBAction func didTapLocation(_ sender: UIButton) {
+
+        showLoadingAnimation()
+
         weatherViewModel.didTapLocation()
         sender.alpha = 0.2
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -151,6 +172,7 @@ class WeatherViewController: UIViewController {
     }
 
     @IBAction func didTapSearch(_ sender: UIButton) {
+        showLoadingAnimation()
         handleTextField()
     }
 
@@ -169,6 +191,7 @@ class WeatherViewController: UIViewController {
 extension WeatherViewController: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        showLoadingAnimation()
         handleTextField()
         return true
     }
@@ -203,10 +226,16 @@ extension WeatherViewController: ViewModelDelegate {
             self.cityTextLabel.text = city
             self.tempTextLabel.text = temperature
             self.weatherImageView.image = image
+            self.errorImageview.isHidden = true
 
             self.forecast1TextLabel.text = "Now"
             self.cond1ImageView.image = forecastImage
             self.temp1TextLabel.text = forecastTemp
+
+            self.cityTextLabel.textColor = .white
+            self.tempTextLabel.isHidden = false
+            self.weatherImageView.isHidden = false
+            self.animationLabel.isHidden = true
         }
     }
 
@@ -229,30 +258,37 @@ extension WeatherViewController: ViewModelDelegate {
             self.cond5ImageView.image = VCForecast[3].forecastImage
             self.temp5TextLabel.text = VCForecast[3].forecastTemp
 
-            //TODO: Current Weather and Forecast might not load simultaniously > fix
-            self.forecastStackView.layer.opacity = 1
-            self.cityTextLabel.textColor = .white
-            self.tempTextLabel.isHidden = false
-            self.weatherImageView.isHidden = false
-            self.hideAnimation()
+            self.forecastStackView.isHidden = false
+            self.forecastAnimationView.isHidden = true
         }
     }
 
-    func didCatchError() {
+    func didCatchError(errorMsg: String, errorImage: UIImage) {
         DispatchQueue.main.async {
-            self.cityTextLabel.text = "City not found"
+            self.cityTextLabel.text = errorMsg
+            self.errorImageview.image = errorImage
+
             self.tempTextLabel.isHidden = true
             self.weatherImageView.isHidden = true
-            self.forecastStackView.layer.opacity = 0
+            self.forecastStackView.isHidden = true
             self.cityTextLabel.textColor = .white
-            self.hideAnimation()
+            self.errorImageview.isHidden = false
+
+            self.forecastAnimationView.isHidden = true
+            self.animationLabel.isHidden = true
         }
     }
 
-    func hideAnimation() {
-        //TODO: Stop animation instead of hiding
-        self.forecastAnimationView.isHidden = true
-        self.animationLabel.isHidden = true
-
+    func hideWhileLoading() {
+        self.forecastStackView.isHidden = true
+        self.tempTextLabel.isHidden = true
+        self.weatherImageView.isHidden = true
     }
+
+    func showAfterLoading() {
+        self.forecastStackView.isHidden = false
+        self.tempTextLabel.isHidden = false
+        self.weatherImageView.isHidden = false
+    }
+
 }

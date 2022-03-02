@@ -18,7 +18,7 @@ protocol ViewModelDelegate {
         (dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)
     ])
 
-    func didCatchError()
+    func didCatchError(errorMsg: String, errorImage: UIImage)
 }
 
 
@@ -107,6 +107,10 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         handleAuthCase()
     }
 
+    func didBecomeActive() {
+        getLocationBasedOnUserPreference()
+    }
+
     func willEnterForeground() {
         getLocationBasedOnUserPreference()
     }
@@ -160,9 +164,18 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
     }
 
     func didCatchError(error: Error) {
-        delegate?.didCatchError()
         print(#function)
-        print("didCatchError")
+        let text: String
+        let image: UIImage
+        //TODO: Jesse > instance of reachability instead?
+        if Reachability.isConnectedToNetwork(){
+            text = "City Not Found"
+            image = UIImage(systemName: "globe.asia.australia")!
+        } else {
+            text = "No Internet"
+            image = UIImage(systemName: "wifi.slash")!
+        }
+        delegate?.didCatchError(errorMsg: text, errorImage: image)
     }
 }
 
@@ -181,6 +194,7 @@ extension WeatherViewModel: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(#function)
+        //    >> check here for internet connection
     }
 }
 
