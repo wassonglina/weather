@@ -164,16 +164,18 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
     }
 
     func didCatchError(error: Error) {
-        print(#function)
         let text: String
         let image: UIImage
-        //TODO: Jesse > instance of reachability instead?
-        if Reachability.isConnectedToNetwork(){
+        if error.localizedDescription == "The data couldn’t be read because it is missing." {
             text = "City Not Found"
             image = UIImage(systemName: "globe.asia.australia")!
-        } else {
+        } else if error.localizedDescription == "The Internet connection appears to be offline." {
             text = "No Internet"
             image = UIImage(systemName: "wifi.slash")!
+        } else {
+        //    text = "Error Loading Weather"
+            text = "Error"
+            image = UIImage(systemName: "exclamationmark.icloud")!
         }
         delegate?.didCatchError(errorMsg: text, errorImage: image)
     }
@@ -188,7 +190,7 @@ extension WeatherViewModel: CLLocationManagerDelegate {
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        self.preferedLocationSource = .currentLocation          //fails first time
+        self.preferedLocationSource = .currentLocation    //fails first time
         print(#function)
     }
 
