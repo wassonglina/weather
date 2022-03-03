@@ -8,7 +8,7 @@
 import UIKit
 import CoreLocation
 
-protocol WeatherManagerDelegate {
+protocol WeatherManagerDelegate: AnyObject {
     func didFetchWeather(with: WeatherModel)
     func didFetchForecast(with: [WeatherModel])
     func didCatchError(error: Error)
@@ -25,14 +25,15 @@ extension String {
 }
 
 
-class WeatherOperator {
+class WeatherManager {
 
     let weatherURL = "https://api.openweathermap.org/data/2.5/weather?&appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
 
     //gives weather of today and next 5 days of every 3h
     let weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
 
-    var delegate: WeatherManagerDelegate?
+    //TODO: check weak > protocol conformance AnyObject?
+    weak var delegate: WeatherManagerDelegate?
 
     func createCityURL(city: String) {
         print(#function)
@@ -106,7 +107,6 @@ class WeatherOperator {
             return nil
         }
     }
-
 
     func parseJSONForecast(with encodedData: Data) -> [WeatherModel]? {
         let decoder = JSONDecoder()

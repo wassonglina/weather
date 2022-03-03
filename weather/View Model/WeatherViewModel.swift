@@ -9,7 +9,7 @@ import UIKit
 import CoreLocation
 
 
-protocol ViewModelDelegate {
+protocol ViewModelDelegate: AnyObject {
     func updateWeatherUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String)
 
     func presentAuthAlert(with title: String, with message: String, with cancel: UIAlertAction, with action: UIAlertAction)
@@ -22,17 +22,17 @@ protocol ViewModelDelegate {
 }
 
 
-class WeatherViewModel: NSObject, WeatherManagerDelegate {
+class WeatherViewModel: NSObject {
 
     var locationManager = CLLocationManager()
-    var delegate: ViewModelDelegate?
-    let weatherOperator = WeatherOperator()
+    weak var delegate: ViewModelDelegate?
+    let weatherManager = WeatherManager()
     var timer: Timer?
     let randomLocation = ["Honolulu", "Hobart", "Pattani", "Manaus", "Stavanger", "Taipei", "Dhaka"]
 
     override init() {
         super.init()
-        weatherOperator.delegate = self
+        weatherManager.delegate = self
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers    //faster response + energy efficient
     }
@@ -51,7 +51,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
                 print("case location")
             case .city(let cityname):
                 locationManager.stopUpdatingLocation()
-                weatherOperator.createCityURL(city: cityname)
+                weatherManager.createCityURL(city: cityname)
                 print("case city")
             case nil:
                 break
@@ -86,20 +86,19 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
             if auth == .authorizedWhenInUse || auth == .authorizedAlways {
                 preferedLocationSource = .currentLocation
             } else if auth == .notDetermined || auth == .denied || auth == .restricted {
-                weatherOperator.createCityURL(city: randomLocation.randomElement()!)
+                weatherManager.createCityURL(city: randomLocation.randomElement()!)
             }
         case .city(let name):
-            weatherOperator.createCityURL(city: name)
+            weatherManager.createCityURL(city: name)
         case nil:
             break
         }
     }
 
-
     func getWeatherWithCoordinates() {
         if let location = locationManager.location {
             let coordinates = location.coordinate
-            weatherOperator.createGeoURL(with: coordinates)
+            weatherManager.createGeoURL(with: coordinates)
         }
     }
 
@@ -131,6 +130,11 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
         }
         delegate?.presentAuthAlert(with: title, with: message, with: cancelAction, with: settingsAction)
     }
+}
+
+
+
+extension WeatherViewModel: WeatherManagerDelegate {
 
     func didFetchWeather(with currentWeather: WeatherModel) {
         let city = currentWeather.name!
@@ -164,6 +168,7 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
     }
 
     func didCatchError(error: Error) {
+        //TODO: Jesse > use error.localizedDescription to handle Error?
         let text: String
         let image: UIImage
         if error.localizedDescription == "The data couldn’t be read because it is missing." {
@@ -173,7 +178,6 @@ class WeatherViewModel: NSObject, WeatherManagerDelegate {
             text = "No Internet"
             image = UIImage(systemName: "wifi.slash")!
         } else {
-        //    text = "Error Loading Weather"
             text = "Error"
             image = UIImage(systemName: "exclamationmark.icloud")!
         }

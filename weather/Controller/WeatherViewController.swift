@@ -10,7 +10,6 @@ import UIKit
 
 class WeatherViewController: UIViewController {
 
-
     @IBOutlet var cityTextField: UITextField!
     @IBOutlet var cityTextLabel: UILabel!               //back View
     @IBOutlet var tempTextLabel: UILabel!
@@ -44,7 +43,7 @@ class WeatherViewController: UIViewController {
     @IBOutlet var searchButton: UIButton!
     @IBOutlet var locationUIButton: UIButton!
 
-    var weatherOperator = WeatherOperator()
+//    var weatherManager = WeatherManager()
     var weatherViewModel = WeatherViewModel()
     let cornerRadius = CGFloat(10)
     let animationView = AnimationView()
