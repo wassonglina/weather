@@ -48,7 +48,7 @@ class WeatherViewController: UIViewController {
     var weatherViewModel = WeatherViewModel()
     let cornerRadius = CGFloat(10)
     let animationView = AnimationView()
-    let textLoadingAnmination = "Loading ..."
+    let textLoadingAnimation = "Loading ..."
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -70,14 +70,17 @@ class WeatherViewController: UIViewController {
         cityTextField.keyboardType = .asciiCapable
         cityTextField.enablesReturnKeyAutomatically = true
 
+ //       prepareViewForAnimation()
+//      >> call function? problems with startAnimation bc should to be called in viewWillAppear and not viewDidLoad
+
         cityTextLabel.textColor = .white.withAlphaComponent(0.15)
-        cityTextLabel.text = textLoadingAnmination
+        cityTextLabel.text = textLoadingAnimation
 
         tempTextLabel.isHidden = true
         weatherImageView.isHidden = true
         errorImageview.isHidden = true
         forecastStackView.isHidden = true
-
+//
         forecastView.backgroundColor = .white.withAlphaComponent(0.15)
         forecastView.layer.cornerRadius = cornerRadius
 
@@ -106,8 +109,7 @@ class WeatherViewController: UIViewController {
         print(#function)
         animationView.defineForecastGradient()
         animationView.defineLabelGradient()
-        animationView.startAnmiationForecast(with: forecastAnimationView)
-        animationView.startAnmiationLabel(with: animationLabel)
+        startAnimation()
     }
 
     override func viewDidLayoutSubviews() {
@@ -135,6 +137,23 @@ class WeatherViewController: UIViewController {
         cityTextField.endEditing(true)
     }
 
+    func prepareViewForAnimation() {
+        tempTextLabel.isHidden = true
+        errorImageview.isHidden = true
+        weatherImageView.isHidden = true
+        forecastStackView.isHidden = true
+        animationLabel.isHidden = false
+        forecastAnimationView.isHidden = false
+        cityTextLabel.text = textLoadingAnimation
+        cityTextLabel.textColor = .white.withAlphaComponent(0.15)
+        startAnimation()
+    }  // >> when finished start animation
+
+    func startAnimation() {
+        animationView.startAnmiationForecast(with: forecastAnimationView)
+        animationView.startAnmiationLabel(with: animationLabel)
+    }
+
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {
             return
@@ -147,22 +166,8 @@ class WeatherViewController: UIViewController {
         self.view.frame.origin.y = 0
     }
 
-    func showLoadingAnimation() {
-        forecastAnimationView.isHidden = false
-        animationLabel.isHidden = false
-        forecastStackView.isHidden = true
-        tempTextLabel.isHidden = true
-        weatherImageView.isHidden = true
-        cityTextLabel.text = textLoadingAnmination
-        cityTextLabel.textColor = .white.withAlphaComponent(0.15)
-        animationView.startAnmiationForecast(with: forecastAnimationView)
-        animationView.startAnmiationLabel(with: animationLabel)
-    }
-
     @IBAction func didTapLocation(_ sender: UIButton) {
-
-        showLoadingAnimation()
-
+        prepareViewForAnimation()
         weatherViewModel.didTapLocation()
         sender.alpha = 0.2
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -172,7 +177,7 @@ class WeatherViewController: UIViewController {
     }
 
     @IBAction func didTapSearch(_ sender: UIButton) {
-        showLoadingAnimation()
+        prepareViewForAnimation()
         handleTextField()
     }
 
@@ -191,7 +196,7 @@ class WeatherViewController: UIViewController {
 extension WeatherViewController: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        showLoadingAnimation()
+        prepareViewForAnimation()
         handleTextField()
         return true
     }
@@ -220,8 +225,9 @@ extension WeatherViewController: ViewModelDelegate {
         present(alert, animated: true)
     }
 
-    func updateWeatherUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String) {
 
+    // when bad network weather and forecast don't load simultaneously
+    func updateWeatherUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String) {
         DispatchQueue.main.async {
             self.cityTextLabel.text = city
             self.tempTextLabel.text = temperature
@@ -240,7 +246,6 @@ extension WeatherViewController: ViewModelDelegate {
     }
 
     func updateForecastUI(VCForecast: [(dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)]) {
-
         DispatchQueue.main.async {
             self.forecast2TextLabel.text = VCForecast[0].dayOfWeek
             self.cond2ImageView.image = VCForecast[0].forecastImage
