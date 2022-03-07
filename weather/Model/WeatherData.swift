@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct WeatherDataModel: Decodable {
     let name: String
     let main: Main

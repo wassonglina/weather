@@ -47,7 +47,7 @@ class WeatherViewController: UIViewController {
     var weatherViewModel = WeatherViewModel()
     let cornerRadius = CGFloat(10)
     let animationView = AnimationView()
-    let textLoadingAnimation = "Loading ..."
+    let animationText = "Loading ..."
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -57,29 +57,58 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         print(#function)
 
+        let todayFont = UIFont.scriptFont(size: 47, style: .medium)
+   //     let tempFont = UIFont.scriptFont(size: 47, style: .medium)
+        let forecastFont = UIFont.scriptFont(size: 20, style: .medium)
+
         searchButton?.isUserInteractionEnabled = false
         searchButton?.alpha = 0.4
 
         cityTextField.delegate = self
         weatherViewModel.delegate = self
 
-        weatherViewModel.getLocationBasedOnUserPreference()
+        weatherViewModel.getLocationBasedOnUserPref()
 
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
         cityTextField.keyboardType = .asciiCapable
         cityTextField.enablesReturnKeyAutomatically = true
 
- //       prepareViewForAnimation()
-//      >> call function? problems with startAnimation bc should to be called in viewWillAppear and not viewDidLoad
-
+        cityTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: todayFont)
+        cityTextLabel.adjustsFontForContentSizeCategory = true
         cityTextLabel.textColor = .white.withAlphaComponent(0.15)
-        cityTextLabel.text = textLoadingAnimation
+        cityTextLabel.text = animationText
 
+        tempTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: todayFont)
+        tempTextLabel.adjustsFontForContentSizeCategory = true
         tempTextLabel.isHidden = true
         weatherImageView.isHidden = true
         errorImageview.isHidden = true
         forecastStackView.isHidden = true
-//
+
+        forecast1TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+        forecast2TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+        forecast3TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+        forecast4TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+        forecast5TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+
+        forecast1TextLabel.adjustsFontForContentSizeCategory = true
+        forecast2TextLabel.adjustsFontForContentSizeCategory = true
+        forecast3TextLabel.adjustsFontForContentSizeCategory = true
+        forecast4TextLabel.adjustsFontForContentSizeCategory = true
+        forecast5TextLabel.adjustsFontForContentSizeCategory = true
+
+        temp1TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+        temp2TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+        temp3TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+        temp4TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+        temp5TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+
+        temp1TextLabel.adjustsFontForContentSizeCategory = true
+        temp2TextLabel.adjustsFontForContentSizeCategory = true
+        temp3TextLabel.adjustsFontForContentSizeCategory = true
+        temp4TextLabel.adjustsFontForContentSizeCategory = true
+        temp5TextLabel.adjustsFontForContentSizeCategory = true
+
         forecastView.backgroundColor = .white.withAlphaComponent(0.15)
         forecastView.layer.cornerRadius = cornerRadius
 
@@ -128,7 +157,7 @@ class WeatherViewController: UIViewController {
     }
 
     @objc func didBecomeActive() {
-        print(#function)
+        print("VC: \(#function)")
         weatherViewModel.didBecomeActive()
     }
 
@@ -143,7 +172,7 @@ class WeatherViewController: UIViewController {
         forecastStackView.isHidden = true
         animationLabel.isHidden = false
         forecastAnimationView.isHidden = false
-        cityTextLabel.text = textLoadingAnimation
+        cityTextLabel.text = animationText
         cityTextLabel.textColor = .white.withAlphaComponent(0.15)
         startAnimation()
     }  // >> when finished start animation
@@ -176,6 +205,7 @@ class WeatherViewController: UIViewController {
     }
 
     @IBAction func didTapSearch(_ sender: UIButton) {
+        print(#function)
         prepareViewForAnimation()
         handleTextField()
     }

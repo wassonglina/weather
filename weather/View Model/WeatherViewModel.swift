@@ -46,13 +46,14 @@ class WeatherViewModel: NSObject {
         didSet {
             switch preferedLocationSource {
             case .currentLocation:
+                print("case location")
                 locationManager.startUpdatingLocation()
                 getWeatherWithCoordinates()
-                print("case location")
             case .city(let cityname):
+                print("case city")
                 locationManager.stopUpdatingLocation()
                 weatherManager.createCityURL(city: cityname)
-                print("case city")
+
             case nil:
                 break
             }
@@ -78,7 +79,7 @@ class WeatherViewModel: NSObject {
         }
     }
 
-    func getLocationBasedOnUserPreference() {
+    func getLocationBasedOnUserPref() {
         print(#function)
         switch preferedLocationSource {
         case .currentLocation:
@@ -107,11 +108,12 @@ class WeatherViewModel: NSObject {
     }
 
     func didBecomeActive() {
-        getLocationBasedOnUserPreference()
+        print("WVM: \(#function)")
+        getLocationBasedOnUserPref()
     }
 
     func willEnterForeground() {
-        getLocationBasedOnUserPreference()
+        getLocationBasedOnUserPref()
     }
 
     func didEnterCity(with name: String) {

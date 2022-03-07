@@ -14,6 +14,7 @@
 		FC35B40727A08B55007AEDFD /* WeatherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC35B40627A08B54007AEDFD /* WeatherData.swift */; };
 		FC35B40927A0BB0F007AEDFD /* WeatherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC35B40827A0BB0F007AEDFD /* WeatherModel.swift */; };
 		FC35B40E27A1FEAA007AEDFD /* BackgroundGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC35B40D27A1FEA9007AEDFD /* BackgroundGradientView.swift */; };
+		FC4BFBBF27D6A1AC00E9169D /* UIFont+CustomFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4BFBBE27D6A1AC00E9169D /* UIFont+CustomFont.swift */; };
 		FC6B70372798B43C00BB08C5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6B70362798B43C00BB08C5 /* AppDelegate.swift */; };
 		FC6B70392798B43C00BB08C5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6B70382798B43C00BB08C5 /* SceneDelegate.swift */; };
 		FC6B703B2798B43C00BB08C5 /* WeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC6B703A2798B43C00BB08C5 /* WeatherViewController.swift */; };
@@ -43,6 +44,7 @@
 		FC35B40627A08B54007AEDFD /* WeatherData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherData.swift; sourceTree = "<group>"; };
 		FC35B40827A0BB0F007AEDFD /* WeatherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherModel.swift; sourceTree = "<group>"; };
 		FC35B40D27A1FEA9007AEDFD /* BackgroundGradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundGradientView.swift; sourceTree = "<group>"; };
+		FC4BFBBE27D6A1AC00E9169D /* UIFont+CustomFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+CustomFont.swift"; sourceTree = "<group>"; };
 		FC6B70332798B43C00BB08C5 /* weather.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = weather.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC6B70362798B43C00BB08C5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FC6B70382798B43C00BB08C5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 				FC6B70382798B43C00BB08C5 /* SceneDelegate.swift */,
 				FCE00EE327C570390090A538 /* DateExtension.swift */,
 				FCE00EE627C583350090A538 /* DateContaining.swift */,
+				FC4BFBBE27D6A1AC00E9169D /* UIFont+CustomFont.swift */,
 				FC35B40A27A0BB1F007AEDFD /* Model */,
 				FC077A5827ACA5ED00124280 /* View Model */,
 				FC35B40B27A0BB26007AEDFD /* View */,
@@ -266,6 +269,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC4BFBBF27D6A1AC00E9169D /* UIFont+CustomFont.swift in Sources */,
 				FC35B40527991BE2007AEDFD /* WeatherManager.swift in Sources */,
 				FCE00EE427C570390090A538 /* DateExtension.swift in Sources */,
 				FC077A5727AB376C00124280 /* WeatherViewModel.swift in Sources */,
@@ -482,9 +486,11 @@
 				DEVELOPMENT_TEAM = C62J87LZSH;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = weather/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Wrong city? Share your location to get the weather for your area.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -510,9 +516,11 @@
 				DEVELOPMENT_TEAM = C62J87LZSH;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = weather/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Wrong city? Share your location to get the weather for your area.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
