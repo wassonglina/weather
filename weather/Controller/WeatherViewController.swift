@@ -57,7 +57,7 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         print(#function)
 
-        let todayFont = UIFont.scriptFont(size: 47, style: .medium)
+   //     let todayFont = UIFont.scriptFont(size: 47, style: .medium)
    //     let tempFont = UIFont.scriptFont(size: 47, style: .medium)
         let forecastFont = UIFont.scriptFont(size: 20, style: .medium)
 
@@ -73,13 +73,13 @@ class WeatherViewController: UIViewController {
         cityTextField.keyboardType = .asciiCapable
         cityTextField.enablesReturnKeyAutomatically = true
 
-        cityTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: todayFont)
-        cityTextLabel.adjustsFontForContentSizeCategory = true
+//        cityTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: todayFont)
+//        cityTextLabel.adjustsFontForContentSizeCategory = true
         cityTextLabel.textColor = .white.withAlphaComponent(0.15)
         cityTextLabel.text = animationText
 
-        tempTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: todayFont)
-        tempTextLabel.adjustsFontForContentSizeCategory = true
+//        tempTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: todayFont)
+//        tempTextLabel.adjustsFontForContentSizeCategory = true
         tempTextLabel.isHidden = true
         weatherImageView.isHidden = true
         errorImageview.isHidden = true
@@ -278,7 +278,7 @@ extension WeatherViewController: ViewModelDelegate {
         DispatchQueue.main.async {
             self.forecast2TextLabel.text = VCForecast[0].dayOfWeek
             self.cond2ImageView.image = VCForecast[0].forecastImage
-            self.temp2TextLabel.text = VCForecast[0].forecastTemp
+            self.temp2TextLabel.text = VCForecast[0].forecastTemp       //"\(forcastTempMin) - \(ForecastTempMax)"
 
             self.forecast3TextLabel.text = VCForecast[1].dayOfWeek
             self.cond3ImageView.image = VCForecast[1].forecastImage

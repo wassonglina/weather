@@ -15,6 +15,7 @@ struct WeatherModel {
     let name: String?    //Weather
     var isNight: Bool?   //Weather
     let day: Int?       //Forecast
+    let range: [Double]
 
     func getDayOfWeek() -> String {
         let dayFormatter = DateFormatter()

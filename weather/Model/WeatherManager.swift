@@ -27,6 +27,12 @@ extension String {
 
 class WeatherManager {
 
+    let placeholder = [
+        1.3475,
+        2.3556,
+        5.5768
+    ]
+
     let weatherURL = "https://api.openweathermap.org/data/2.5/weather?&appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
 
     //gives weather of today and next 5 days of every 3h
@@ -39,6 +45,7 @@ class WeatherManager {
         print(#function)
         let weatherURLString = "\(weatherURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
         let forcastURLString = "\(weatherForecastURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
+        print(forcastURLString)
         performNetworkRequest(with: weatherURLString) { data in
             
             if let currentWeather = self.parseJSONWeather(with: data) {
@@ -92,7 +99,7 @@ class WeatherManager {
         let decoder = JSONDecoder()
 
         do {
-            let decodedWeather = try decoder.decode(WeatherDataModel.self, from: encodedData)
+            let decodedWeather = try decoder.decode(OpenWeatherAPI.Current.self, from: encodedData)
             let decodedTemp = decodedWeather.main.temp
             let decodedName = decodedWeather.name
             let decodedCondition = decodedWeather.weather[0].id
@@ -100,7 +107,7 @@ class WeatherManager {
             let sunset = Date(timeIntervalSince1970: decodedWeather.sys.sunset)
             let answer = Date().isBetween(with: sunrise, with: sunset)
 
-            return WeatherModel(temp: decodedTemp, condition: decodedCondition, isForecast: false, name: decodedName, isNight: answer, day: nil)
+            return WeatherModel(temp: decodedTemp, condition: decodedCondition, isForecast: false, name: decodedName, isNight: answer, day: nil, range: placeholder)
 
         } catch {
             delegate?.didCatchError(error: error)
@@ -113,9 +120,19 @@ class WeatherManager {
 
         do {
 
-            let decodedForecast = try decoder.decode(Forecast.self, from: encodedData)
+            let decodedForecast = try decoder.decode(OpenWeatherAPI.Forecast.self, from: encodedData)
             let filteredList = filterNoon(unfilteredList: decodedForecast.list)
+//            let highLowDay = []
+//            let tempMin =
+//            let tempMax =
 
+            let maxDay = getMaxDay(unfilteredList: decodedForecast.list)
+            print(maxDay)
+
+            let minDay = getMinDay(unfilteredList: decodedForecast.list)
+            print(minDay)
+
+            //only get temp, weather id and date of filtered list
             let forecastModels: [WeatherModel] = filteredList.compactMap { list in
                 let forecastTemp = list.main.temp
                 let forecastCondition = list.weather[0].id
@@ -126,7 +143,7 @@ class WeatherManager {
                 let forecastWeekday = Calendar.current.component(.weekday, from: foracastDate)
 
                 if forecastWeekday != weekday {
-                    return WeatherModel(temp: forecastTemp, condition: forecastCondition, isForecast: true, name: nil, isNight: false, day: foracastDay)
+                    return WeatherModel(temp: forecastTemp, condition: forecastCondition, isForecast: true, name: nil, isNight: false, day: foracastDay, range: placeholder)
                 } else {
                     return nil
                 }
