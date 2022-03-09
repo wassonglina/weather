@@ -247,6 +247,7 @@ extension WeatherViewController: UITextFieldDelegate {
 
 extension WeatherViewController: ViewModelDelegate {
 
+
     func presentAuthAlert(with title: String, with message: String, with cancel: UIAlertAction, with action: UIAlertAction) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(action)
@@ -256,7 +257,7 @@ extension WeatherViewController: ViewModelDelegate {
 
 
     // when bad network weather and forecast don't load simultaneously
-    func updateWeatherUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String) {
+    func updateCurrentUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String) {
         DispatchQueue.main.async {
             self.cityTextLabel.text = city
             self.tempTextLabel.text = temperature
@@ -274,11 +275,11 @@ extension WeatherViewController: ViewModelDelegate {
         }
     }
 
-    func updateForecastUI(VCForecast: [(dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)]) {
+    func updateForecastUI(VCForecast: [(dayOfWeek: String, forecastImage: UIImage, forecastTemp: String, forcastTempMin: String, forcastTempMax: String)]) {
         DispatchQueue.main.async {
             self.forecast2TextLabel.text = VCForecast[0].dayOfWeek
             self.cond2ImageView.image = VCForecast[0].forecastImage
-            self.temp2TextLabel.text = VCForecast[0].forecastTemp       //"\(forcastTempMin) - \(ForecastTempMax)"
+            self.temp2TextLabel.text = "\(VCForecast[0].forcastTempMin) - \(VCForecast[0].forcastTempMax)"
 
             self.forecast3TextLabel.text = VCForecast[1].dayOfWeek
             self.cond3ImageView.image = VCForecast[1].forecastImage

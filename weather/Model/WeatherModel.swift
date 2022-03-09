@@ -11,11 +11,49 @@ struct CurrentModel: WeatherModel {
 
     let temp: Double
     let condition: Int
-    let name: String   //Weather
-    var isNight: Bool?   //Weather
+    let name: String
+    var isNight: Bool?
     var isForecast: Bool
 
 }
+
+//struct ForecastDay {
+//
+//    let day: Int
+//    let dataPoints: [DataPoint]
+//
+//    struct DataPoint {
+//        let time: Int
+//        let temp: Double
+//    }
+//}
+
+//[
+//    [day: 1, time: 12, temp: 66],
+//    [day: 1, time: 12, temp: 66],
+//    [day: 1, time: 12, temp: 66],
+//    [day: 2, time: 12, temp: 66],
+//    [day: 2, time: 12, temp: 66],
+//    [day: 2, time: 12, temp: 66],
+//    [day: 1, time: 12, temp: 66],
+//    [day: 1, time: 12, temp: 66],
+//    [day: 1, time: 12, temp: 66],
+//    [day: 1, time: 12, temp: 66],
+//    [day: 1, time: 12, temp: 66],
+//]
+//
+//[
+//    [day: 1, items: [
+//        [time: 12, temp: 66],
+//        time: 12, temp: 66]
+//    time: 12, temp: 66]
+//     ],
+//[day: 1, items: [
+//    [time: 12, temp: 66],
+//    time: 12, temp: 66]
+//time: 12, temp: 66]
+// ],
+//]
 
 struct ForecastModel: WeatherModel {
 

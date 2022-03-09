@@ -73,6 +73,7 @@ class WeatherManager {
         performNetworkRequest(with: forcastURLString) { data in
             if let forecastWeather = self.parseJSONForecast(with: data) {
                 self.delegate?.didFetchForecast(with: forecastWeather)
+             //   self.delegate?.
             }
         }
     }
@@ -121,28 +122,24 @@ class WeatherManager {
         do {
 
             let decodedForecast = try decoder.decode(OpenWeatherAPI.Forecast.self, from: encodedData)
-            let filteredList = filterNoon(unfilteredList: decodedForecast.list)
+ //           let filteredList = filterNoon(unfilteredList: decodedForecast.list)
 //            let highLowDay = []
 //            let tempMin =
 //            let tempMax =
 
-            let maxDay = getMaxDay(unfilteredList: decodedForecast.list)
-            print(maxDay)
-
-            let minDay = getMinDay(unfilteredList: decodedForecast.list)
-            print(minDay)
+//            let filteredList = filterDay(unfilteredList: decodedForecast, dayNumber: <#T##Int#>)
 
             //only get temp, weather id and date of filtered list
-            let forecastModels: [ForecastModel] = filteredList.compactMap { list in
+            let forecastModels: [ForecastModel] = decodedForecast.list.compactMap { list in
                 let forecastTemp = list.main.temp
                 let forecastCondition = list.weather[0].id
                 let foracastDay = list.dt
 
-                let weekday = Calendar.current.component(.weekday, from: Date())
+                let today = Calendar.current.component(.weekday, from: Date())
                 let foracastDate = Date(timeIntervalSince1970: Double(list.dt))
                 let forecastWeekday = Calendar.current.component(.weekday, from: foracastDate)
 
-                if forecastWeekday != weekday {
+                if forecastWeekday != today {
                     return ForecastModel(temp: forecastTemp, condition: forecastCondition, day: foracastDay, isForecast: true, isNight: false)
                 } else {
                     return nil

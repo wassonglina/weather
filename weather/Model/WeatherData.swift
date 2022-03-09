@@ -70,6 +70,7 @@ func filterNoon<T: DateContaining>(unfilteredList: [T]) -> [T] {
     return filteredList
 }
 
+//TODO: function is for todays weather:
 func getMaxDay(unfilteredList: [OpenWeatherAPI.Forecast.Entry]) -> Double {
 
     let temp: [Double] = unfilteredList.map { item in
@@ -88,32 +89,52 @@ func getMinDay(unfilteredList: [OpenWeatherAPI.Forecast.Entry]) -> Double {
     return temp.min()!
 }
 
+//TODO: function is for forecast weather:
+func filterDay(unfilteredList: [ForecastModel], dayNumber: Int) -> [ForecastModel] {
 
-//get all min and max of same day > add date and filter (instead of map) all temps for same day
+    var forecastDay =  Date.now
 
-//
-//func getMinMaxDay(unfilteredList: [List]) -> (day: Date, min: Double, max: Double) {
-//
-//    let date: Date
-//    let min: Double
-//    let max: Double
-//
-//    let temp: [Double] = unfilteredList.map { item in
-//        let min = item.main.temp_min
-//        return min
-//    }
-//    return temp.min()!
-//}
+//    let now = Date.now
 
-//func getMaxOneDay(unfilteredList: [List]) -> Double {
-//
-//    let temp = unfilteredList.filter { <#List#> in
-//        <#code#>
-//    }
-//
-//}
+    switch dayNumber {
+    case 1:
+        forecastDay = Date.now.addingTimeInterval(86400)  //1 Day
+    case 2:
+        forecastDay = Date.now.addingTimeInterval(172800)  //2 Days
+    case 3:
+        forecastDay = Date.now.addingTimeInterval(259200)  //3 Days
+    case 4:
+        forecastDay = Date.now.addingTimeInterval(345600)  //4 Days
+    default:
+        print("Error getting values for current day.")
+    }
 
+    let forecastDayComponent = Calendar.current.dateComponents(in: .current, from: forecastDay).day  //15
 
+    let filteredList = unfilteredList.filter { item in
+
+        let date = Date(timeIntervalSince1970: Double(item.day!))
+        let dayComponent = Calendar.current.dateComponents(in: .current, from: date).day
+        return dayComponent == forecastDayComponent
+    }
+    print(filteredList)
+    return filteredList
+}
+
+func minTemp(unfilteredList: [ForecastModel]) -> Double {
+    let temp: [Double] = unfilteredList.map { item in
+        return item.temp
+    }
+    return temp.min()!
+}
+
+func maxTemp(unfilteredList: [ForecastModel]) -> Double {
+    let temp: [Double] = unfilteredList.map { item in
+        return item.temp
+    }
+    return temp.max()!
+
+}
 
 
 

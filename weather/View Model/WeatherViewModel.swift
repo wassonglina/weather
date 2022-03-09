@@ -10,12 +10,12 @@ import CoreLocation
 
 
 protocol ViewModelDelegate: AnyObject {
-    func updateWeatherUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String)
+    func updateCurrentUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String)
 
     func presentAuthAlert(with title: String, with message: String, with cancel: UIAlertAction, with action: UIAlertAction)
 
     func updateForecastUI(VCForecast: [
-        (dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)
+        (dayOfWeek: String, forecastImage: UIImage, forecastTemp: String, forcastTempMin: String, forcastTempMax: String)
     ])
 
     func didCatchError(errorMsg: String, errorImage: UIImage)
@@ -135,7 +135,6 @@ class WeatherViewModel: NSObject {
 }
 
 
-
 extension WeatherViewModel: WeatherManagerDelegate {
 
     func didFetchCurrent(with currentWeather: CurrentModel) {
@@ -146,31 +145,46 @@ extension WeatherViewModel: WeatherManagerDelegate {
         let conditionImage = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast)).fill")!
         let forecastTemp = currentWeather.tempString
 
-        delegate?.updateWeatherUI(city: city, temperature: temp, image: image, forecastImage: conditionImage, forecastTemp: forecastTemp)
+        delegate?.updateCurrentUI(city: city, temperature: temp, image: image, forecastImage: conditionImage, forecastTemp: forecastTemp)
     }
 
-    func didFetchForecast(with forecastWeather: [ForecastModel]) {
-        let firstDay = forecastWeather[0].getDayOfWeek()
-        let firstImage = UIImage(systemName: "\(forecastWeather[0].symbolName(isNight: forecastWeather[0].isNight!, isForecast: forecastWeather[0].isForecast))")!
-        let firstTemp = forecastWeather[0].tempString
 
-        let secondsDay = forecastWeather[1].getDayOfWeek()
-        let secondImage = UIImage(systemName: "\(forecastWeather[1].symbolName(isNight: forecastWeather[1].isNight!, isForecast: forecastWeather[1].isForecast))")!
-        let secondTemp = forecastWeather[1].tempString
 
-        let thirdDay = forecastWeather[2].getDayOfWeek()
-        let thirdImage = UIImage(systemName: "\(forecastWeather[2].symbolName(isNight: forecastWeather[2].isNight!, isForecast: forecastWeather[2].isForecast))")!
-        let thirdTemp = forecastWeather[2].tempString
+    func didFetchForecast(with forecastEntries: [ForecastModel]) {
+        let firstDay = forecastEntries[0].getDayOfWeek()
+        let firstImage = UIImage(systemName: "\(forecastEntries[0].symbolName(isNight: forecastEntries[0].isNight!, isForecast: forecastEntries[0].isForecast))")!
+        let firstTemp = forecastEntries[0].tempString
 
-        let fourthDay = forecastWeather[3].getDayOfWeek()
-        let fourthImage = UIImage(systemName: "\(forecastWeather[3].symbolName(isNight: forecastWeather[3].isNight!, isForecast: forecastWeather[3].isForecast))")!
-        let fourthTemp = forecastWeather[3].tempString
+//        let firstDay = filterDay(forcastEntries, 0)
+            // let firstDay = maxTemp(firstDay)
+            // let maxTemp = firstDay.temp
 
-        delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp), (dayOfWeek: secondsDay, forecastImage: secondImage, forecastTemp: secondTemp), (dayOfWeek: thirdDay, forecastImage: thirdImage, forecastTemp: thirdTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage, forecastTemp: fourthTemp)])
+        let firstDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 1)
+
+        let min = String(minTemp(unfilteredList: firstDayAll))
+        let max = String(maxTemp(unfilteredList: firstDayAll))
+        print(min, max)
+
+
+        let secondsDay = forecastEntries[1].getDayOfWeek()
+        let secondImage = UIImage(systemName: "\(forecastEntries[1].symbolName(isNight: forecastEntries[1].isNight!, isForecast: forecastEntries[1].isForecast))")!
+        let secondTemp = forecastEntries[1].tempString
+
+        let thirdDay = forecastEntries[2].getDayOfWeek()
+        let thirdImage = UIImage(systemName: "\(forecastEntries[2].symbolName(isNight: forecastEntries[2].isNight!, isForecast: forecastEntries[2].isForecast))")!
+        let thirdTemp = forecastEntries[2].tempString
+
+        let fourthDay = forecastEntries[3].getDayOfWeek()
+        let fourthImage = UIImage(systemName: "\(forecastEntries[3].symbolName(isNight: forecastEntries[3].isNight!, isForecast: forecastEntries[3].isForecast))")!
+        let fourthTemp = forecastEntries[3].tempString
+
+        delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp, forcastTempMin: min, forcastTempMax: max), (dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp, forcastTempMin: min, forcastTempMax: max), (dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp, forcastTempMin: min, forcastTempMax: max), (dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp, forcastTempMin: min, forcastTempMax: max)])
+
+//        delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp, forcastTempMin: min, forcastTempMax: max), (dayOfWeek: secondsDay, forecastImage: secondImage, forecastTemp: secondTemp, forcastTempMin: min, forcastTempMax: max), (dayOfWeek: thirdDay, forecastImage: thirdImage, forecastTemp: thirdTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage, forecastTemp: fourthTemp, forcastTempMin: min, forcastTempMax: max)])
     }
 
     func didCatchError(error: Error) {
-        //TODO: Jesse > use error.localizedDescription to handle Error?
+        //TODO: Use error code instead
         let text: String
         let image: UIImage
         if error.localizedDescription == "The data couldn’t be read because it is missing." {
