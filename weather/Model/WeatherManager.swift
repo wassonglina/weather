@@ -9,8 +9,8 @@ import UIKit
 import CoreLocation
 
 protocol WeatherManagerDelegate: AnyObject {
-    func didFetchWeather(with: WeatherModel)
-    func didFetchForecast(with: [WeatherModel])
+    func didFetchCurrent(with: CurrentModel)
+    func didFetchForecast(with: [ForecastModel])
     func didCatchError(error: Error)
 }
 
@@ -49,7 +49,7 @@ class WeatherManager {
         performNetworkRequest(with: weatherURLString) { data in
             
             if let currentWeather = self.parseJSONWeather(with: data) {
-                self.delegate?.didFetchWeather(with: currentWeather)
+                self.delegate?.didFetchCurrent(with: currentWeather)
             }
         }
         performNetworkRequest(with: forcastURLString) { data in
@@ -67,7 +67,7 @@ class WeatherManager {
         let forcastURLString = "\(weatherForecastURL)&lat=\(lat)&lon=\(long)"
         performNetworkRequest(with: weatherURLString) { data in
             if let currentWeather = self.parseJSONWeather(with: data) {
-                self.delegate?.didFetchWeather(with: currentWeather)
+                self.delegate?.didFetchCurrent(with: currentWeather)
             }
         }
         performNetworkRequest(with: forcastURLString) { data in
@@ -95,7 +95,7 @@ class WeatherManager {
         }
     }
 
-    func parseJSONWeather(with encodedData: Data) -> WeatherModel? {
+    func parseJSONWeather(with encodedData: Data) -> CurrentModel? {
         let decoder = JSONDecoder()
 
         do {
@@ -107,7 +107,7 @@ class WeatherManager {
             let sunset = Date(timeIntervalSince1970: decodedWeather.sys.sunset)
             let answer = Date().isBetween(with: sunrise, with: sunset)
 
-            return WeatherModel(temp: decodedTemp, condition: decodedCondition, isForecast: false, name: decodedName, isNight: answer, day: nil, range: placeholder)
+            return CurrentModel(temp: decodedTemp, condition: decodedCondition, name: decodedName, isNight: answer, isForecast: false)
 
         } catch {
             delegate?.didCatchError(error: error)
@@ -115,7 +115,7 @@ class WeatherManager {
         }
     }
 
-    func parseJSONForecast(with encodedData: Data) -> [WeatherModel]? {
+    func parseJSONForecast(with encodedData: Data) -> [ForecastModel]? {
         let decoder = JSONDecoder()
 
         do {
@@ -133,7 +133,7 @@ class WeatherManager {
             print(minDay)
 
             //only get temp, weather id and date of filtered list
-            let forecastModels: [WeatherModel] = filteredList.compactMap { list in
+            let forecastModels: [ForecastModel] = filteredList.compactMap { list in
                 let forecastTemp = list.main.temp
                 let forecastCondition = list.weather[0].id
                 let foracastDay = list.dt
@@ -143,7 +143,7 @@ class WeatherManager {
                 let forecastWeekday = Calendar.current.component(.weekday, from: foracastDate)
 
                 if forecastWeekday != weekday {
-                    return WeatherModel(temp: forecastTemp, condition: forecastCondition, isForecast: true, name: nil, isNight: false, day: foracastDay, range: placeholder)
+                    return ForecastModel(temp: forecastTemp, condition: forecastCondition, day: foracastDay, isForecast: true, isNight: false)
                 } else {
                     return nil
                 }

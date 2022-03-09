@@ -7,15 +7,25 @@
 
 import Foundation
 
-struct WeatherModel {
+struct CurrentModel: WeatherModel {
 
     let temp: Double
     let condition: Int
-    var isForecast: Bool
-    let name: String?    //Weather
+    let name: String   //Weather
     var isNight: Bool?   //Weather
-    let day: Int?       //Forecast
-    let range: [Double]
+    var isForecast: Bool
+
+}
+
+struct ForecastModel: WeatherModel {
+
+    let temp: Double
+    let condition: Int
+    let day: Int?
+    var isForecast: Bool
+    var isNight: Bool?   //Weather
+    //    let minTemp: Double
+    //    let maxTemp: Double
 
     func getDayOfWeek() -> String {
         let dayFormatter = DateFormatter()
@@ -24,11 +34,21 @@ struct WeatherModel {
         return nameOfDay
     }
 
-    func getTempUnit(with: Double) -> String {
+
+}
+
+protocol WeatherModel {
+    var temp: Double { get }
+    var condition: Int { get }
+}
+
+extension WeatherModel {
+
+    var tempString: String {
         let formatter = MeasurementFormatter()
         formatter.numberFormatter.maximumFractionDigits = 0
         formatter.numberFormatter.roundingMode = .up
-        let tempUnit = Measurement(value: with, unit: UnitTemperature.celsius)
+        let tempUnit = Measurement(value: temp, unit: UnitTemperature.celsius)
         return (formatter.string(from: tempUnit))
     }
 

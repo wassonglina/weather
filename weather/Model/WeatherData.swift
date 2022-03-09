@@ -30,7 +30,7 @@ struct OpenWeatherAPI {
         }
 
         struct Entry: Decodable, DateContaining {
-            let dt: Int
+            let dt: Int //Date
             let main: Temperature
             let weather: [Weather]
         }

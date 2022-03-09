@@ -138,33 +138,33 @@ class WeatherViewModel: NSObject {
 
 extension WeatherViewModel: WeatherManagerDelegate {
 
-    func didFetchWeather(with currentWeather: WeatherModel) {
-        let city = currentWeather.name!
-        let temp = currentWeather.getTempUnit(with: currentWeather.temp)
+    func didFetchCurrent(with currentWeather: CurrentModel) {
+        let city = currentWeather.name
+        let temp = currentWeather.tempString
         let image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast))")!
 
         let conditionImage = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast)).fill")!
-        let forecastTemp = currentWeather.getTempUnit(with: currentWeather.temp)
+        let forecastTemp = currentWeather.tempString
 
         delegate?.updateWeatherUI(city: city, temperature: temp, image: image, forecastImage: conditionImage, forecastTemp: forecastTemp)
     }
 
-    func didFetchForecast(with forecastWeather: [WeatherModel]) {
+    func didFetchForecast(with forecastWeather: [ForecastModel]) {
         let firstDay = forecastWeather[0].getDayOfWeek()
         let firstImage = UIImage(systemName: "\(forecastWeather[0].symbolName(isNight: forecastWeather[0].isNight!, isForecast: forecastWeather[0].isForecast))")!
-        let firstTemp = forecastWeather[0].getTempUnit(with: forecastWeather[0].temp)
+        let firstTemp = forecastWeather[0].tempString
 
         let secondsDay = forecastWeather[1].getDayOfWeek()
         let secondImage = UIImage(systemName: "\(forecastWeather[1].symbolName(isNight: forecastWeather[1].isNight!, isForecast: forecastWeather[1].isForecast))")!
-        let secondTemp = forecastWeather[1].getTempUnit(with: forecastWeather[1].temp)
+        let secondTemp = forecastWeather[1].tempString
 
         let thirdDay = forecastWeather[2].getDayOfWeek()
         let thirdImage = UIImage(systemName: "\(forecastWeather[2].symbolName(isNight: forecastWeather[2].isNight!, isForecast: forecastWeather[2].isForecast))")!
-        let thirdTemp = forecastWeather[2].getTempUnit(with: forecastWeather[2].temp)
+        let thirdTemp = forecastWeather[2].tempString
 
         let fourthDay = forecastWeather[3].getDayOfWeek()
         let fourthImage = UIImage(systemName: "\(forecastWeather[3].symbolName(isNight: forecastWeather[3].isNight!, isForecast: forecastWeather[3].isForecast))")!
-        let fourthTemp = forecastWeather[3].getTempUnit(with: forecastWeather[3].temp)
+        let fourthTemp = forecastWeather[3].tempString
 
         delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp), (dayOfWeek: secondsDay, forecastImage: secondImage, forecastTemp: secondTemp), (dayOfWeek: thirdDay, forecastImage: thirdImage, forecastTemp: thirdTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage, forecastTemp: fourthTemp)])
     }
