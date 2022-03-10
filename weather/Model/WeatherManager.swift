@@ -122,12 +122,6 @@ class WeatherManager {
         do {
 
             let decodedForecast = try decoder.decode(OpenWeatherAPI.Forecast.self, from: encodedData)
- //           let filteredList = filterNoon(unfilteredList: decodedForecast.list)
-//            let highLowDay = []
-//            let tempMin =
-//            let tempMax =
-
-//            let filteredList = filterDay(unfilteredList: decodedForecast, dayNumber: <#T##Int#>)
 
             //only get temp, weather id and date of filtered list
             let forecastModels: [ForecastModel] = decodedForecast.list.compactMap { list in

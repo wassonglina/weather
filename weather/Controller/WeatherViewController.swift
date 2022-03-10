@@ -275,11 +275,11 @@ extension WeatherViewController: ViewModelDelegate {
         }
     }
 
-    func updateForecastUI(VCForecast: [(dayOfWeek: String, forecastImage: UIImage, forecastTemp: String, forcastTempMin: String, forcastTempMax: String)]) {
+    func updateForecastUI(VCForecast: [(dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)]) {
         DispatchQueue.main.async {
             self.forecast2TextLabel.text = VCForecast[0].dayOfWeek
             self.cond2ImageView.image = VCForecast[0].forecastImage
-            self.temp2TextLabel.text = "\(VCForecast[0].forcastTempMin) - \(VCForecast[0].forcastTempMax)"
+            self.temp2TextLabel.text = VCForecast[0].forecastTemp
 
             self.forecast3TextLabel.text = VCForecast[1].dayOfWeek
             self.cond3ImageView.image = VCForecast[1].forecastImage

@@ -15,7 +15,7 @@ protocol ViewModelDelegate: AnyObject {
     func presentAuthAlert(with title: String, with message: String, with cancel: UIAlertAction, with action: UIAlertAction)
 
     func updateForecastUI(VCForecast: [
-        (dayOfWeek: String, forecastImage: UIImage, forecastTemp: String, forcastTempMin: String, forcastTempMax: String)
+        (dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)
     ])
 
     func didCatchError(errorMsg: String, errorImage: UIImage)
@@ -149,38 +149,40 @@ extension WeatherViewModel: WeatherManagerDelegate {
     }
 
 
-
     func didFetchForecast(with forecastEntries: [ForecastModel]) {
         let firstDay = forecastEntries[0].getDayOfWeek()
         let firstImage = UIImage(systemName: "\(forecastEntries[0].symbolName(isNight: forecastEntries[0].isNight!, isForecast: forecastEntries[0].isForecast))")!
-        let firstTemp = forecastEntries[0].tempString
-
-//        let firstDay = filterDay(forcastEntries, 0)
-            // let firstDay = maxTemp(firstDay)
-            // let maxTemp = firstDay.temp
 
         let firstDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 1)
+        let firstMin = getMinTempString(unfilteredList: firstDayAll)
+        let firstMax = getMaxTempString(unfilteredList: firstDayAll)
+        let firstTempRange = "\(firstMin) - \(firstMax)"
 
-        let min = String(minTemp(unfilteredList: firstDayAll))
-        let max = String(maxTemp(unfilteredList: firstDayAll))
-        print(min, max)
-
-
-        let secondsDay = forecastEntries[1].getDayOfWeek()
+        let secondDay = forecastEntries[1].getDayOfWeek()   //all entries so first few aleays same day
         let secondImage = UIImage(systemName: "\(forecastEntries[1].symbolName(isNight: forecastEntries[1].isNight!, isForecast: forecastEntries[1].isForecast))")!
-        let secondTemp = forecastEntries[1].tempString
+
+        let secondDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 2)
+        let secondMin = getMinTempString(unfilteredList: secondDayAll)
+        let secondMax = getMaxTempString(unfilteredList: secondDayAll)
+        let secondTempRange = "\(secondMin) - \(secondMax)"
 
         let thirdDay = forecastEntries[2].getDayOfWeek()
         let thirdImage = UIImage(systemName: "\(forecastEntries[2].symbolName(isNight: forecastEntries[2].isNight!, isForecast: forecastEntries[2].isForecast))")!
-        let thirdTemp = forecastEntries[2].tempString
+
+        let thirdDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 3)
+        let thirdMin = getMinTempString(unfilteredList: thirdDayAll)
+        let thirdMax = getMaxTempString(unfilteredList: thirdDayAll)
+        let thirdTempRange = "\(thirdMin) - \(thirdMax)"
 
         let fourthDay = forecastEntries[3].getDayOfWeek()
         let fourthImage = UIImage(systemName: "\(forecastEntries[3].symbolName(isNight: forecastEntries[3].isNight!, isForecast: forecastEntries[3].isForecast))")!
-        let fourthTemp = forecastEntries[3].tempString
 
-        delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp, forcastTempMin: min, forcastTempMax: max), (dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp, forcastTempMin: min, forcastTempMax: max), (dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp, forcastTempMin: min, forcastTempMax: max), (dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp, forcastTempMin: min, forcastTempMax: max)])
+        let fourthDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 4)
+        let fourthMin = getMinTempString(unfilteredList: fourthDayAll)
+        let fourthMax = getMaxTempString(unfilteredList: fourthDayAll)
+        let fourthTempRange = "\(fourthMin) - \(fourthMax)"
 
-//        delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp: firstTemp, forcastTempMin: min, forcastTempMax: max), (dayOfWeek: secondsDay, forecastImage: secondImage, forecastTemp: secondTemp, forcastTempMin: min, forcastTempMax: max), (dayOfWeek: thirdDay, forecastImage: thirdImage, forecastTemp: thirdTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage, forecastTemp: fourthTemp, forcastTempMin: min, forcastTempMax: max)])
+        delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage, forecastTemp:  firstTempRange), (dayOfWeek: secondDay, forecastImage: secondImage, forecastTemp: secondTempRange), (dayOfWeek: thirdDay, forecastImage: thirdImage, forecastTemp: thirdTempRange), (dayOfWeek: fourthDay, forecastImage: fourthImage, forecastTemp: fourthTempRange)])
     }
 
     func didCatchError(error: Error) {

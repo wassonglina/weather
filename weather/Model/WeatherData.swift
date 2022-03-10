@@ -62,7 +62,7 @@ func filterNoon<T: DateContaining>(unfilteredList: [T]) -> [T] {
         let date = Date(timeIntervalSince1970: Double(item.dt))
 
         //gives infos of choosen calendar fo date > prints:
-        //calendar: gregorian (current) timeZone: America/Los_Angeles (fixed (equal to current)) era: 1 year: 2022 month: 3 day: 13 hour: 11 minute: 0 second: 0 nanosecond: 0 weekday: 1 weekdayOrdinal: 2 quarter: 0 weekOfMonth: 3 weekOfYear: 12 yearForWeekOfYear: 2022 isLeapMonth: false
+        //calendar: gregorian (current) timeZone: America/Los_Angeles (fixed (equal to current)) era: 1 year: 2022 month: 3 day: 13 hour: 11 ...
         let components = Calendar.current.dateComponents(in: .current, from: date)
 
         return (11...13).contains(components.hour!)
@@ -70,32 +70,10 @@ func filterNoon<T: DateContaining>(unfilteredList: [T]) -> [T] {
     return filteredList
 }
 
-//TODO: function is for todays weather:
-func getMaxDay(unfilteredList: [OpenWeatherAPI.Forecast.Entry]) -> Double {
-
-    let temp: [Double] = unfilteredList.map { item in
-        let max = item.main.temp_max
-        return max
-    }
-    return temp.max()!
-}
-
-func getMinDay(unfilteredList: [OpenWeatherAPI.Forecast.Entry]) -> Double {
-
-    let temp: [Double] = unfilteredList.map { item in
-        let min = item.main.temp_min
-        return min
-    }
-    return temp.min()!
-}
 
 //TODO: function is for forecast weather:
 func filterDay(unfilteredList: [ForecastModel], dayNumber: Int) -> [ForecastModel] {
-
     var forecastDay =  Date.now
-
-//    let now = Date.now
-
     switch dayNumber {
     case 1:
         forecastDay = Date.now.addingTimeInterval(86400)  //1 Day
@@ -108,36 +86,45 @@ func filterDay(unfilteredList: [ForecastModel], dayNumber: Int) -> [ForecastMode
     default:
         print("Error getting values for current day.")
     }
-
-    let forecastDayComponent = Calendar.current.dateComponents(in: .current, from: forecastDay).day  //15
-
+    let forecastDayComponent = Calendar.current.dateComponents(in: .current, from: forecastDay).day
     let filteredList = unfilteredList.filter { item in
-
         let date = Date(timeIntervalSince1970: Double(item.day!))
         let dayComponent = Calendar.current.dateComponents(in: .current, from: date).day
         return dayComponent == forecastDayComponent
     }
-    print(filteredList)
     return filteredList
 }
 
-func minTemp(unfilteredList: [ForecastModel]) -> Double {
+func getMinTempString(unfilteredList: [ForecastModel]) -> String {
     let temp: [Double] = unfilteredList.map { item in
         return item.temp
     }
-    return temp.min()!
+    return createTempString(temp: temp.min()!)
 }
 
-func maxTemp(unfilteredList: [ForecastModel]) -> Double {
+func getMaxTempString(unfilteredList: [ForecastModel]) -> String {
     let temp: [Double] = unfilteredList.map { item in
         return item.temp
     }
-    return temp.max()!
-
+    return createTempString(temp: temp.max()!)
 }
+
+//TODO: Where put this function? //>> format temp to show 9-13°
+func createTempString(temp: Double) -> String {
+
+    let formatter = MeasurementFormatter()
+    formatter.numberFormatter.maximumFractionDigits = 0
+    formatter.numberFormatter.roundingMode = .halfEven
+    formatter.unitStyle = MeasurementFormatter.UnitStyle.short
+    let tempUnit = Measurement(value: temp, unit: UnitTemperature.celsius)
+//    UnitTemperature.celsius.symbol
+    return (formatter.string(from: tempUnit))
+}
+
 
 
 
 //extension Array where Element: DateContaining {
 //    func filterNoon() -> 
 //}
+

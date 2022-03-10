@@ -17,43 +17,6 @@ struct CurrentModel: WeatherModel {
 
 }
 
-//struct ForecastDay {
-//
-//    let day: Int
-//    let dataPoints: [DataPoint]
-//
-//    struct DataPoint {
-//        let time: Int
-//        let temp: Double
-//    }
-//}
-
-//[
-//    [day: 1, time: 12, temp: 66],
-//    [day: 1, time: 12, temp: 66],
-//    [day: 1, time: 12, temp: 66],
-//    [day: 2, time: 12, temp: 66],
-//    [day: 2, time: 12, temp: 66],
-//    [day: 2, time: 12, temp: 66],
-//    [day: 1, time: 12, temp: 66],
-//    [day: 1, time: 12, temp: 66],
-//    [day: 1, time: 12, temp: 66],
-//    [day: 1, time: 12, temp: 66],
-//    [day: 1, time: 12, temp: 66],
-//]
-//
-//[
-//    [day: 1, items: [
-//        [time: 12, temp: 66],
-//        time: 12, temp: 66]
-//    time: 12, temp: 66]
-//     ],
-//[day: 1, items: [
-//    [time: 12, temp: 66],
-//    time: 12, temp: 66]
-//time: 12, temp: 66]
-// ],
-//]
 
 struct ForecastModel: WeatherModel {
 
@@ -62,8 +25,7 @@ struct ForecastModel: WeatherModel {
     let day: Int?
     var isForecast: Bool
     var isNight: Bool?   //Weather
-    //    let minTemp: Double
-    //    let maxTemp: Double
+
 
     func getDayOfWeek() -> String {
         let dayFormatter = DateFormatter()
@@ -71,8 +33,6 @@ struct ForecastModel: WeatherModel {
         let nameOfDay = dayFormatter.weekdaySymbols[Calendar.current.component(.weekday, from: dayOfWeek) - 1]
         return nameOfDay
     }
-
-
 }
 
 protocol WeatherModel {
@@ -85,7 +45,8 @@ extension WeatherModel {
     var tempString: String {
         let formatter = MeasurementFormatter()
         formatter.numberFormatter.maximumFractionDigits = 0
-        formatter.numberFormatter.roundingMode = .up
+        formatter.numberFormatter.roundingMode = .halfEven
+        formatter.unitStyle = MeasurementFormatter.UnitStyle.short
         let tempUnit = Measurement(value: temp, unit: UnitTemperature.celsius)
         return (formatter.string(from: tempUnit))
     }
