@@ -107,8 +107,10 @@ class WeatherManager {
             let sunrise = Date(timeIntervalSince1970: decodedWeather.sys.sunrise)
             let sunset = Date(timeIntervalSince1970: decodedWeather.sys.sunset)
             let answer = Date().isBetween(with: sunrise, with: sunset)
+            let decodedMinTemp = decodedWeather.main.temp_min
+            let decodedMaxTemp = decodedWeather.main.temp_max
 
-            return CurrentModel(temp: decodedTemp, condition: decodedCondition, name: decodedName, isNight: answer, isForecast: false)
+            return CurrentModel(currentTemp: decodedTemp, minTemp: decodedMinTemp, maxTemp: decodedMaxTemp, condition: decodedCondition, name: decodedName, isNight: answer, isForecast: false)
 
         } catch {
             delegate?.didCatchError(error: error)
@@ -134,7 +136,7 @@ class WeatherManager {
                 let forecastWeekday = Calendar.current.component(.weekday, from: foracastDate)
 
                 if forecastWeekday != today {
-                    return ForecastModel(temp: forecastTemp, condition: forecastCondition, day: foracastDay, isForecast: true, isNight: false)
+                    return ForecastModel(currentTemp: forecastTemp, condition: forecastCondition, day: foracastDay, isForecast: true, isNight: false)
                 } else {
                     return nil
                 }

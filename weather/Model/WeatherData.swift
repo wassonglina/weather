@@ -8,44 +8,44 @@
 import Foundation
 
 struct OpenWeatherAPI {
-
+    
     struct Current: Decodable {
         let name: String
         let main: Temperature
         let weather: [Weather]
         let sys: Sys
-
+        
         struct Sys: Decodable {
             let sunrise: Double
             let sunset: Double
         }
     }
-
+    
     struct Forecast: Decodable {
         let city: City
         let list: [Entry]
-
+        
         struct City: Decodable {
             let name: String
         }
-
+        
         struct Entry: Decodable, DateContaining {
             let dt: Int //Date
             let main: Temperature
             let weather: [Weather]
         }
     }
-
+    
     struct Temperature: Decodable {
         let temp: Double
         let temp_min: Double
         let temp_max: Double
     }
-
+    
     struct Weather: Decodable {
         let id: Int
     }
-
+    
 }
 
 protocol DateContaining {
@@ -54,17 +54,17 @@ protocol DateContaining {
 
 //Generics > flexible, reusable functions and types > [T]
 func filterNoon<T: DateContaining>(unfilteredList: [T]) -> [T] {
-
+    
     let filteredList = unfilteredList.filter { item in
-
+        
         //creates the day of timestamp dt > prints:
         //2022-03-13 18:00:00 +0000
         let date = Date(timeIntervalSince1970: Double(item.dt))
-
+        
         //gives infos of choosen calendar fo date > prints:
         //calendar: gregorian (current) timeZone: America/Los_Angeles (fixed (equal to current)) era: 1 year: 2022 month: 3 day: 13 hour: 11 ...
         let components = Calendar.current.dateComponents(in: .current, from: date)
-
+        
         return (11...13).contains(components.hour!)
     }
     return filteredList
@@ -73,6 +73,7 @@ func filterNoon<T: DateContaining>(unfilteredList: [T]) -> [T] {
 
 //TODO: function is for forecast weather:
 func filterDay(unfilteredList: [ForecastModel], dayNumber: Int) -> [ForecastModel] {
+    
     var forecastDay =  Date.now
     switch dayNumber {
     case 1:
@@ -95,33 +96,12 @@ func filterDay(unfilteredList: [ForecastModel], dayNumber: Int) -> [ForecastMode
     return filteredList
 }
 
-func getMinTempString(unfilteredList: [ForecastModel]) -> String {
+func getTemps(unfilteredList: [ForecastModel]) -> (min: Double, max: Double) {
     let temp: [Double] = unfilteredList.map { item in
-        return item.temp
+        return item.currentTemp
     }
-    return createTempString(temp: temp.min()!)
+    return (temp.min()!, temp.max()!)
 }
-
-func getMaxTempString(unfilteredList: [ForecastModel]) -> String {
-    let temp: [Double] = unfilteredList.map { item in
-        return item.temp
-    }
-    return createTempString(temp: temp.max()!)
-}
-
-//TODO: Where put this function? //>> format temp to show 9-13°
-func createTempString(temp: Double) -> String {
-
-    let formatter = MeasurementFormatter()
-    formatter.numberFormatter.maximumFractionDigits = 0
-    formatter.numberFormatter.roundingMode = .halfEven
-    formatter.unitStyle = MeasurementFormatter.UnitStyle.short
-    let tempUnit = Measurement(value: temp, unit: UnitTemperature.celsius)
-//    UnitTemperature.celsius.symbol
-    return (formatter.string(from: tempUnit))
-}
-
-
 
 
 //extension Array where Element: DateContaining {

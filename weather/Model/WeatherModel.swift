@@ -8,19 +8,19 @@
 import Foundation
 
 struct CurrentModel: WeatherModel {
-
-    let temp: Double
+    let currentTemp: Double
+    let minTemp: Double
+    let maxTemp: Double
     let condition: Int
     let name: String
     var isNight: Bool?
     var isForecast: Bool
-
 }
 
 
 struct ForecastModel: WeatherModel {
 
-    let temp: Double
+    let currentTemp: Double
     let condition: Int
     let day: Int?
     var isForecast: Bool
@@ -36,7 +36,7 @@ struct ForecastModel: WeatherModel {
 }
 
 protocol WeatherModel {
-    var temp: Double { get }
+    var currentTemp: Double { get }
     var condition: Int { get }
 }
 
@@ -47,7 +47,9 @@ extension WeatherModel {
         formatter.numberFormatter.maximumFractionDigits = 0
         formatter.numberFormatter.roundingMode = .halfEven
         formatter.unitStyle = MeasurementFormatter.UnitStyle.short
-        let tempUnit = Measurement(value: temp, unit: UnitTemperature.celsius)
+
+        //get only temp
+        let tempUnit = Measurement(value: currentTemp, unit: UnitTemperature.celsius)
         return (formatter.string(from: tempUnit))
     }
 
