@@ -96,12 +96,20 @@ func filterDay(unfilteredList: [ForecastModel], dayNumber: Int) -> [ForecastMode
     return filteredList
 }
 
-func getTemps(unfilteredList: [ForecastModel]) -> (min: Double, max: Double) {
+func getMinTemp(unfilteredList: [ForecastModel]) -> Double {
     let temp: [Double] = unfilteredList.map { item in
         return item.currentTemp
     }
-    return (temp.min()!, temp.max()!)
+    return (temp.min()!)
 }
+
+func getMaxTemp(unfilteredList: [ForecastModel]) -> Double {
+    let temp: [Double] = unfilteredList.map { item in
+        return item.currentTemp
+    }
+    return (temp.max()!)
+}
+
 
 
 //extension Array where Element: DateContaining {

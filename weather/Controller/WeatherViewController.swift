@@ -38,6 +38,12 @@ class WeatherViewController: UIViewController {
     @IBOutlet var temp4TextLabel: UILabel!
     @IBOutlet var temp5TextLabel: UILabel!
 
+    @IBOutlet var temp1MinTextLabel: UILabel!
+    @IBOutlet var temp2MinTextLabel: UILabel!
+    @IBOutlet var temp3MinTextLabel: UILabel!
+    @IBOutlet var temp4MinTextLabel: UILabel!
+    @IBOutlet var temp5MinTextLabel: UILabel!
+
     @IBOutlet var forecastStackView: UIStackView!
 
     @IBOutlet var searchButton: UIButton!
@@ -108,6 +114,25 @@ class WeatherViewController: UIViewController {
         temp3TextLabel.adjustsFontForContentSizeCategory = true
         temp4TextLabel.adjustsFontForContentSizeCategory = true
         temp5TextLabel.adjustsFontForContentSizeCategory = true
+
+        temp1MinTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+        temp2MinTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+        temp3MinTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+        temp4MinTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+        temp5MinTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
+
+        temp1MinTextLabel.adjustsFontForContentSizeCategory = true
+        temp2MinTextLabel.adjustsFontForContentSizeCategory = true
+        temp3MinTextLabel.adjustsFontForContentSizeCategory = true
+        temp4MinTextLabel.adjustsFontForContentSizeCategory = true
+        temp5MinTextLabel.adjustsFontForContentSizeCategory = true
+
+
+        //        temp1TextLabel.font = temp1TextLabel.font.monospacingNumbers()
+        //        temp2TextLabel.font = temp2TextLabel.font.monospacingNumbers()
+        //        temp3TextLabel.font = temp3TextLabel.font.monospacingNumbers()
+        //        temp4TextLabel.font = temp4TextLabel.font.monospacingNumbers()
+        //        temp5TextLabel.font = temp5TextLabel.font.monospacingNumbers()
 
         forecastView.backgroundColor = .white.withAlphaComponent(0.15)
         forecastView.layer.cornerRadius = cornerRadius
@@ -247,7 +272,6 @@ extension WeatherViewController: UITextFieldDelegate {
 
 extension WeatherViewController: ViewModelDelegate {
 
-
     func presentAuthAlert(with title: String, with message: String, with cancel: UIAlertAction, with action: UIAlertAction) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(action)
@@ -257,16 +281,17 @@ extension WeatherViewController: ViewModelDelegate {
 
 
     // when bad network weather and forecast don't load simultaneously
-    func updateCurrentUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String) {
+    func updateCurrentUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastMinTemp: String, forecastMaxTemp: String) {
         DispatchQueue.main.async {
             self.cityTextLabel.text = city
             self.tempTextLabel.text = temperature
             self.weatherImageView.image = image
             self.errorImageview.isHidden = true
 
-            self.forecast1TextLabel.text = "Now"
+            self.forecast1TextLabel.text = "Today"
             self.cond1ImageView.image = forecastImage
-            self.temp1TextLabel.text = forecastTemp
+            self.temp1TextLabel.text = forecastMaxTemp
+            self.temp1MinTextLabel.text = forecastMinTemp
 
             self.cityTextLabel.textColor = .white
             self.tempTextLabel.isHidden = false
@@ -275,23 +300,28 @@ extension WeatherViewController: ViewModelDelegate {
         }
     }
 
-    func updateForecastUI(VCForecast: [(dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)]) {
+    func updateForecastUI(VCForecast: [(dayOfWeek: String, forecastImage: UIImage, forecastMinTemp: String, forecastMaxTemp: String)]) {
         DispatchQueue.main.async {
             self.forecast2TextLabel.text = VCForecast[0].dayOfWeek
             self.cond2ImageView.image = VCForecast[0].forecastImage
-            self.temp2TextLabel.text = VCForecast[0].forecastTemp
+            self.temp2TextLabel.text = VCForecast[0].forecastMaxTemp
+            self.temp1MinTextLabel.text = VCForecast[0].forecastMinTemp
 
             self.forecast3TextLabel.text = VCForecast[1].dayOfWeek
             self.cond3ImageView.image = VCForecast[1].forecastImage
-            self.temp3TextLabel.text = VCForecast[1].forecastTemp
+            self.temp3TextLabel.text = VCForecast[1].forecastMaxTemp
+            self.temp2MinTextLabel.text = VCForecast[1].forecastMinTemp
 
             self.forecast4TextLabel.text = VCForecast[2].dayOfWeek
             self.cond4ImageView.image = VCForecast[2].forecastImage
-            self.temp4TextLabel.text = VCForecast[2].forecastTemp
+            self.temp4TextLabel.text = VCForecast[2].forecastMaxTemp
+            self.temp4MinTextLabel.text = VCForecast[2].forecastMinTemp
+
 
             self.forecast5TextLabel.text = VCForecast[3].dayOfWeek
             self.cond5ImageView.image = VCForecast[3].forecastImage
-            self.temp5TextLabel.text = VCForecast[3].forecastTemp
+            self.temp5TextLabel.text = VCForecast[3].forecastMaxTemp
+            self.temp5MinTextLabel.text = VCForecast[3].forecastMinTemp
 
             self.forecastStackView.isHidden = false
             self.forecastAnimationView.isHidden = true

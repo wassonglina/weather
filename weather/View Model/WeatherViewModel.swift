@@ -10,12 +10,12 @@ import CoreLocation
 
 
 protocol ViewModelDelegate: AnyObject {
-    func updateCurrentUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastTemp: String)
+    func updateCurrentUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastMinTemp: String, forecastMaxTemp: String)
 
     func presentAuthAlert(with title: String, with message: String, with cancel: UIAlertAction, with action: UIAlertAction)
 
     func updateForecastUI(VCForecast: [
-        (dayOfWeek: String, forecastImage: UIImage, forecastTemp: String)
+        (dayOfWeek: String, forecastImage: UIImage, forecastMinTemp: String, forecastMaxTemp: String)
     ])
 
     func didCatchError(errorMsg: String, errorImage: UIImage)
@@ -134,29 +134,15 @@ class WeatherViewModel: NSObject {
     }
 
     //style depends on temp unit and region setting > if temp unit selected that's less common will show unit (e.g. °C for USA or °F for DE)
-    func createTempString(min: Double, max: Double) -> String {
+    func createTempString(temp: Double) -> String {
         let formatter = MeasurementFormatter()
         formatter.numberFormatter.maximumFractionDigits = 0
         formatter.numberFormatter.roundingMode = .halfEven
         formatter.unitStyle = .short
-        let minUnit = Measurement(value: min, unit: UnitTemperature.celsius)
-        let maxUnit = Measurement(value: max, unit: UnitTemperature.celsius)
-        let min = (formatter.string(from: minUnit))
-        let max = (formatter.string(from: maxUnit))
-        return ("\(min) - \(max)")
-    }
+        let tempUnit = Measurement(value: temp, unit: UnitTemperature.celsius)
+        let temp = formatter.string(from: tempUnit)
 
-    func createTempString2(min: Double, max: Double) -> String {
-        let formatter = MeasurementFormatter()
-        formatter.numberFormatter.maximumFractionDigits = 0
-        formatter.numberFormatter.roundingMode = .halfEven
-        formatter.unitStyle = .short
-
-        let minUnit = Measurement(value: min, unit: UnitTemperature.celsius)
-        let maxUnit = Measurement(value: max, unit: UnitTemperature.celsius)
-        let min = formatter.string(from: minUnit)
-        let max = formatter.string(from: maxUnit)
-        return ("\(min) - \(max)")
+        return (temp)
     }
 
 }
@@ -167,45 +153,48 @@ extension WeatherViewModel: WeatherManagerDelegate {
     func didFetchCurrent(with currentWeather: CurrentModel) {
         let city = currentWeather.name
         let currentTemp = currentWeather.tempString
-
         let image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast))")!
-
         let conditionImage = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast)).fill")!
+        let minTemp = createTempString(temp: currentWeather.minTemp)
+        let maxTemp = createTempString(temp: currentWeather.maxTemp)
+ //       let tempsString = ("\(minTemp) - \(maxTemp)")
 
-        let tempsString = createTempString(min: currentWeather.minTemp, max: currentWeather.maxTemp)
-  //      let forecastTemp = currentWeather.tempString
-
-        delegate?.updateCurrentUI(city: city, temperature: currentTemp, image: image, forecastImage: conditionImage, forecastTemp: tempsString)
+        delegate?.updateCurrentUI(city: city, temperature: currentTemp, image: image, forecastImage: conditionImage, forecastMinTemp: minTemp, forecastMaxTemp: maxTemp)
     }
 
     func didFetchForecast(with forecastEntries: [ForecastModel]) {
 
         let firstDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 1)
         let firstDay = firstDayAll.first!.getDayOfWeek()
-        let firstImage = UIImage(systemName: (firstDayAll.first!.symbolName(isNight: (firstDayAll.first!.isNight!), isForecast: firstDayAll.first!.isForecast)))
-        let firstMinMaxTemps = getTemps(unfilteredList: firstDayAll)
-        let firstTempsString = createTempString(min: firstMinMaxTemps.min, max: firstMinMaxTemps.max)
+        let firstImage = UIImage(systemName: (firstDayAll[4].symbolName(isNight: (firstDayAll.first!.isNight!), isForecast: firstDayAll.first!.isForecast)))
+        let firstMinTemp = createTempString(temp: getMinTemp(unfilteredList: firstDayAll))
+        let firstMaxTemp = createTempString(temp: getMaxTemp(unfilteredList: firstDayAll))
+  //      let firstTempsString = ("\(firstMinTemp) - \(firstMaxTemp)")
 
         let secondDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 2)
         let secondDay = secondDayAll.first!.getDayOfWeek()
-        let secondImage = UIImage(systemName: (secondDayAll.first!.symbolName(isNight: (firstDayAll.first!.isNight!), isForecast: secondDayAll.first!.isForecast)))
-        let secondMinMaxTemps = getTemps(unfilteredList: secondDayAll)
-        let secondTempsString = createTempString(min: secondMinMaxTemps.min, max: secondMinMaxTemps.max)
+        let secondImage = UIImage(systemName: (secondDayAll[4].symbolName(isNight: (secondDayAll.first!.isNight!), isForecast: secondDayAll.first!.isForecast)))
+        let secondMinTemp = createTempString(temp: getMinTemp(unfilteredList: secondDayAll))
+        let secondtMaxTemp = createTempString(temp: getMaxTemp(unfilteredList: secondDayAll))
+  //      let secondTempsString = ("\(secondMinTemp) - \(secondtMaxTemp)")
 
         let thirdDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 3)
         let thirdDay = thirdDayAll.first!.getDayOfWeek()
-        let thirdImage = UIImage(systemName: (thirdDayAll.first!.symbolName(isNight: (thirdDayAll.first!.isNight!), isForecast: thirdDayAll.first!.isForecast)))
-        let thirdMinMaxTemps = getTemps(unfilteredList: thirdDayAll)
-        let thirdTempsString = createTempString(min: thirdMinMaxTemps.min, max: thirdMinMaxTemps.max)
+        let thirdImage = UIImage(systemName: (thirdDayAll[4].symbolName(isNight: (thirdDayAll.first!.isNight!), isForecast: thirdDayAll.first!.isForecast)))
+        let thirdMinTemp = createTempString(temp: getMinTemp(unfilteredList: thirdDayAll))
+        let thirdMaxTemp = createTempString(temp: getMaxTemp(unfilteredList: thirdDayAll))
+   //     let thirdTempsString = ("\(thirdMinTemp) - \(thirdMaxTemp)")
 
         let fourthDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 4)
         let fourthDay = fourthDayAll.first!.getDayOfWeek()
-        let fourthImage = UIImage(systemName: (fourthDayAll.first!.symbolName(isNight: (thirdDayAll.first!.isNight!), isForecast: fourthDayAll.first!.isForecast)))
-        let fourthMinMaxTemps = getTemps(unfilteredList: fourthDayAll)
-        let fourthTempsString = createTempString(min: fourthMinMaxTemps.min, max: fourthMinMaxTemps.max)
+        let fourthImage = UIImage(systemName: (fourthDayAll[4].symbolName(isNight: (fourthDayAll.first!.isNight!), isForecast: fourthDayAll.first!.isForecast)))
+        let fourthMinTemp = createTempString(temp: getMinTemp(unfilteredList: fourthDayAll))
+        let fourthMaxTemp = createTempString(temp: getMaxTemp(unfilteredList: fourthDayAll))
+  //      let fourthTempsString = ("\(fourthMinTemp) - \(fourthMaxTemp)")
+
+        delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage!, forecastMinTemp: firstMinTemp, forecastMaxTemp: firstMaxTemp), (dayOfWeek: secondDay, forecastImage: secondImage!, forecastMinTemp: secondMinTemp, forecastMaxTemp: secondtMaxTemp), (dayOfWeek: thirdDay, forecastImage: thirdImage!, forecastMinTemp: thirdMinTemp, forecastMaxTemp: thirdMaxTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage!, forecastMinTemp: fourthMinTemp, forecastMaxTemp: fourthMaxTemp)])
 
 
-        delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage!, forecastTemp:  firstTempsString), (dayOfWeek: secondDay, forecastImage: secondImage!, forecastTemp: secondTempsString), (dayOfWeek: thirdDay, forecastImage: thirdImage!, forecastTemp: thirdTempsString), (dayOfWeek: fourthDay, forecastImage: fourthImage!, forecastTemp: fourthTempsString)])
     }
 
     func didCatchError(error: Error) {
