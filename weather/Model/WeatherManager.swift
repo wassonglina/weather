@@ -11,7 +11,7 @@ import CoreLocation
 protocol WeatherManagerDelegate: AnyObject {
     func didFetchCurrent(with: CurrentModel)
     func didFetchForecast(with: [ForecastModel])
-    func didCatchError(error: Error)
+    func didCatchError(error: NSError)
 }
 
 //filter characters for URL
@@ -84,7 +84,7 @@ class WeatherManager {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { data, response, error in
                 if error != nil {
-                    self.delegate?.didCatchError(error: error!)
+                    self.delegate?.didCatchError(error: error! as NSError)
                     print("Error performing network request")
                     return
                 }
@@ -113,7 +113,7 @@ class WeatherManager {
             return CurrentModel(currentTemp: decodedTemp, minTemp: decodedMinTemp, maxTemp: decodedMaxTemp, condition: decodedCondition, name: decodedName, isNight: answer, isForecast: false)
 
         } catch {
-            delegate?.didCatchError(error: error)
+            delegate?.didCatchError(error: error as NSError)
             return nil
         }
     }
@@ -143,7 +143,7 @@ class WeatherManager {
             }
             return forecastModels
         } catch {
-            delegate?.didCatchError(error: error)
+            delegate?.didCatchError(error: error as NSError)
             return nil
         }
     }

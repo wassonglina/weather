@@ -197,15 +197,19 @@ extension WeatherViewModel: WeatherManagerDelegate {
 
     }
 
-    func didCatchError(error: Error) {
+    func didCatchError(error: NSError) {
         //TODO: Use error code instead
         let text: String
         let image: UIImage
-        if error.localizedDescription == "The data couldn’t be read because it is missing." {
+
+        if error.code == 4865 {
             text = "City Not Found"
             image = UIImage(systemName: "globe.asia.australia")!
-        } else if error.localizedDescription == "The Internet connection appears to be offline." {
+        } else if error.code == -1009 {
             text = "No Internet"
+            image = UIImage(systemName: "wifi.slash")!
+        } else if error.code == -1001 {
+            text = "Request Timed Out"
             image = UIImage(systemName: "wifi.slash")!
         } else {
             text = "Error"
