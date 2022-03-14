@@ -44,6 +44,7 @@ class WeatherManager {
     func createCityURL(city: String) {
         print(#function)
         let weatherURLString = "\(weatherURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
+        print(weatherURLString)
         let forcastURLString = "\(weatherForecastURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
         print(forcastURLString)
         performNetworkRequest(with: weatherURLString) { data in
@@ -73,7 +74,6 @@ class WeatherManager {
         performNetworkRequest(with: forcastURLString) { data in
             if let forecastWeather = self.parseJSONForecast(with: data) {
                 self.delegate?.didFetchForecast(with: forecastWeather)
-             //   self.delegate?.
             }
         }
     }

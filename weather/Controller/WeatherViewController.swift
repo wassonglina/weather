@@ -305,12 +305,12 @@ extension WeatherViewController: ViewModelDelegate {
             self.forecast2TextLabel.text = VCForecast[0].dayOfWeek
             self.cond2ImageView.image = VCForecast[0].forecastImage
             self.temp2TextLabel.text = VCForecast[0].forecastMaxTemp
-            self.temp1MinTextLabel.text = VCForecast[0].forecastMinTemp
+            self.temp2MinTextLabel.text = VCForecast[0].forecastMinTemp
 
             self.forecast3TextLabel.text = VCForecast[1].dayOfWeek
             self.cond3ImageView.image = VCForecast[1].forecastImage
             self.temp3TextLabel.text = VCForecast[1].forecastMaxTemp
-            self.temp2MinTextLabel.text = VCForecast[1].forecastMinTemp
+            self.temp3MinTextLabel.text = VCForecast[1].forecastMinTemp
 
             self.forecast4TextLabel.text = VCForecast[2].dayOfWeek
             self.cond4ImageView.image = VCForecast[2].forecastImage
