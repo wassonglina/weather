@@ -63,6 +63,7 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         print(#function)
 
+// text big enough no need for modificatio? delete once UI is layed out properly
    //     let todayFont = UIFont.scriptFont(size: 47, style: .medium)
    //     let tempFont = UIFont.scriptFont(size: 47, style: .medium)
         let forecastFont = UIFont.scriptFont(size: 20, style: .medium)
@@ -73,17 +74,19 @@ class WeatherViewController: UIViewController {
         cityTextField.delegate = self
         weatherViewModel.delegate = self
 
-        weatherViewModel.getLocationBasedOnUserPref()
+   //     weatherViewModel.getLocationBasedOnUserPref()
 
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
         cityTextField.keyboardType = .asciiCapable
         cityTextField.enablesReturnKeyAutomatically = true
 
+// text big enough no need for modification? delete once UI is layed out properly
 //        cityTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: todayFont)
 //        cityTextLabel.adjustsFontForContentSizeCategory = true
         cityTextLabel.textColor = .white.withAlphaComponent(0.15)
         cityTextLabel.text = animationText
 
+// text big enough no need for modification? delete once UI is layed out properly
 //        tempTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: todayFont)
 //        tempTextLabel.adjustsFontForContentSizeCategory = true
         tempTextLabel.isHidden = true
@@ -127,13 +130,6 @@ class WeatherViewController: UIViewController {
         temp4MinTextLabel.adjustsFontForContentSizeCategory = true
         temp5MinTextLabel.adjustsFontForContentSizeCategory = true
 
-
-        //        temp1TextLabel.font = temp1TextLabel.font.monospacingNumbers()
-        //        temp2TextLabel.font = temp2TextLabel.font.monospacingNumbers()
-        //        temp3TextLabel.font = temp3TextLabel.font.monospacingNumbers()
-        //        temp4TextLabel.font = temp4TextLabel.font.monospacingNumbers()
-        //        temp5TextLabel.font = temp5TextLabel.font.monospacingNumbers()
-
         forecastView.backgroundColor = .white.withAlphaComponent(0.15)
         forecastView.layer.cornerRadius = cornerRadius
 
@@ -155,7 +151,6 @@ class WeatherViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(self.willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -178,9 +173,10 @@ class WeatherViewController: UIViewController {
 
     @objc func willEnterForeground() {
         print(#function)
-        weatherViewModel.willEnterForeground()
+     //   weatherViewModel.willEnterForeground()
     }
 
+    //TODO: jesse >> only call getLocationBasedOnUserPref() in didBecomeActive? Otherwise called 3x (viewDidLoad,willEnterForeground, and didBecomeActive)
     @objc func didBecomeActive() {
         print("VC: \(#function)")
         weatherViewModel.didBecomeActive()

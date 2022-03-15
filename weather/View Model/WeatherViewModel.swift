@@ -21,7 +21,6 @@ protocol ViewModelDelegate: AnyObject {
     func didCatchError(errorMsg: String, errorImage: UIImage)
 }
 
-
 class WeatherViewModel: NSObject {
 
     var locationManager = CLLocationManager()
@@ -30,12 +29,28 @@ class WeatherViewModel: NSObject {
     var timer: Timer?
     let randomLocation = ["Honolulu", "Hobart", "Pattani", "Manaus", "Stavanger", "Taipei", "Dhaka"]
 
+    let defaults = UserDefaults.standard
+
     override init() {
         super.init()
         weatherManager.delegate = self
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers    //faster response + energy efficient
+
+        // set PreferedLocationSource based on last settings
+        //true if .city was set and false when never or .location set
+        let userPrefCity = defaults.bool(forKey: "UserPrefCity")
+        print("User prefers city: \(userPrefCity)")
+
+        if userPrefCity == false {
+            preferedLocationSource = .currentLocation
+        } else if userPrefCity == true {
+            preferedLocationSource = .city(defaults.string(forKey: "savedCity")!)
+        } else {
+            print("Something didn't work setting prefs with user defaults.")
+        }
     }
+
 
     enum PreferedLocationSource: Equatable {
         case currentLocation
@@ -49,11 +64,16 @@ class WeatherViewModel: NSObject {
                 print("case location")
                 locationManager.startUpdatingLocation()
                 getWeatherWithCoordinates()
+                defaults.set(false, forKey: "UserPrefCity")
+                print("User prefers city: \(defaults.bool(forKey: "UserPrefCity"))")
             case .city(let cityname):
                 print("case city")
                 locationManager.stopUpdatingLocation()
                 weatherManager.createCityURL(city: cityname)
-
+                //called when city search tapped; sets USerPrefCity == true and saves City in defaults
+                defaults.set(true, forKey: "UserPrefCity")
+                print("User prefers city: \(defaults.bool(forKey: "UserPrefCity"))")
+                defaults.set(cityname, forKey: "savedCity")
             case nil:
                 break
             }
@@ -79,6 +99,8 @@ class WeatherViewModel: NSObject {
         }
     }
 
+    //called in viewDidLoad, didBecomeActive and willEnterForeground
+    //>> check user Pref  >>Not quit right here
     func getLocationBasedOnUserPref() {
         print(#function)
         switch preferedLocationSource {
@@ -123,7 +145,9 @@ class WeatherViewModel: NSObject {
     func createAlert(){
         let title = "Get weather for your current location?"
         let message = "Allow access to your location in settings."
-        let cancelAction = UIAlertAction(title: "Cancel", style: .default)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default) { _ in
+            self.getLocationBasedOnUserPref()
+        }
         let settingsAction = UIAlertAction(title: "Settings", style: .cancel) { _ in
             let settingsUrl = NSURL(string: UIApplication.openSettingsURLString)
             if let url = settingsUrl {
@@ -144,9 +168,7 @@ class WeatherViewModel: NSObject {
 
         return (temp)
     }
-
 }
-
 
 extension WeatherViewModel: WeatherManagerDelegate {
 
@@ -157,7 +179,6 @@ extension WeatherViewModel: WeatherManagerDelegate {
         let conditionImage = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast)).fill")!
         let minTemp = createTempString(temp: currentWeather.minTemp)
         let maxTemp = createTempString(temp: currentWeather.maxTemp)
- //       let tempsString = ("\(minTemp) - \(maxTemp)")
 
         delegate?.updateCurrentUI(city: city, temperature: currentTemp, image: image, forecastImage: conditionImage, forecastMinTemp: minTemp, forecastMaxTemp: maxTemp)
     }
@@ -169,32 +190,26 @@ extension WeatherViewModel: WeatherManagerDelegate {
         let firstImage = UIImage(systemName: (firstDayAll[4].symbolName(isNight: (firstDayAll.first!.isNight!), isForecast: firstDayAll.first!.isForecast)))
         let firstMinTemp = createTempString(temp: getMinTemp(unfilteredList: firstDayAll))
         let firstMaxTemp = createTempString(temp: getMaxTemp(unfilteredList: firstDayAll))
-  //      let firstTempsString = ("\(firstMinTemp) - \(firstMaxTemp)")
 
         let secondDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 2)
         let secondDay = secondDayAll.first!.getDayOfWeek()
         let secondImage = UIImage(systemName: (secondDayAll[4].symbolName(isNight: (secondDayAll.first!.isNight!), isForecast: secondDayAll.first!.isForecast)))
         let secondMinTemp = createTempString(temp: getMinTemp(unfilteredList: secondDayAll))
         let secondtMaxTemp = createTempString(temp: getMaxTemp(unfilteredList: secondDayAll))
-  //      let secondTempsString = ("\(secondMinTemp) - \(secondtMaxTemp)")
 
         let thirdDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 3)
         let thirdDay = thirdDayAll.first!.getDayOfWeek()
         let thirdImage = UIImage(systemName: (thirdDayAll[4].symbolName(isNight: (thirdDayAll.first!.isNight!), isForecast: thirdDayAll.first!.isForecast)))
         let thirdMinTemp = createTempString(temp: getMinTemp(unfilteredList: thirdDayAll))
         let thirdMaxTemp = createTempString(temp: getMaxTemp(unfilteredList: thirdDayAll))
-   //     let thirdTempsString = ("\(thirdMinTemp) - \(thirdMaxTemp)")
 
         let fourthDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 4)
         let fourthDay = fourthDayAll.first!.getDayOfWeek()
         let fourthImage = UIImage(systemName: (fourthDayAll[4].symbolName(isNight: (fourthDayAll.first!.isNight!), isForecast: fourthDayAll.first!.isForecast)))
         let fourthMinTemp = createTempString(temp: getMinTemp(unfilteredList: fourthDayAll))
         let fourthMaxTemp = createTempString(temp: getMaxTemp(unfilteredList: fourthDayAll))
-  //      let fourthTempsString = ("\(fourthMinTemp) - \(fourthMaxTemp)")
 
         delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage!, forecastMinTemp: firstMinTemp, forecastMaxTemp: firstMaxTemp), (dayOfWeek: secondDay, forecastImage: secondImage!, forecastMinTemp: secondMinTemp, forecastMaxTemp: secondtMaxTemp), (dayOfWeek: thirdDay, forecastImage: thirdImage!, forecastMinTemp: thirdMinTemp, forecastMaxTemp: thirdMaxTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage!, forecastMinTemp: fourthMinTemp, forecastMaxTemp: fourthMaxTemp)])
-
-
     }
 
     func didCatchError(error: NSError) {
@@ -223,18 +238,19 @@ extension WeatherViewModel: WeatherManagerDelegate {
 extension WeatherViewModel: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        getWeatherWithCoordinates()
         print(#function)
+        getWeatherWithCoordinates()
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        self.preferedLocationSource = .currentLocation    //fails first time
         print(#function)
+        //don't call getLocationBasedOnUserPref() here -> weather will update once didBecomeActive() is called
+     //   getLocationBasedOnUserPref()
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(#function)
-        //    >> check here for internet connection
+        //send error "no auth"
     }
 }
 

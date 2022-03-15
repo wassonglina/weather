@@ -17,6 +17,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aS2-fM-2sa" userLabel="Top Info">
+                                <rect key="frame" x="67.666666666666686" y="107" width="240" height="240"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="240" id="4Yr-zw-T81"/>
+                                    <constraint firstAttribute="height" constant="240" id="X1e-Ue-hrR"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="h9O-Hg-Tbf" userLabel="Alignment Space">
+                                <rect key="frame" x="0.0" y="44" width="375" height="416.33333333333331"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="122 º" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zz7-b8-QaU">
                                 <rect key="frame" x="163.33333333333334" y="392.33333333333331" width="48.333333333333343" height="27.333333333333314"/>
                                 <fontDescription key="fontDescription" name="AvenirNext-Medium" family="Avenir Next" pointSize="20"/>
@@ -347,6 +359,8 @@
                         <color key="backgroundColor" red="0.69996215930000005" green="0.79827084449999997" blue="0.81591272839999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="bUA-uA-yrW" firstAttribute="top" secondItem="pF2-Wx-93C" secondAttribute="bottom" constant="40" id="1Hw-4X-cDb"/>
+                            <constraint firstItem="aS2-fM-2sa" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="2MO-4Q-lLC"/>
+                            <constraint firstItem="aS2-fM-2sa" firstAttribute="top" relation="greaterThanOrEqual" secondItem="6Tk-OE-BBY" secondAttribute="top" id="3FK-qn-aJe"/>
                             <constraint firstItem="2MH-Xn-Pn9" firstAttribute="width" secondItem="EbK-hb-Hce" secondAttribute="width" id="4dg-dg-App"/>
                             <constraint firstItem="Zz7-b8-QaU" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="54W-5O-UKG"/>
                             <constraint firstItem="Y5P-gx-qBx" firstAttribute="trailing" secondItem="Mwt-Rg-Oaz" secondAttribute="trailing" id="6Oe-aa-dpE"/>
@@ -354,8 +368,10 @@
                             <constraint firstItem="Mwt-Rg-Oaz" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="9NR-gt-zB1"/>
                             <constraint firstItem="Y5P-gx-qBx" firstAttribute="bottom" secondItem="Mwt-Rg-Oaz" secondAttribute="bottom" id="C4P-fD-Mva"/>
                             <constraint firstItem="jkG-8N-2VF" firstAttribute="centerY" secondItem="bUA-uA-yrW" secondAttribute="centerY" id="DH7-X1-4ct"/>
+                            <constraint firstItem="h9O-Hg-Tbf" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="DPz-wy-Z1m"/>
                             <constraint firstItem="pF2-Wx-93C" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="DiP-Kg-6UX"/>
                             <constraint firstItem="Zz7-b8-QaU" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="E9z-0N-11R"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="h9O-Hg-Tbf" secondAttribute="trailing" id="JCN-Xo-DLA"/>
                             <constraint firstItem="jkG-8N-2VF" firstAttribute="leading" secondItem="bUA-uA-yrW" secondAttribute="trailing" constant="10" id="LJT-72-zgm"/>
                             <constraint firstItem="fMS-Un-kCr" firstAttribute="width" secondItem="EbK-hb-Hce" secondAttribute="width" id="LfA-KQ-qM6"/>
                             <constraint firstItem="6wa-us-iQd" firstAttribute="bottom" secondItem="8bC-Xf-vdC" secondAttribute="bottom" id="NWo-ca-3jl"/>
@@ -368,7 +384,10 @@
                             <constraint firstItem="rYG-Rw-MVp" firstAttribute="top" secondItem="Mwt-Rg-Oaz" secondAttribute="bottom" constant="5" id="W3Y-dR-wb3"/>
                             <constraint firstItem="Mwt-Rg-Oaz" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="40" id="Wc3-e5-LGh"/>
                             <constraint firstItem="CD1-ax-HTa" firstAttribute="centerY" secondItem="bUA-uA-yrW" secondAttribute="centerY" id="YVT-0N-0xD"/>
+                            <constraint firstItem="aS2-fM-2sa" firstAttribute="bottom" relation="lessThanOrEqual" secondItem="pF2-Wx-93C" secondAttribute="bottom" id="Yx0-bO-WJI"/>
                             <constraint firstItem="6wa-us-iQd" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailing" id="alh-pV-GQ4"/>
+                            <constraint firstItem="aS2-fM-2sa" firstAttribute="centerY" secondItem="h9O-Hg-Tbf" secondAttribute="centerY" multiplier="0.9" id="aqZ-Gx-CFY"/>
+                            <constraint firstItem="h9O-Hg-Tbf" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="bPb-OC-la5"/>
                             <constraint firstItem="bUA-uA-yrW" firstAttribute="leading" secondItem="CD1-ax-HTa" secondAttribute="trailing" constant="10" id="c6E-eA-kgf"/>
                             <constraint firstItem="EbK-hb-Hce" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="cd0-nN-TZK"/>
                             <constraint firstItem="EbK-hb-Hce" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="etP-aw-p8Z"/>
@@ -380,6 +399,7 @@
                             <constraint firstItem="dQh-T5-Fcx" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="q0f-qm-oPB"/>
                             <constraint firstItem="6wa-us-iQd" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="sKN-52-wsn"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="rYG-Rw-MVp" secondAttribute="trailing" multiplier="1.25" id="sYa-sS-Q36"/>
+                            <constraint firstItem="h9O-Hg-Tbf" firstAttribute="bottom" secondItem="pF2-Wx-93C" secondAttribute="top" id="syA-jf-YgE"/>
                             <constraint firstItem="Y5P-gx-qBx" firstAttribute="leading" secondItem="Mwt-Rg-Oaz" secondAttribute="leading" id="uOI-tX-jlY"/>
                             <constraint firstItem="Y5P-gx-qBx" firstAttribute="top" secondItem="Mwt-Rg-Oaz" secondAttribute="top" id="ye5-nO-aUf"/>
                         </constraints>
@@ -429,6 +449,9 @@
         <image name="magnifyingglass" catalog="system" width="128" height="115"/>
         <image name="sun.max" catalog="system" width="128" height="124"/>
         <image name="wifi.slash" catalog="system" width="128" height="102"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="systemGreenColor">
             <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
