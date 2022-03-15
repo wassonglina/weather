@@ -149,8 +149,9 @@ class WeatherViewModel: NSObject {
             self.getLocationBasedOnUserPref()
         }
         let settingsAction = UIAlertAction(title: "Settings", style: .cancel) { _ in
+            self.preferedLocationSource = .currentLocation
             let settingsUrl = NSURL(string: UIApplication.openSettingsURLString)
-            if let url = settingsUrl {
+            if let url = settingsUrl {git 
                 UIApplication.shared.open(url as URL)
             }
         }
