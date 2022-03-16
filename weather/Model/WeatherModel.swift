@@ -25,7 +25,6 @@ struct CurrentModel: WeatherModel {
     var isForecast: Bool
 }
 
-
 struct ForecastModel: WeatherModel {
     let currentTemp: Double
     let condition: Int
@@ -41,7 +40,6 @@ struct ForecastModel: WeatherModel {
         return nameOfDay
     }
 }
-
 
 protocol WeatherModel {
     var currentTemp: Double { get }
