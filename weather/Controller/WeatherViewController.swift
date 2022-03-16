@@ -261,6 +261,7 @@ extension WeatherViewController: UITextFieldDelegate {
 
 extension WeatherViewController: ViewModelDelegate {
 
+
     func presentAuthAlert(with title: String, with message: String, with cancel: UIAlertAction, with action: UIAlertAction) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(action)
@@ -289,28 +290,27 @@ extension WeatherViewController: ViewModelDelegate {
         }
     }
 
-    func updateForecastUI(VCForecast: [(dayOfWeek: String, forecastImage: UIImage, forecastMinTemp: String, forecastMaxTemp: String)]) {
+    func updateForecastUI(with forecastUIModels: [ForecastUIModel]) {
         DispatchQueue.main.async {
-            self.forecast2TextLabel.text = VCForecast[0].dayOfWeek
-            self.cond2ImageView.image = VCForecast[0].forecastImage
-            self.temp2TextLabel.text = VCForecast[0].forecastMaxTemp
-            self.temp2MinTextLabel.text = VCForecast[0].forecastMinTemp
+            self.forecast2TextLabel.text = forecastUIModels[0].forcastDay
+            self.cond2ImageView.image = forecastUIModels[0].forcastImage
+            self.temp2MinTextLabel.text = forecastUIModels[0].forcastTempMin
+            self.temp2TextLabel.text = forecastUIModels[0].forcastTempMax
 
-            self.forecast3TextLabel.text = VCForecast[1].dayOfWeek
-            self.cond3ImageView.image = VCForecast[1].forecastImage
-            self.temp3TextLabel.text = VCForecast[1].forecastMaxTemp
-            self.temp3MinTextLabel.text = VCForecast[1].forecastMinTemp
+            self.forecast3TextLabel.text = forecastUIModels[1].forcastDay
+            self.cond3ImageView.image = forecastUIModels[1].forcastImage
+            self.temp3MinTextLabel.text = forecastUIModels[1].forcastTempMin
+            self.temp3TextLabel.text = forecastUIModels[1].forcastTempMax
 
-            self.forecast4TextLabel.text = VCForecast[2].dayOfWeek
-            self.cond4ImageView.image = VCForecast[2].forecastImage
-            self.temp4TextLabel.text = VCForecast[2].forecastMaxTemp
-            self.temp4MinTextLabel.text = VCForecast[2].forecastMinTemp
+            self.forecast4TextLabel.text = forecastUIModels[2].forcastDay
+            self.cond4ImageView.image = forecastUIModels[2].forcastImage
+            self.temp4MinTextLabel.text = forecastUIModels[2].forcastTempMin
+            self.temp4TextLabel.text = forecastUIModels[2].forcastTempMax
 
-
-            self.forecast5TextLabel.text = VCForecast[3].dayOfWeek
-            self.cond5ImageView.image = VCForecast[3].forecastImage
-            self.temp5TextLabel.text = VCForecast[3].forecastMaxTemp
-            self.temp5MinTextLabel.text = VCForecast[3].forecastMinTemp
+            self.forecast5TextLabel.text = forecastUIModels[3].forcastDay
+            self.cond5ImageView.image = forecastUIModels[3].forcastImage
+            self.temp5MinTextLabel.text = forecastUIModels[3].forcastTempMin
+            self.temp5TextLabel.text = forecastUIModels[3].forcastTempMax
 
             self.forecastStackView.isHidden = false
             self.forecastAnimationView.isHidden = true

@@ -19,9 +19,11 @@ protocol ViewModelDelegate: AnyObject {
 
     func presentAuthAlert(with title: String, with message: String, with cancel: UIAlertAction, with action: UIAlertAction)
 
-    func updateForecastUI(VCForecast: [
-        (dayOfWeek: String, forecastImage: UIImage, forecastMinTemp: String, forecastMaxTemp: String)
-    ])
+//    func updateForecastUI(VCForecast: [
+//        (dayOfWeek: String, forecastImage: UIImage, forecastMinTemp: String, forecastMaxTemp: String)
+//    ])
+
+    func updateForecastUI(with forecastUIModels: [ForecastUIModel])
 
     func didCatchError(errorMsg: String, errorImage: UIImage)
 }
@@ -178,32 +180,19 @@ extension WeatherViewModel: WeatherManagerDelegate {
     }
 
     func didFetchForecast(with forecastEntries: [ForecastModel]) {
-
-        let firstDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 1)
-        let firstDay = firstDayAll.first!.getDayOfWeek()
-        let firstImage = UIImage(systemName: (firstDayAll[4].symbolName(isNight: (firstDayAll.first!.isNight!), isForecast: firstDayAll.first!.isForecast)))
-        let firstMinTemp = createTempString(temp: getMinTemp(unfilteredList: firstDayAll))
-        let firstMaxTemp = createTempString(temp: getMaxTemp(unfilteredList: firstDayAll))
-
-        let secondDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 2)
-        let secondDay = secondDayAll.first!.getDayOfWeek()
-        let secondImage = UIImage(systemName: (secondDayAll[4].symbolName(isNight: (secondDayAll.first!.isNight!), isForecast: secondDayAll.first!.isForecast)))
-        let secondMinTemp = createTempString(temp: getMinTemp(unfilteredList: secondDayAll))
-        let secondtMaxTemp = createTempString(temp: getMaxTemp(unfilteredList: secondDayAll))
-
-        let thirdDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 3)
-        let thirdDay = thirdDayAll.first!.getDayOfWeek()
-        let thirdImage = UIImage(systemName: (thirdDayAll[4].symbolName(isNight: (thirdDayAll.first!.isNight!), isForecast: thirdDayAll.first!.isForecast)))
-        let thirdMinTemp = createTempString(temp: getMinTemp(unfilteredList: thirdDayAll))
-        let thirdMaxTemp = createTempString(temp: getMaxTemp(unfilteredList: thirdDayAll))
-
-        let fourthDayAll = filterDay(unfilteredList: forecastEntries, dayNumber: 4)
-        let fourthDay = fourthDayAll.first!.getDayOfWeek()
-        let fourthImage = UIImage(systemName: (fourthDayAll[4].symbolName(isNight: (fourthDayAll.first!.isNight!), isForecast: fourthDayAll.first!.isForecast)))
-        let fourthMinTemp = createTempString(temp: getMinTemp(unfilteredList: fourthDayAll))
-        let fourthMaxTemp = createTempString(temp: getMaxTemp(unfilteredList: fourthDayAll))
-
-        delegate?.updateForecastUI(VCForecast: [(dayOfWeek: firstDay, forecastImage: firstImage!, forecastMinTemp: firstMinTemp, forecastMaxTemp: firstMaxTemp), (dayOfWeek: secondDay, forecastImage: secondImage!, forecastMinTemp: secondMinTemp, forecastMaxTemp: secondtMaxTemp), (dayOfWeek: thirdDay, forecastImage: thirdImage!, forecastMinTemp: thirdMinTemp, forecastMaxTemp: thirdMaxTemp), (dayOfWeek: fourthDay, forecastImage: fourthImage!, forecastMinTemp: fourthMinTemp, forecastMaxTemp: fourthMaxTemp)])
+        var x = 1
+        let forcastUIModels: [ForecastUIModel] = forecastEntries.compactMap { item in
+            let allEntries = filterDay(unfilteredList: forecastEntries, dayNumber: x)
+            let day = allEntries.first!.getDayOfWeek()
+            let image = UIImage(systemName: allEntries[4].symbolName(isNight: allEntries.first!.isNight!, isForecast: allEntries.first!.isForecast ))
+            let tempMin = createTempString(temp: getMinTemp(unfilteredList: allEntries))
+            let tempMax = createTempString(temp: getMaxTemp(unfilteredList: allEntries))
+            if x <= 3 {
+                x += 1
+            }
+            return ForecastUIModel(forcastDay: day, forcastImage: image!, forcastTempMin: tempMin, forcastTempMax: tempMax)
+        }
+        delegate?.updateForecastUI(with: forcastUIModels)
     }
 
     func didCatchError(error: NSError) {

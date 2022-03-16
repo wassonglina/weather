@@ -6,6 +6,14 @@
 //
 
 import Foundation
+import UIKit
+
+struct ForecastUIModel {
+    let forcastDay: String
+    let forcastImage: UIImage
+    let forcastTempMin: String
+    let forcastTempMax: String
+}
 
 struct CurrentModel: WeatherModel {
     let currentTemp: Double
@@ -19,7 +27,6 @@ struct CurrentModel: WeatherModel {
 
 
 struct ForecastModel: WeatherModel {
-
     let currentTemp: Double
     let condition: Int
     let day: Int?
@@ -34,6 +41,7 @@ struct ForecastModel: WeatherModel {
         return nameOfDay
     }
 }
+
 
 protocol WeatherModel {
     var currentTemp: Double { get }
@@ -109,3 +117,4 @@ extension WeatherModel {
         }
     }
 }
+

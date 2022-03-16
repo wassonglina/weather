@@ -27,12 +27,6 @@ extension String {
 
 class WeatherManager {
 
-    let placeholder = [
-        1.3475,
-        2.3556,
-        5.5768
-    ]
-
     let weatherURL = "https://api.openweathermap.org/data/2.5/weather?&appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
 
     //gives weather of today and next 5 days of every 3h
