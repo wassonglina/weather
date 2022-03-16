@@ -8,6 +8,11 @@
 import UIKit
 import CoreLocation
 
+protocol ObjectSavable {
+    func setObject<Object>(_ object: Object, forKey: String) throws where Object: Encodable
+    func getObject<Object>(forKey: String, castTo type: Object.Type) throws -> Object where Object: Decodable
+}
+
 
 protocol ViewModelDelegate: AnyObject {
     func updateCurrentUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastMinTemp: String, forecastMaxTemp: String)
@@ -27,9 +32,8 @@ class WeatherViewModel: NSObject {
     weak var delegate: ViewModelDelegate?
     let weatherManager = WeatherManager()
     var timer: Timer?
-    let randomLocation = ["Honolulu", "Hobart", "Pattani", "Manaus", "Stavanger", "Taipei", "Dhaka"]
-
     let defaults = UserDefaults.standard
+    let randomLocation = ["Honolulu", "Hobart", "Pattani", "Manaus", "Stavanger", "Taipei", "Dhaka"]
 
     override init() {
         super.init()
@@ -37,22 +41,18 @@ class WeatherViewModel: NSObject {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers    //faster response + energy efficient
 
-        // set PreferedLocationSource based on last settings
-        //true if .city was set and false when never or .location set
-        let userPrefCity = defaults.bool(forKey: "UserPrefCity")
-        print("User prefers city: \(userPrefCity)")
+        let prefSource = try? defaults.getObject(forKey: "PrefSource", castTo: PreferedLocationSource.self)
 
-        if userPrefCity == false {
+        switch prefSource {
+        case .city(let cityname):
+            print("decoded city")
+            preferedLocationSource = .city(cityname)
+        default:
             preferedLocationSource = .currentLocation
-        } else if userPrefCity == true {
-            preferedLocationSource = .city(defaults.string(forKey: "savedCity")!)
-        } else {
-            print("Something didn't work setting prefs with user defaults.")
         }
     }
 
-
-    enum PreferedLocationSource: Equatable {
+    enum PreferedLocationSource: Equatable, Codable {
         case currentLocation
         case city(String)
     }
@@ -64,16 +64,13 @@ class WeatherViewModel: NSObject {
                 print("case location")
                 locationManager.startUpdatingLocation()
                 getWeatherWithCoordinates()
-                defaults.set(false, forKey: "UserPrefCity")
-                print("User prefers city: \(defaults.bool(forKey: "UserPrefCity"))")
+                //TODO: saving unnecessary bc it's default
+                try? defaults.setObject(PreferedLocationSource.currentLocation, forKey: "PrefSource")
             case .city(let cityname):
                 print("case city")
                 locationManager.stopUpdatingLocation()
                 weatherManager.createCityURL(city: cityname)
-                //called when city search tapped; sets USerPrefCity == true and saves City in defaults
-                defaults.set(true, forKey: "UserPrefCity")
-                print("User prefers city: \(defaults.bool(forKey: "UserPrefCity"))")
-                defaults.set(cityname, forKey: "savedCity")
+                try? defaults.setObject(PreferedLocationSource.city(cityname), forKey: "PrefSource")
             case nil:
                 break
             }
@@ -99,8 +96,8 @@ class WeatherViewModel: NSObject {
         }
     }
 
-    //called in viewDidLoad, didBecomeActive and willEnterForeground
-    //>> check user Pref  >>Not quit right here
+    //didBecomeActive
+    //>> check user Pref  >>Not quite right here
     func getLocationBasedOnUserPref() {
         print(#function)
         switch preferedLocationSource {
@@ -134,10 +131,6 @@ class WeatherViewModel: NSObject {
         getLocationBasedOnUserPref()
     }
 
-    func willEnterForeground() {
-        getLocationBasedOnUserPref()
-    }
-
     func didEnterCity(with name: String) {
         preferedLocationSource = .city(name)
     }
@@ -151,7 +144,7 @@ class WeatherViewModel: NSObject {
         let settingsAction = UIAlertAction(title: "Settings", style: .cancel) { _ in
             self.preferedLocationSource = .currentLocation
             let settingsUrl = NSURL(string: UIApplication.openSettingsURLString)
-            if let url = settingsUrl {git 
+            if let url = settingsUrl {
                 UIApplication.shared.open(url as URL)
             }
         }
@@ -245,13 +238,44 @@ extension WeatherViewModel: CLLocationManagerDelegate {
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         print(#function)
-        //don't call getLocationBasedOnUserPref() here -> weather will update once didBecomeActive() is called
-     //   getLocationBasedOnUserPref()
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(#function)
-        //send error "no auth"
     }
 }
 
+
+
+extension UserDefaults: ObjectSavable {
+    func setObject<Object>(_ object: Object, forKey: String) throws where Object: Encodable {
+        let encoder = JSONEncoder()
+        do {
+            let data = try encoder.encode(object)
+            set(data, forKey: forKey)
+        } catch {
+            throw ObjectSavableError.unableToEncode
+        }
+    }
+
+    func getObject<Object>(forKey: String, castTo type: Object.Type) throws -> Object where Object: Decodable {
+        guard let data = data(forKey: forKey) else { throw ObjectSavableError.noValue }
+        let decoder = JSONDecoder()
+        do {
+            let object = try decoder.decode(type, from: data)
+            return object
+        } catch {
+            throw ObjectSavableError.unableToDecode
+        }
+    }
+
+    enum ObjectSavableError: String, LocalizedError {
+        case unableToEncode = "Unable to encode object into data"
+        case noValue = "No data object found for the given key"
+        case unableToDecode = "Unable to decode object into given type"
+
+        var errorDescription: String? {
+            rawValue
+        }
+    }
+}

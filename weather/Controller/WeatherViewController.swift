@@ -148,8 +148,6 @@ class WeatherViewController: UIViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(self.willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
-
         NotificationCenter.default.addObserver(self, selector: #selector(self.didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
 
@@ -169,11 +167,6 @@ class WeatherViewController: UIViewController {
         animationLabel.frame = cityTextLabel.frame
         animationView.labelGradientLayer.frame = animationLabel.bounds
         animationLabel.layer.mask = animationView.labelGradientLayer
-    }
-
-    @objc func willEnterForeground() {
-        print(#function)
-     //   weatherViewModel.willEnterForeground()
     }
 
     //TODO: jesse >> only call getLocationBasedOnUserPref() in didBecomeActive? Otherwise called 3x (viewDidLoad,willEnterForeground, and didBecomeActive)
