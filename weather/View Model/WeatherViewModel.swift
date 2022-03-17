@@ -16,15 +16,8 @@ protocol ObjectSavable {
 
 protocol ViewModelDelegate: AnyObject {
     func updateCurrentUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastMinTemp: String, forecastMaxTemp: String)
-
     func presentAuthAlert(with title: String, with message: String, with cancel: UIAlertAction, with action: UIAlertAction)
-
-//    func updateForecastUI(VCForecast: [
-//        (dayOfWeek: String, forecastImage: UIImage, forecastMinTemp: String, forecastMaxTemp: String)
-//    ])
-
     func updateForecastUI(with forecastUIModels: [ForecastUIModel])
-
     func didCatchError(errorMsg: String, errorImage: UIImage)
 }
 
@@ -46,11 +39,12 @@ class WeatherViewModel: NSObject {
         let prefSource = try? defaults.getObject(forKey: "PrefSource", castTo: PreferedLocationSource.self)
 
         switch prefSource {
+        case .currentLocation:
+            preferedLocationSource = .currentLocation
         case .city(let cityname):
-            print("decoded city")
             preferedLocationSource = .city(cityname)
         default:
-            preferedLocationSource = .currentLocation
+            preferedLocationSource = .currentLocation   //for now default but maybe change in future
         }
     }
 
@@ -63,13 +57,10 @@ class WeatherViewModel: NSObject {
         didSet {
             switch preferedLocationSource {
             case .currentLocation:
-                print("case location")
                 locationManager.startUpdatingLocation()
                 getWeatherWithCoordinates()
-                //TODO: saving unnecessary bc it's default
                 try? defaults.setObject(PreferedLocationSource.currentLocation, forKey: "PrefSource")
             case .city(let cityname):
-                print("case city")
                 locationManager.stopUpdatingLocation()
                 weatherManager.createCityURL(city: cityname)
                 try? defaults.setObject(PreferedLocationSource.city(cityname), forKey: "PrefSource")
@@ -98,8 +89,7 @@ class WeatherViewModel: NSObject {
         }
     }
 
-    //didBecomeActive
-    //>> check user Pref  >>Not quite right here
+    //called by didBecomeActive
     func getLocationBasedOnUserPref() {
         print(#function)
         switch preferedLocationSource {
@@ -153,60 +143,18 @@ class WeatherViewModel: NSObject {
         delegate?.presentAuthAlert(with: title, with: message, with: cancelAction, with: settingsAction)
     }
 
-    //style depends on temp unit and region setting > if temp unit selected that's less common will show unit (e.g. °C for USA or °F for DE)
-    func createTempString(temp: Double) -> String {
-        let formatter = MeasurementFormatter()
-        formatter.numberFormatter.maximumFractionDigits = 0
-        formatter.numberFormatter.roundingMode = .halfEven
-        formatter.unitStyle = .short
-        let tempUnit = Measurement(value: temp, unit: UnitTemperature.celsius)
-        let temp = formatter.string(from: tempUnit)
-
-        return (temp)
-    }
-}
-
-extension WeatherViewModel: WeatherManagerDelegate {
-
-    func didFetchCurrent(with currentWeather: CurrentModel) {
-        let city = currentWeather.name
-        let currentTemp = currentWeather.tempString
-        let image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast))")!
-        let conditionImage = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast)).fill")!
-        let minTemp = createTempString(temp: currentWeather.minTemp)
-        let maxTemp = createTempString(temp: currentWeather.maxTemp)
-
-        delegate?.updateCurrentUI(city: city, temperature: currentTemp, image: image, forecastImage: conditionImage, forecastMinTemp: minTemp, forecastMaxTemp: maxTemp)
-    }
-
-    func didFetchForecast(with forecastEntries: [ForecastModel]) {
-        var x = 1
-        let forcastUIModels: [ForecastUIModel] = forecastEntries.compactMap { item in
-            let allEntries = filterDay(unfilteredList: forecastEntries, dayNumber: x)
-            let day = allEntries.first!.getDayOfWeek()
-            let image = UIImage(systemName: allEntries[4].symbolName(isNight: allEntries.first!.isNight!, isForecast: allEntries.first!.isForecast ))
-            let tempMin = createTempString(temp: getMinTemp(unfilteredList: allEntries))
-            let tempMax = createTempString(temp: getMaxTemp(unfilteredList: allEntries))
-            if x <= 3 {
-                x += 1
-            }
-            return ForecastUIModel(forcastDay: day, forcastImage: image!, forcastTempMin: tempMin, forcastTempMax: tempMax)
-        }
-        delegate?.updateForecastUI(with: forcastUIModels)
-    }
-
+//MARK: functions to prepare current and forecast data for VC
     func filterDay(unfilteredList: [ForecastModel], dayNumber: Int) -> [ForecastModel] {
-
         var forecastDay =  Date.now
         switch dayNumber {
         case 1:
-            forecastDay = Date.now.addingTimeInterval(86400)  //1 Day
+            forecastDay = Date.now.addingTimeInterval(86400)  //in 1 Day
         case 2:
-            forecastDay = Date.now.addingTimeInterval(172800)  //2 Days
+            forecastDay = Date.now.addingTimeInterval(172800)  //in 2 Days
         case 3:
-            forecastDay = Date.now.addingTimeInterval(259200)  //3 Days
+            forecastDay = Date.now.addingTimeInterval(259200)  //in 3 Days
         case 4:
-            forecastDay = Date.now.addingTimeInterval(345600)  //4 Days
+            forecastDay = Date.now.addingTimeInterval(345600)  //in 4 Days
         default:
             print("Error getting values for current day.")
         }
@@ -217,6 +165,17 @@ extension WeatherViewModel: WeatherManagerDelegate {
             return dayComponent == forecastDayComponent
         }
         return filteredList
+    }
+
+    //style depends on temp unit and region setting > if temp unit selected that's less common will show unit (e.g. °C for USA or °F for DE)
+    func createTempString(temp: Double) -> String {
+        let formatter = MeasurementFormatter()
+        formatter.numberFormatter.maximumFractionDigits = 0
+        formatter.numberFormatter.roundingMode = .halfEven
+        formatter.unitStyle = .short
+        let tempUnit = Measurement(value: temp, unit: UnitTemperature.celsius)
+        let temp = formatter.string(from: tempUnit)
+        return (temp)
     }
 
     func getMinTemp(unfilteredList: [ForecastModel]) -> Double {
@@ -232,9 +191,39 @@ extension WeatherViewModel: WeatherManagerDelegate {
         }
         return (temp.max()!)
     }
+}
+
+extension WeatherViewModel: WeatherManagerDelegate {
+
+    func didFetchCurrent(with currentWeather: CurrentModel) {
+        print(currentWeather)
+        let city = currentWeather.name
+        let currentTemp = currentWeather.tempString
+        let image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast))")!
+        let conditionImage = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast)).fill")!
+        let minTemp = createTempString(temp: currentWeather.minTemp)
+        let maxTemp = createTempString(temp: currentWeather.maxTemp)
+
+        delegate?.updateCurrentUI(city: city, temperature: currentTemp, image: image, forecastImage: conditionImage, forecastMinTemp: minTemp, forecastMaxTemp: maxTemp)
+    }
+
+    func didFetchForecast(with forecastEntries: [ForecastModel]) {
+        var x = 1
+        let forecastUIModels: [ForecastUIModel] = forecastEntries.compactMap { item in
+            let allEntries = filterDay(unfilteredList: forecastEntries, dayNumber: x)
+            let day = allEntries.first!.getDayOfWeek()
+            let image = UIImage(systemName: allEntries[4].symbolName(isNight: allEntries.first!.isNight!, isForecast: allEntries.first!.isForecast ))
+            let tempMin = createTempString(temp: getMinTemp(unfilteredList: allEntries))
+            let tempMax = createTempString(temp: getMaxTemp(unfilteredList: allEntries))
+            if x <= 3 {
+                x += 1
+            }
+            return ForecastUIModel(forecastDay: day, forecastImage: image!, forecastTempMin: tempMin, forecastTempMax: tempMax)
+        }
+        delegate?.updateForecastUI(with: forecastUIModels)
+    }
 
     func didCatchError(error: NSError) {
-        //TODO: Use error code instead
         let text: String
         let image: UIImage
 

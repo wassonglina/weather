@@ -9,10 +9,10 @@ import Foundation
 import UIKit
 
 struct ForecastUIModel {
-    let forcastDay: String
-    let forcastImage: UIImage
-    let forcastTempMin: String
-    let forcastTempMax: String
+    let forecastDay: String
+    let forecastImage: UIImage
+    let forecastTempMin: String
+    let forecastTempMax: String
 }
 
 struct CurrentModel: WeatherModel {

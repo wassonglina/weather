@@ -39,15 +39,15 @@ class WeatherManager {
         print(#function)
         let weatherURLString = "\(weatherURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
         print(weatherURLString)
-        let forcastURLString = "\(weatherForecastURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
-        print(forcastURLString)
+        let forecastURLString = "\(weatherForecastURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
+        print(forecastURLString)
         performNetworkRequest(with: weatherURLString) { data in
             
             if let currentWeather = self.parseJSONWeather(with: data) {
                 self.delegate?.didFetchCurrent(with: currentWeather)
             }
         }
-        performNetworkRequest(with: forcastURLString) { data in
+        performNetworkRequest(with: forecastURLString) { data in
             if let forecastWeather = self.parseJSONForecast(with: data) {
                 self.delegate?.didFetchForecast(with: forecastWeather)
             }
@@ -59,13 +59,15 @@ class WeatherManager {
         let lat = coordinates.latitude
         let long = coordinates.longitude
         let weatherURLString = "\(weatherURL)&lat=\(lat)&lon=\(long)"
-        let forcastURLString = "\(weatherForecastURL)&lat=\(lat)&lon=\(long)"
+        print(weatherURLString)
+        let forecastURLString = "\(weatherForecastURL)&lat=\(lat)&lon=\(long)"
+        print(forecastURLString)
         performNetworkRequest(with: weatherURLString) { data in
             if let currentWeather = self.parseJSONWeather(with: data) {
                 self.delegate?.didFetchCurrent(with: currentWeather)
             }
         }
-        performNetworkRequest(with: forcastURLString) { data in
+        performNetworkRequest(with: forecastURLString) { data in
             if let forecastWeather = self.parseJSONForecast(with: data) {
                 self.delegate?.didFetchForecast(with: forecastWeather)
             }
