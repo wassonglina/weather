@@ -9,8 +9,6 @@ import UIKit
 import CoreLocation
 
 protocol WeatherManagerDelegate: AnyObject {
-    func didFetchCurrent(with: CurrentModel)
-    func didFetchForecast(with: [ForecastModel])
     func didCatchError(error: NSError)
 }
 
@@ -32,44 +30,52 @@ class WeatherManager {
     //gives weather of today and next 5 days of every 3h
     let weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
 
-    //TODO: check weak > protocol conformance AnyObject?
     weak var delegate: WeatherManagerDelegate?
 
-    func createCityURL(city: String) {
+    func createCityURL2(city: String, completion: @escaping (CurrentModel) -> Void) {
         print(#function)
         let weatherURLString = "\(weatherURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
         print(weatherURLString)
-        let forecastURLString = "\(weatherForecastURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
-        print(forecastURLString)
         performNetworkRequest(with: weatherURLString) { data in
-            
             if let currentWeather = self.parseJSONWeather(with: data) {
-                self.delegate?.didFetchCurrent(with: currentWeather)
-            }
-        }
-        performNetworkRequest(with: forecastURLString) { data in
-            if let forecastWeather = self.parseJSONForecast(with: data) {
-                self.delegate?.didFetchForecast(with: forecastWeather)
+                completion(currentWeather)
             }
         }
     }
 
-    func createGeoURL(with coordinates: CLLocationCoordinate2D) {
+    func createCityURL(city: String, completion: @escaping ([ForecastModel]) -> Void) {
+        print(#function)
+        let forecastURLString = "\(weatherForecastURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
+        print(forecastURLString)
+        performNetworkRequest(with: forecastURLString) { data in
+            if let forecastWeather = self.parseJSONForecast(with: data) {
+                completion(forecastWeather)
+            }
+        }
+    }
+
+    func createGeoURL(with coordinates: CLLocationCoordinate2D, completion: @escaping ([ForecastModel]) -> Void) {
+        print(#function)
+        let lat = coordinates.latitude
+        let long = coordinates.longitude
+        let forecastURLString = "\(weatherForecastURL)&lat=\(lat)&lon=\(long)"
+        print(forecastURLString)
+        performNetworkRequest(with: forecastURLString) { data in
+            if let forecastWeather = self.parseJSONForecast(with: data) {
+                completion(forecastWeather)
+            }
+        }
+    }
+
+    func createGeoURL2(with coordinates: CLLocationCoordinate2D, completion: @escaping (CurrentModel) -> Void) {
         print(#function)
         let lat = coordinates.latitude
         let long = coordinates.longitude
         let weatherURLString = "\(weatherURL)&lat=\(lat)&lon=\(long)"
         print(weatherURLString)
-        let forecastURLString = "\(weatherForecastURL)&lat=\(lat)&lon=\(long)"
-        print(forecastURLString)
         performNetworkRequest(with: weatherURLString) { data in
             if let currentWeather = self.parseJSONWeather(with: data) {
-                self.delegate?.didFetchCurrent(with: currentWeather)
-            }
-        }
-        performNetworkRequest(with: forecastURLString) { data in
-            if let forecastWeather = self.parseJSONForecast(with: data) {
-                self.delegate?.didFetchForecast(with: forecastWeather)
+                completion(currentWeather)
             }
         }
     }
@@ -106,7 +112,12 @@ class WeatherManager {
             let decodedMinTemp = decodedWeather.main.temp_min
             let decodedMaxTemp = decodedWeather.main.temp_max
 
-            return CurrentModel(currentTemp: decodedTemp, minTemp: decodedMinTemp, maxTemp: decodedMaxTemp, condition: decodedCondition, name: decodedName, isNight: answer, isForecast: false)
+            let lat = decodedWeather.coord.lat
+            let long = decodedWeather.coord.lon
+
+            print(lat, long)
+
+            return CurrentModel(currentTemp: decodedTemp, minTemp: decodedMinTemp, maxTemp: decodedMaxTemp, condition: decodedCondition, name: decodedName, isNight: answer, isForecast: false, lat: lat, long: long)
 
         } catch {
             delegate?.didCatchError(error: error as NSError)

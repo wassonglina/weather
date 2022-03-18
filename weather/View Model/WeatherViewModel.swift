@@ -13,7 +13,6 @@ protocol ObjectSavable {
     func getObject<Object>(forKey: String, castTo type: Object.Type) throws -> Object where Object: Decodable
 }
 
-
 protocol ViewModelDelegate: AnyObject {
     func updateCurrentUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastMinTemp: String, forecastMaxTemp: String)
     func presentAuthAlert(with title: String, with message: String, with cancel: UIAlertAction, with action: UIAlertAction)
@@ -28,7 +27,9 @@ class WeatherViewModel: NSObject {
     let weatherManager = WeatherManager()
     var timer: Timer?
     let defaults = UserDefaults.standard
-    let randomLocation = ["Honolulu", "Hobart", "Pattani", "Manaus", "Stavanger", "Taipei", "Dhaka"]
+    let cities = ["Honolulu", "Hobart", "Pattani", "Manaus", "Stavanger", "Taipei", "Dhaka"]
+
+    var networkRequestCheckCoordinates: CLLocationCoordinate2D?
 
     override init() {
         super.init()
@@ -62,10 +63,40 @@ class WeatherViewModel: NSObject {
                 try? defaults.setObject(PreferedLocationSource.currentLocation, forKey: "PrefSource")
             case .city(let cityname):
                 locationManager.stopUpdatingLocation()
-                weatherManager.createCityURL(city: cityname)
+                getWeatherWithCity(with: cityname)
                 try? defaults.setObject(PreferedLocationSource.city(cityname), forKey: "PrefSource")
             case nil:
                 break
+            }
+        }
+    }
+
+    func getWeatherWithCity(with cityname: String) {
+        weatherManager.createCityURL2(city: cityname) { [self] currentWeather in
+            if preferedLocationSource == .city(cityname) {
+                didFetchCurrent(with: currentWeather)
+            }
+        }
+
+        weatherManager.createCityURL(city: cityname) { [self] forecastWeather in
+            if preferedLocationSource == .city(cityname) {
+                didFetchForecast(with: forecastWeather)
+            }
+        }
+    }
+
+    func getWeatherWithCoordinates() {
+        if let location = locationManager.location {
+            let coordinates = location.coordinate
+            weatherManager.createGeoURL2(with: coordinates) { [self] currentWeather in
+                if self.preferedLocationSource == .currentLocation {
+                    didFetchCurrent(with: currentWeather)
+                }
+            }
+            weatherManager.createGeoURL(with: coordinates) { [self] forecastWeather in
+                if self.preferedLocationSource == .currentLocation {
+                    didFetchForecast(with: forecastWeather)
+                }
             }
         }
     }
@@ -98,19 +129,14 @@ class WeatherViewModel: NSObject {
             if auth == .authorizedWhenInUse || auth == .authorizedAlways {
                 preferedLocationSource = .currentLocation
             } else if auth == .notDetermined || auth == .denied || auth == .restricted {
-                weatherManager.createCityURL(city: randomLocation.randomElement()!)
+                getWeatherWithCity(with: cities.randomElement()!)
+      //          weatherManager.createCityURL(city: cities.randomElement()!)
             }
         case .city(let name):
-            weatherManager.createCityURL(city: name)
+            getWeatherWithCity(with: name)
+ //           weatherManager.createCityURL(city: name)
         case nil:
             break
-        }
-    }
-
-    func getWeatherWithCoordinates() {
-        if let location = locationManager.location {
-            let coordinates = location.coordinate
-            weatherManager.createGeoURL(with: coordinates)
         }
     }
 
@@ -143,7 +169,7 @@ class WeatherViewModel: NSObject {
         delegate?.presentAuthAlert(with: title, with: message, with: cancelAction, with: settingsAction)
     }
 
-//MARK: functions to prepare current and forecast data for VC
+    //MARK: functions to prepare current and forecast data for VC
     func filterDay(unfilteredList: [ForecastModel], dayNumber: Int) -> [ForecastModel] {
         var forecastDay =  Date.now
         switch dayNumber {
@@ -191,20 +217,16 @@ class WeatherViewModel: NSObject {
         }
         return (temp.max()!)
     }
-}
-
-extension WeatherViewModel: WeatherManagerDelegate {
 
     func didFetchCurrent(with currentWeather: CurrentModel) {
-        print(currentWeather)
         let city = currentWeather.name
         let currentTemp = currentWeather.tempString
         let image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast))")!
         let conditionImage = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast)).fill")!
-        let minTemp = createTempString(temp: currentWeather.minTemp)
-        let maxTemp = createTempString(temp: currentWeather.maxTemp)
+        let minTemp = self.createTempString(temp: currentWeather.minTemp)
+        let maxTemp = self.createTempString(temp: currentWeather.maxTemp)
 
-        delegate?.updateCurrentUI(city: city, temperature: currentTemp, image: image, forecastImage: conditionImage, forecastMinTemp: minTemp, forecastMaxTemp: maxTemp)
+        self.delegate?.updateCurrentUI(city: city, temperature: currentTemp, image: image, forecastImage: conditionImage, forecastMinTemp: minTemp, forecastMaxTemp: maxTemp)
     }
 
     func didFetchForecast(with forecastEntries: [ForecastModel]) {
@@ -222,6 +244,9 @@ extension WeatherViewModel: WeatherManagerDelegate {
         }
         delegate?.updateForecastUI(with: forecastUIModels)
     }
+}
+
+extension WeatherViewModel: WeatherManagerDelegate {
 
     func didCatchError(error: NSError) {
         let text: String
@@ -234,7 +259,7 @@ extension WeatherViewModel: WeatherManagerDelegate {
             text = "No Internet"
             image = UIImage(systemName: "wifi.slash")!
         } else if error.code == -1001 {
-            text = "Request Timed Out"
+            text = "No Internet"   // "Request Timed Out" > updates also automatic > not always requested
             image = UIImage(systemName: "wifi.slash")!
         } else {
             text = "Error"

@@ -14,10 +14,16 @@ struct OpenWeatherAPI {
         let main: Temperature
         let weather: [Weather]
         let sys: Sys
+        let coord: Coordinates
         
         struct Sys: Decodable {
             let sunrise: Double
             let sunset: Double
+        }
+
+        struct Coordinates: Decodable {
+            let lon: Double
+            let lat: Double
         }
     }
     
