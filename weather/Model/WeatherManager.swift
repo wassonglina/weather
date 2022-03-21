@@ -9,7 +9,6 @@ import UIKit
 import CoreLocation
 
 
-//filter characters for URL
 extension String {
     func stringByAddingPercentEncodingForRFC3986() -> String? {
         let unreserved = "-._~/?"
@@ -28,13 +27,13 @@ class WeatherManager {
 
     func requestCurrentCityURL(city: String, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
         print(#function)
-        let weatherURLString = "\(currentWeatherURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
+        let weatherURLString = "\(currentWeatherURL)&q=\(city.trimmingCharacters(in: .whitespaces).stringByAddingPercentEncodingForRFC3986()!)"
         perform(urlString: weatherURLString, transform: parseJSONCurrent, completion: completion)
     }
 
     func requestForecastCityURL(city: String, completion: @escaping (Result<[ForecastModel], Error>) -> Void) {
         print(#function)
-        let forecastURLString = "\(weatherForecastURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
+        let forecastURLString = "\(weatherForecastURL)&q=\(city.trimmingCharacters(in: .whitespaces).stringByAddingPercentEncodingForRFC3986()!)"
         perform(urlString: forecastURLString, transform: parseJSONForecast, completion: completion)
     }
 

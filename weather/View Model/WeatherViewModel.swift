@@ -162,7 +162,8 @@ class WeatherViewModel: NSObject {
         delegate?.presentAuthAlert(with: title, with: message, with: cancelAction, with: settingsAction)
     }
 
-//MARK: evaluate network request > prepare data for UI or error handling
+
+//MARK:  - Evaluation network request > prepare data for UI or error handling
 
     func evaluateCurrent(result: (Result<CurrentModel, Error>)) {
         switch result {
@@ -184,15 +185,15 @@ class WeatherViewModel: NSObject {
         }
     }
 
-    //    func evaluate<T>(result: (Result<T, Error>)) {      //, execute: (Data)
-    //        switch result {
-    //        case .success(let decodedData):
-    //            didFetchCurrent(with: decodedData)
-    //        case .failure(let error):
-    //            print(error)
-    //            didCatchError(error: error as NSError)
-    //        }
-    //    }
+//    func evaluate<T>(result: (Result<T, Error>), execute: (Data)) {      //, execute: (Data)
+//            switch result {
+//            case .success(let decodedData):
+//                execute(with: decodedData)
+//            case .failure(let error):
+//                print(error)
+//                didCatchError(error: error as NSError)
+//            }
+//        }
 
 
     func didCatchError(error: NSError) {
@@ -216,7 +217,7 @@ class WeatherViewModel: NSObject {
     }
 
 
-//MARK: prepare current and forecast data for VC
+//MARK: - Preparation current and forecast data for VC
 
     func didFetchCurrent(with currentWeather: CurrentModel) {
         let city = currentWeather.name
@@ -294,6 +295,7 @@ class WeatherViewModel: NSObject {
     }
 }
 
+//MARK: - Extension CLLocationManagerDelegate
 
 extension WeatherViewModel: CLLocationManagerDelegate {
 
@@ -311,6 +313,8 @@ extension WeatherViewModel: CLLocationManagerDelegate {
     }
 }
 
+
+//MARK: - Extension: ObjectSavable UserDefaults
 
 extension UserDefaults: ObjectSavable {
     func setObject<Object>(_ object: Object, forKey: String) throws where Object: Encodable {

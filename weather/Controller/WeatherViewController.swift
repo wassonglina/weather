@@ -63,9 +63,6 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         print(#function)
 
-// text big enough no need for modificatio? delete once UI is layed out properly
-   //     let todayFont = UIFont.scriptFont(size: 47, style: .medium)
-   //     let tempFont = UIFont.scriptFont(size: 47, style: .medium)
         let forecastFont = UIFont.scriptFont(size: 20, style: .medium)
 
         searchButton?.isUserInteractionEnabled = false
@@ -74,21 +71,13 @@ class WeatherViewController: UIViewController {
         cityTextField.delegate = self
         weatherViewModel.delegate = self
 
-   //     weatherViewModel.getLocationBasedOnUserPref()
-
         cityTextField.backgroundColor = .white.withAlphaComponent(0.3)
         cityTextField.keyboardType = .asciiCapable
         cityTextField.enablesReturnKeyAutomatically = true
 
-// text big enough no need for modification? delete once UI is layed out properly
-//        cityTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: todayFont)
-//        cityTextLabel.adjustsFontForContentSizeCategory = true
         cityTextLabel.textColor = .white.withAlphaComponent(0.15)
         cityTextLabel.text = animationText
 
-// text big enough no need for modification? delete once UI is layed out properly
-//        tempTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: todayFont)
-//        tempTextLabel.adjustsFontForContentSizeCategory = true
         tempTextLabel.isHidden = true
         weatherImageView.isHidden = true
         errorImageview.isHidden = true
@@ -169,7 +158,6 @@ class WeatherViewController: UIViewController {
         animationLabel.layer.mask = animationView.labelGradientLayer
     }
 
-    //TODO: jesse >> only call getLocationBasedOnUserPref() in didBecomeActive? Otherwise called 3x (viewDidLoad,willEnterForeground, and didBecomeActive)
     @objc func didBecomeActive() {
         print("VC: \(#function)")
         weatherViewModel.didBecomeActive()
@@ -191,6 +179,7 @@ class WeatherViewController: UIViewController {
         startAnimation()
     }  // >> when finished start animation
 
+
     func startAnimation() {
         animationView.startAnmiationForecast(with: forecastAnimationView)
         animationView.startAnmiationLabel(with: animationLabel)
@@ -200,7 +189,7 @@ class WeatherViewController: UIViewController {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {
             return
         }
-        //TODO: if constraints programatically > constraintHeight/2 instead of hard coded number
+        //TODO: test programatically > constraintHeight/2 instead of hard coded
         self.view.frame.origin.y = 40 - keyboardSize.height
     }
 
@@ -235,7 +224,8 @@ class WeatherViewController: UIViewController {
     }
 }
 
-//Mark: - UITextFieldDelegate
+//MARK: - Extension WeatherViewController: UITextFieldDelegate
+
 extension WeatherViewController: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -257,7 +247,8 @@ extension WeatherViewController: UITextFieldDelegate {
     }
 }
 
-//Mark: - ViewModelDelegate
+
+//MARK: - Extension WeatherViewController: ViewModelDelegate
 
 extension WeatherViewController: ViewModelDelegate {
 
@@ -332,17 +323,4 @@ extension WeatherViewController: ViewModelDelegate {
             self.animationLabel.isHidden = true
         }
     }
-
-    func hideWhileLoading() {
-        self.forecastStackView.isHidden = true
-        self.tempTextLabel.isHidden = true
-        self.weatherImageView.isHidden = true
-    }
-
-    func showAfterLoading() {
-        self.forecastStackView.isHidden = false
-        self.tempTextLabel.isHidden = false
-        self.weatherImageView.isHidden = false
-    }
-
 }
