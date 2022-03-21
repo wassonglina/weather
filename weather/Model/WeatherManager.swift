@@ -8,9 +8,6 @@
 import UIKit
 import CoreLocation
 
-protocol WeatherManagerDelegate: AnyObject {
-    func didCatchError(error: NSError)
-}
 
 //filter characters for URL
 extension String {
@@ -22,15 +19,12 @@ extension String {
     }
 }
 
-
 class WeatherManager {
 
     let currentWeatherURL = "https://api.openweathermap.org/data/2.5/weather?&appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
 
     //gives weather of today and next 5 days of every 3h
     let weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
-
-    weak var delegate: WeatherManagerDelegate?
 
     func requestCurrentCityURL(city: String, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
         print(#function)
@@ -55,7 +49,6 @@ class WeatherManager {
         print(#function)
         let forecastURLString = "\(weatherForecastURL)&lat=\(coordinates.latitude)&lon=\(coordinates.longitude)"
         perform(urlString: forecastURLString, transform: parseJSONForecast, completion: completion)
-        print(forecastURLString)
     }
 
 
@@ -86,10 +79,8 @@ class WeatherManager {
         if let url = URL(string: urlString) {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { data, response, error in
-
                 if error != nil {
                     completion(.failure(error!))
-
                     return
                 }
                 if let weatherData = data {
@@ -120,24 +111,24 @@ class WeatherManager {
     func parseJSONForecast(with encodedData: Data) throws -> [ForecastModel] {
         let decoder = JSONDecoder()
 
-            let decodedForecast = try decoder.decode(OpenWeatherAPI.Forecast.self, from: encodedData)
+        let decodedForecast = try decoder.decode(OpenWeatherAPI.Forecast.self, from: encodedData)
 
-            //only get temp, weather id and date of filtered list
-            let forecastModels: [ForecastModel] = decodedForecast.list.compactMap { list in
-                let forecastTemp = list.main.temp
-                let forecastCondition = list.weather[0].id
-                let foracastDay = list.dt
+        //only get temp, weather id and date of filtered list
+        let forecastModels: [ForecastModel] = decodedForecast.list.compactMap { list in
+            let forecastTemp = list.main.temp
+            let forecastCondition = list.weather[0].id
+            let foracastDay = list.dt
 
-                let today = Calendar.current.component(.weekday, from: Date())
-                let foracastDate = Date(timeIntervalSince1970: Double(list.dt))
-                let forecastWeekday = Calendar.current.component(.weekday, from: foracastDate)
+            let today = Calendar.current.component(.weekday, from: Date())
+            let foracastDate = Date(timeIntervalSince1970: Double(list.dt))
+            let forecastWeekday = Calendar.current.component(.weekday, from: foracastDate)
 
-                if forecastWeekday != today {
-                    return ForecastModel(currentTemp: forecastTemp, condition: forecastCondition, day: foracastDay, isForecast: true, isNight: false)
-                } else {
-                    return nil
-                }
+            if forecastWeekday != today {
+                return ForecastModel(currentTemp: forecastTemp, condition: forecastCondition, day: foracastDay, isForecast: true, isNight: false)
+            } else {
+                return nil
             }
-            return forecastModels
+        }
+        return forecastModels
     }
 }
