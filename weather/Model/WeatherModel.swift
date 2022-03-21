@@ -23,10 +23,6 @@ struct CurrentModel: WeatherModel {
     let name: String
     var isNight: Bool?
     var isForecast: Bool
-
-    let lat: Double
-    let long: Double
-
 }
 
 struct ForecastModel: WeatherModel {

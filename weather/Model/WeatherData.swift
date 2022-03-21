@@ -14,27 +14,15 @@ struct OpenWeatherAPI {
         let main: Temperature
         let weather: [Weather]
         let sys: Sys
-        let coord: Coordinates
         
         struct Sys: Decodable {
             let sunrise: Double
             let sunset: Double
         }
-
-        struct Coordinates: Decodable {
-            let lon: Double
-            let lat: Double
-        }
     }
     
     struct Forecast: Decodable {
-        let city: City
         let list: [Entry]
-        
-        struct City: Decodable {
-            let name: String
-        }
-        
         struct Entry: Decodable, DateContaining {
             let dt: Int //Date
             let main: Temperature
@@ -51,7 +39,6 @@ struct OpenWeatherAPI {
     struct Weather: Decodable {
         let id: Int
     }
-    
 }
 
 protocol DateContaining {

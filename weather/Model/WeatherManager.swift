@@ -25,110 +25,100 @@ extension String {
 
 class WeatherManager {
 
-    let weatherURL = "https://api.openweathermap.org/data/2.5/weather?&appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
+    let currentWeatherURL = "https://api.openweathermap.org/data/2.5/weather?&appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
 
     //gives weather of today and next 5 days of every 3h
     let weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
 
     weak var delegate: WeatherManagerDelegate?
 
-    func createCityURL2(city: String, completion: @escaping (CurrentModel) -> Void) {
+    func requestCurrentCityURL(city: String, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
         print(#function)
-        let weatherURLString = "\(weatherURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
-        print(weatherURLString)
-        performNetworkRequest(with: weatherURLString) { data in
-            if let currentWeather = self.parseJSONWeather(with: data) {
-                completion(currentWeather)
-            }
-        }
+        let weatherURLString = "\(currentWeatherURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
+        perform(urlString: weatherURLString, transform: parseJSONCurrent, completion: completion)
     }
 
-    func createCityURL(city: String, completion: @escaping ([ForecastModel]) -> Void) {
+    func requestForecastCityURL(city: String, completion: @escaping (Result<[ForecastModel], Error>) -> Void) {
         print(#function)
         let forecastURLString = "\(weatherForecastURL)&q=\(city.stringByAddingPercentEncodingForRFC3986()!)"
-        print(forecastURLString)
-        performNetworkRequest(with: forecastURLString) { data in
-            if let forecastWeather = self.parseJSONForecast(with: data) {
-                completion(forecastWeather)
-            }
-        }
+        perform(urlString: forecastURLString, transform: parseJSONForecast, completion: completion)
     }
 
-    func createGeoURL(with coordinates: CLLocationCoordinate2D, completion: @escaping ([ForecastModel]) -> Void) {
+    func requestCurrentGeoURL(with coordinates: CLLocationCoordinate2D, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
         print(#function)
-        let lat = coordinates.latitude
-        let long = coordinates.longitude
-        let forecastURLString = "\(weatherForecastURL)&lat=\(lat)&lon=\(long)"
-        print(forecastURLString)
-        performNetworkRequest(with: forecastURLString) { data in
-            if let forecastWeather = self.parseJSONForecast(with: data) {
-                completion(forecastWeather)
-            }
-        }
-    }
-
-    func createGeoURL2(with coordinates: CLLocationCoordinate2D, completion: @escaping (CurrentModel) -> Void) {
-        print(#function)
-        let lat = coordinates.latitude
-        let long = coordinates.longitude
-        let weatherURLString = "\(weatherURL)&lat=\(lat)&lon=\(long)"
+        let weatherURLString = "\(currentWeatherURL)&lat=\(coordinates.latitude)&lon=\(coordinates.longitude)"
+        perform(urlString: weatherURLString, transform: parseJSONCurrent, completion: completion)
         print(weatherURLString)
-        performNetworkRequest(with: weatherURLString) { data in
-            if let currentWeather = self.parseJSONWeather(with: data) {
-                completion(currentWeather)
+    }
+
+    func requestForecastGeoURL(with coordinates: CLLocationCoordinate2D, completion: @escaping (Result<[ForecastModel], Error>) -> Void) {
+        print(#function)
+        let forecastURLString = "\(weatherForecastURL)&lat=\(coordinates.latitude)&lon=\(coordinates.longitude)"
+        perform(urlString: forecastURLString, transform: parseJSONForecast, completion: completion)
+        print(forecastURLString)
+    }
+
+
+    //Generics: types not defined
+    func perform<T>(urlString: String,
+                    transform: @escaping (Data) throws -> T,      //T: Current or Forecast Models
+                    completion: @escaping (Result<T, Error>) -> Void  //Result T > .success > Current or Forecast Models
+    ) {
+        performNetworkRequest(with: urlString) { result in
+
+            switch result {
+            case .success(let data):        // Network request successful:
+                do {
+                    let entity = try transform(data)  //transform calls parseJSONCurrent or parseJSONForecast
+                    completion(.success(entity))      //if parsing success > data passed on
+                } catch {
+                    completion(.failure(error))     //if parsing failure > throws error
+                    print("Error parsing JSON: \(error)")
+                }
+            case .failure(let error):       //Network request not succesful
+                completion(.failure(error))
             }
         }
     }
 
-    func performNetworkRequest(with urlString: String, handler: @escaping (Data) -> Void ) {
+    func performNetworkRequest(with urlString: String, completion: @escaping (Result<Data, Error>) -> Void ) {
 
         if let url = URL(string: urlString) {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { data, response, error in
+
                 if error != nil {
-                    self.delegate?.didCatchError(error: error! as NSError)
-                    print("Error performing network request")
+                    completion(.failure(error!))
+
                     return
                 }
                 if let weatherData = data {
-                    handler(weatherData)
+                    completion(.success(weatherData))
                 }
             }
             task.resume()
         }
     }
 
-    func parseJSONWeather(with encodedData: Data) -> CurrentModel? {
+    func parseJSONCurrent(with encodedData: Data) throws -> CurrentModel {
         let decoder = JSONDecoder()
 
-        do {
-            let decodedWeather = try decoder.decode(OpenWeatherAPI.Current.self, from: encodedData)
-            let decodedTemp = decodedWeather.main.temp
-            let decodedName = decodedWeather.name
-            let decodedCondition = decodedWeather.weather[0].id
-            let sunrise = Date(timeIntervalSince1970: decodedWeather.sys.sunrise)
-            let sunset = Date(timeIntervalSince1970: decodedWeather.sys.sunset)
-            let answer = Date().isBetween(with: sunrise, with: sunset)
-            let decodedMinTemp = decodedWeather.main.temp_min
-            let decodedMaxTemp = decodedWeather.main.temp_max
+        let decodedWeather = try decoder.decode(OpenWeatherAPI.Current.self, from: encodedData)
+        let decodedTemp = decodedWeather.main.temp
+        let decodedName = decodedWeather.name
+        let decodedCondition = decodedWeather.weather[0].id
+        let sunrise = Date(timeIntervalSince1970: decodedWeather.sys.sunrise)
+        let sunset = Date(timeIntervalSince1970: decodedWeather.sys.sunset)
+        let answer = Date().isBetween(with: sunrise, with: sunset)
+        let decodedMinTemp = decodedWeather.main.temp_min
+        let decodedMaxTemp = decodedWeather.main.temp_max
 
-            let lat = decodedWeather.coord.lat
-            let long = decodedWeather.coord.lon
 
-            print(lat, long)
-
-            return CurrentModel(currentTemp: decodedTemp, minTemp: decodedMinTemp, maxTemp: decodedMaxTemp, condition: decodedCondition, name: decodedName, isNight: answer, isForecast: false, lat: lat, long: long)
-
-        } catch {
-            delegate?.didCatchError(error: error as NSError)
-            return nil
-        }
+        return CurrentModel(currentTemp: decodedTemp, minTemp: decodedMinTemp, maxTemp: decodedMaxTemp, condition: decodedCondition, name: decodedName, isNight: answer, isForecast: false)
     }
 
-    func parseJSONForecast(with encodedData: Data) -> [ForecastModel]? {
+    func parseJSONForecast(with encodedData: Data) throws -> [ForecastModel] {
         let decoder = JSONDecoder()
-
-        do {
 
             let decodedForecast = try decoder.decode(OpenWeatherAPI.Forecast.self, from: encodedData)
 
@@ -149,9 +139,5 @@ class WeatherManager {
                 }
             }
             return forecastModels
-        } catch {
-            delegate?.didCatchError(error: error as NSError)
-            return nil
-        }
     }
 }

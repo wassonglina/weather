@@ -20,6 +20,7 @@ protocol ViewModelDelegate: AnyObject {
     func didCatchError(errorMsg: String, errorImage: UIImage)
 }
 
+
 class WeatherViewModel: NSObject {
 
     var locationManager = CLLocationManager()
@@ -72,15 +73,26 @@ class WeatherViewModel: NSObject {
     }
 
     func getWeatherWithCity(with cityname: String) {
-        weatherManager.createCityURL2(city: cityname) { [self] currentWeather in
+        weatherManager.requestCurrentCityURL(city: cityname) { [self] currentWeather in
             if preferedLocationSource == .city(cityname) {
-                didFetchCurrent(with: currentWeather)
+                switch currentWeather {
+                case .success(let decodedCurrent):
+                    didFetchCurrent(with: decodedCurrent)
+                case .failure(let error):
+                    print(error)
+                    //TODO: error handling
+                }
             }
         }
-
-        weatherManager.createCityURL(city: cityname) { [self] forecastWeather in
+        weatherManager.requestForecastCityURL(city: cityname) { [self] forecastWeather in
             if preferedLocationSource == .city(cityname) {
-                didFetchForecast(with: forecastWeather)
+                switch forecastWeather {
+                case .success(let decodedForecast):
+                    didFetchForecast(with: decodedForecast)
+                case .failure(let error):
+                    print(error)
+                    //TODO: error handling
+                }
             }
         }
     }
@@ -88,14 +100,27 @@ class WeatherViewModel: NSObject {
     func getWeatherWithCoordinates() {
         if let location = locationManager.location {
             let coordinates = location.coordinate
-            weatherManager.createGeoURL2(with: coordinates) { [self] currentWeather in
+
+            weatherManager.requestCurrentGeoURL(with: coordinates) { [self] currentWeather in
                 if self.preferedLocationSource == .currentLocation {
-                    didFetchCurrent(with: currentWeather)
+                    switch currentWeather {
+                    case .success(let decodedCurrent):
+                        didFetchCurrent(with: decodedCurrent)
+                    case .failure(let error):
+                        print(error)
+                        //TODO: Error handling
+                    }
                 }
             }
-            weatherManager.createGeoURL(with: coordinates) { [self] forecastWeather in
+            weatherManager.requestForecastGeoURL(with: coordinates) { [self] forecastWeather in
                 if self.preferedLocationSource == .currentLocation {
-                    didFetchForecast(with: forecastWeather)
+                    switch forecastWeather {
+                    case .success(let decodedForecast):
+                        didFetchForecast(with: decodedForecast)
+                    case .failure(let error):
+                        print(error)
+                        //TODO: Error handling
+                    }
                 }
             }
         }
@@ -130,11 +155,11 @@ class WeatherViewModel: NSObject {
                 preferedLocationSource = .currentLocation
             } else if auth == .notDetermined || auth == .denied || auth == .restricted {
                 getWeatherWithCity(with: cities.randomElement()!)
-      //          weatherManager.createCityURL(city: cities.randomElement()!)
+                //          weatherManager.createCityURL(city: cities.randomElement()!)
             }
         case .city(let name):
             getWeatherWithCity(with: name)
- //           weatherManager.createCityURL(city: name)
+            //           weatherManager.createCityURL(city: name)
         case nil:
             break
         }
@@ -248,6 +273,7 @@ class WeatherViewModel: NSObject {
 
 extension WeatherViewModel: WeatherManagerDelegate {
 
+    //    MOVE ERROR HANDLING INTO COMPLETION HANDLER
     func didCatchError(error: NSError) {
         let text: String
         let image: UIImage
@@ -260,7 +286,7 @@ extension WeatherViewModel: WeatherManagerDelegate {
             image = UIImage(systemName: "wifi.slash")!
         } else if error.code == -1001 {
             text = "No Internet"   // "Request Timed Out" > updates also automatic > not always requested
-            image = UIImage(systemName: "wifi.slash")!
+            image = UIImage(systemName: "wifi.slash")! //show stopwatch instead?? > "No Response"
         } else {
             text = "Error"
             image = UIImage(systemName: "exclamationmark.icloud")!
