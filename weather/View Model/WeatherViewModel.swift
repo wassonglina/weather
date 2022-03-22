@@ -43,14 +43,14 @@ class WeatherViewModel: NSObject {
         case .city(let cityname):
             preferedLocationSource = .city(cityname)
         default:
-            preferedLocationSource = .currentLocation   //default but maybe change in future
+            preferedLocationSource = .randomCity    //opening app first time
         }
     }
 
     enum PreferedLocationSource: Equatable, Codable {
         case currentLocation
         case city(String)
-        case randomCity(String)
+        case randomCity
     }
 
     var preferedLocationSource: PreferedLocationSource? {
@@ -64,33 +64,40 @@ class WeatherViewModel: NSObject {
                 locationManager.stopUpdatingLocation()
                 getWeatherWithCity(with: cityname)
                 try? defaults.setObject(PreferedLocationSource.city(cityname), forKey: "PrefSource")
-            case .randomCity(let cityname):
+            case .randomCity:
                 locationManager.stopUpdatingLocation()
-                getWeatherWithCity(with: cityname)
+                getWeatherWithRandomCity()
+                print("preferedLocationSource .randomCity")
             case nil:
                 break
             }
         }
     }
 
+    func getWeatherWithRandomCity() {
+        print(#function)
+        let randomCity = cities.randomElement()!
+        weatherManager.requestCurrentCityURL(city: randomCity) { [self] currentWeather in
+            if preferedLocationSource == .randomCity{
+                evaluateCurrent(result: currentWeather)
+            }
+        }
+        weatherManager.requestForecastCityURL(city: randomCity) { [self] forecastWeather in
+            if preferedLocationSource == .randomCity {
+                evaluateForecast(result: forecastWeather)
+            }
+        }
+    }
+
     func getWeatherWithCity(with cityname: String) {
         print(#function)
-        let auth = locationManager.authorizationStatus
-
         weatherManager.requestCurrentCityURL(city: cityname) { [self] currentWeather in
             if preferedLocationSource == .city(cityname) {
-                evaluateCurrent(result: currentWeather)
-                print("evaluate results")
-            } else if auth == .notDetermined || auth == .denied || auth == .restricted {
                 evaluateCurrent(result: currentWeather)
             }
         }
         weatherManager.requestForecastCityURL(city: cityname) { [self] forecastWeather in
             if preferedLocationSource == .city(cityname) {
-                evaluateForecast(result: forecastWeather)
-                print("evaluate results")
-            } else if auth == .notDetermined || auth == .denied || auth == .restricted {
-                print("got it")
                 evaluateForecast(result: forecastWeather)
             }
         }
@@ -135,18 +142,20 @@ class WeatherViewModel: NSObject {
         print(#function)
         switch preferedLocationSource {
         case .currentLocation:
+            print(".currentLocation")
             let auth = locationManager.authorizationStatus
             if auth == .authorizedWhenInUse || auth == .authorizedAlways {
                 preferedLocationSource = .currentLocation
             } else if auth == .notDetermined || auth == .denied || auth == .restricted {
-                preferedLocationSource = .randomCity(cities.randomElement()!)
-
-                getWeatherWithCity(with: cities.randomElement()!)
-                // don't set to preferedLocationSource = .city(city) > otherwiese saves pref and random city in defaults > won't rotate through random cities upon opening  >> when location authorized again jumps back to current location
+                print("change pref source to .randomCity")
+                preferedLocationSource = .randomCity
             }
         case .city(let cityname):
+            print(".city")
             getWeatherWithCity(with: cityname)
-        case .randomCity(let cityname)
+        case .randomCity:
+            print(".randomCity")
+            getWeatherWithRandomCity()
         case nil:
             break
         }

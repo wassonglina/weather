@@ -26,27 +26,23 @@ class WeatherManager {
     let weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
 
     func requestCurrentCityURL(city: String, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
-        print(#function)
         let currentURLString = "\(currentWeatherURL)&q=\(city.trimmingCharacters(in: .whitespaces).stringByAddingPercentEncodingForRFC3986()!)"
         print(currentURLString)
         perform(urlString: currentURLString, transform: parseJSONCurrent, completion: completion)
     }
 
     func requestForecastCityURL(city: String, completion: @escaping (Result<[ForecastModel], Error>) -> Void) {
-        print(#function)
         let forecastURLString = "\(weatherForecastURL)&q=\(city.trimmingCharacters(in: .whitespaces).stringByAddingPercentEncodingForRFC3986()!)"
         perform(urlString: forecastURLString, transform: parseJSONForecast, completion: completion)
         print(forecastURLString)
     }
 
     func requestCurrentGeoURL(with coordinates: CLLocationCoordinate2D, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
-        print(#function)
         let currentURLString = "\(currentWeatherURL)&lat=\(coordinates.latitude)&lon=\(coordinates.longitude)"
         perform(urlString: currentURLString, transform: parseJSONCurrent, completion: completion)
     }
 
     func requestForecastGeoURL(with coordinates: CLLocationCoordinate2D, completion: @escaping (Result<[ForecastModel], Error>) -> Void) {
-        print(#function)
         let forecastURLString = "\(weatherForecastURL)&lat=\(coordinates.latitude)&lon=\(coordinates.longitude)"
         perform(urlString: forecastURLString, transform: parseJSONForecast, completion: completion)
     }
@@ -57,7 +53,6 @@ class WeatherManager {
                     transform: @escaping (Data) throws -> T,      //T: Current or Forecast Models
                     completion: @escaping (Result<T, Error>) -> Void  //Result T > .success > Current or Forecast Models
     ) {
-        print(#function)
         performNetworkRequest(with: urlString) { result in
 
             switch result {
