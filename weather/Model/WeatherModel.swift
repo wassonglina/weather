@@ -62,7 +62,6 @@ extension WeatherModel {
     func symbolName(isNight: Bool, isForecast: Bool) -> String {
         switch condition {
         case 200..<300:
-            //Ternary Operator > Value = condition? ifTure : ifFalse
             if isForecast {
                 return "cloud.bolt.fill"
             } else {

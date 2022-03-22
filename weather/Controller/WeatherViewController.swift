@@ -49,7 +49,6 @@ class WeatherViewController: UIViewController {
     @IBOutlet var searchButton: UIButton!
     @IBOutlet var locationUIButton: UIButton!
 
-//    var weatherManager = WeatherManager()
     var weatherViewModel = WeatherViewModel()
     let cornerRadius = CGFloat(10)
     let animationView = AnimationView()
@@ -177,8 +176,7 @@ class WeatherViewController: UIViewController {
         cityTextLabel.text = animationText
         cityTextLabel.textColor = .white.withAlphaComponent(0.15)
         startAnimation()
-    }  // >> when finished start animation
-
+    }
 
     func startAnimation() {
         animationView.startAnmiationForecast(with: forecastAnimationView)
@@ -189,7 +187,6 @@ class WeatherViewController: UIViewController {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {
             return
         }
-        //TODO: test programatically > constraintHeight/2 instead of hard coded
         self.view.frame.origin.y = 40 - keyboardSize.height
     }
 
@@ -247,7 +244,6 @@ extension WeatherViewController: UITextFieldDelegate {
     }
 }
 
-
 //MARK: - Extension WeatherViewController: ViewModelDelegate
 
 extension WeatherViewController: ViewModelDelegate {
@@ -260,8 +256,6 @@ extension WeatherViewController: ViewModelDelegate {
         present(alert, animated: true)
     }
 
-
-    // when bad network weather and forecast don't load simultaneously
     func updateCurrentUI(city: String, temperature: String, image: UIImage, forecastImage: UIImage, forecastMinTemp: String, forecastMaxTemp: String) {
         DispatchQueue.main.async {
             self.cityTextLabel.text = city

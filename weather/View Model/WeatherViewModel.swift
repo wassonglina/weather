@@ -50,6 +50,7 @@ class WeatherViewModel: NSObject {
     enum PreferedLocationSource: Equatable, Codable {
         case currentLocation
         case city(String)
+        case randomCity(String)
     }
 
     var preferedLocationSource: PreferedLocationSource? {
@@ -63,6 +64,9 @@ class WeatherViewModel: NSObject {
                 locationManager.stopUpdatingLocation()
                 getWeatherWithCity(with: cityname)
                 try? defaults.setObject(PreferedLocationSource.city(cityname), forKey: "PrefSource")
+            case .randomCity(let cityname):
+                locationManager.stopUpdatingLocation()
+                getWeatherWithCity(with: cityname)
             case nil:
                 break
             }
@@ -70,14 +74,25 @@ class WeatherViewModel: NSObject {
     }
 
     func getWeatherWithCity(with cityname: String) {
+        print(#function)
+        let auth = locationManager.authorizationStatus
+
         weatherManager.requestCurrentCityURL(city: cityname) { [self] currentWeather in
             if preferedLocationSource == .city(cityname) {
+                evaluateCurrent(result: currentWeather)
+                print("evaluate results")
+            } else if auth == .notDetermined || auth == .denied || auth == .restricted {
                 evaluateCurrent(result: currentWeather)
             }
         }
         weatherManager.requestForecastCityURL(city: cityname) { [self] forecastWeather in
             if preferedLocationSource == .city(cityname) {
-                evaluateForecast(result: forecastWeather)            }
+                evaluateForecast(result: forecastWeather)
+                print("evaluate results")
+            } else if auth == .notDetermined || auth == .denied || auth == .restricted {
+                print("got it")
+                evaluateForecast(result: forecastWeather)
+            }
         }
     }
 
@@ -124,10 +139,14 @@ class WeatherViewModel: NSObject {
             if auth == .authorizedWhenInUse || auth == .authorizedAlways {
                 preferedLocationSource = .currentLocation
             } else if auth == .notDetermined || auth == .denied || auth == .restricted {
+                preferedLocationSource = .randomCity(cities.randomElement()!)
+
                 getWeatherWithCity(with: cities.randomElement()!)
+                // don't set to preferedLocationSource = .city(city) > otherwiese saves pref and random city in defaults > won't rotate through random cities upon opening  >> when location authorized again jumps back to current location
             }
-        case .city(let name):
-            getWeatherWithCity(with: name)
+        case .city(let cityname):
+            getWeatherWithCity(with: cityname)
+        case .randomCity(let cityname)
         case nil:
             break
         }
@@ -147,9 +166,10 @@ class WeatherViewModel: NSObject {
     }
 
     func createAlert(){
-        let title = "Get weather for your current location?"
-        let message = "Allow access to your location in settings."
+        let title = "Turn on your location in Weather Pal"  //Get weather for your current location? Turn on your location in Weather Pal
+        let message = "Allow location access in settings."
         let cancelAction = UIAlertAction(title: "Cancel", style: .default) { _ in
+            print("tapped cancel")
             self.getLocationBasedOnUserPref()
         }
         let settingsAction = UIAlertAction(title: "Settings", style: .cancel) { _ in
@@ -163,7 +183,7 @@ class WeatherViewModel: NSObject {
     }
 
 
-//MARK:  - Evaluation network request > prepare data for UI or error handling
+    //MARK:  - Evaluation network request > prepare data for UI or error handling
 
     func evaluateCurrent(result: (Result<CurrentModel, Error>)) {
         switch result {
@@ -185,15 +205,15 @@ class WeatherViewModel: NSObject {
         }
     }
 
-//    func evaluate<T>(result: (Result<T, Error>), execute: (Data)) {      //, execute: (Data)
-//            switch result {
-//            case .success(let decodedData):
-//                execute(with: decodedData)
-//            case .failure(let error):
-//                print(error)
-//                didCatchError(error: error as NSError)
-//            }
-//        }
+    //    func evaluate<T>(result: (Result<T, Error>), execute: (Data)) {      //, execute: (Data)
+    //            switch result {
+    //            case .success(let decodedData):
+    //                execute(with: decodedData)
+    //            case .failure(let error):
+    //                print(error)
+    //                didCatchError(error: error as NSError)
+    //            }
+    //        }
 
 
     func didCatchError(error: NSError) {
@@ -217,7 +237,7 @@ class WeatherViewModel: NSObject {
     }
 
 
-//MARK: - Preparation current and forecast data for VC
+    //MARK: - Preparation current and forecast data for VC
 
     func didFetchCurrent(with currentWeather: CurrentModel) {
         let city = currentWeather.name
@@ -306,6 +326,7 @@ extension WeatherViewModel: CLLocationManagerDelegate {
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         print(#function)
+        //didBecomeActive will call func to get weather
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

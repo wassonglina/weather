@@ -27,21 +27,22 @@ class WeatherManager {
 
     func requestCurrentCityURL(city: String, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
         print(#function)
-        let weatherURLString = "\(currentWeatherURL)&q=\(city.trimmingCharacters(in: .whitespaces).stringByAddingPercentEncodingForRFC3986()!)"
-        perform(urlString: weatherURLString, transform: parseJSONCurrent, completion: completion)
+        let currentURLString = "\(currentWeatherURL)&q=\(city.trimmingCharacters(in: .whitespaces).stringByAddingPercentEncodingForRFC3986()!)"
+        print(currentURLString)
+        perform(urlString: currentURLString, transform: parseJSONCurrent, completion: completion)
     }
 
     func requestForecastCityURL(city: String, completion: @escaping (Result<[ForecastModel], Error>) -> Void) {
         print(#function)
         let forecastURLString = "\(weatherForecastURL)&q=\(city.trimmingCharacters(in: .whitespaces).stringByAddingPercentEncodingForRFC3986()!)"
         perform(urlString: forecastURLString, transform: parseJSONForecast, completion: completion)
+        print(forecastURLString)
     }
 
     func requestCurrentGeoURL(with coordinates: CLLocationCoordinate2D, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
         print(#function)
-        let weatherURLString = "\(currentWeatherURL)&lat=\(coordinates.latitude)&lon=\(coordinates.longitude)"
-        perform(urlString: weatherURLString, transform: parseJSONCurrent, completion: completion)
-        print(weatherURLString)
+        let currentURLString = "\(currentWeatherURL)&lat=\(coordinates.latitude)&lon=\(coordinates.longitude)"
+        perform(urlString: currentURLString, transform: parseJSONCurrent, completion: completion)
     }
 
     func requestForecastGeoURL(with coordinates: CLLocationCoordinate2D, completion: @escaping (Result<[ForecastModel], Error>) -> Void) {
@@ -56,6 +57,7 @@ class WeatherManager {
                     transform: @escaping (Data) throws -> T,      //T: Current or Forecast Models
                     completion: @escaping (Result<T, Error>) -> Void  //Result T > .success > Current or Forecast Models
     ) {
+        print(#function)
         performNetworkRequest(with: urlString) { result in
 
             switch result {
@@ -74,7 +76,6 @@ class WeatherManager {
     }
 
     func performNetworkRequest(with urlString: String, completion: @escaping (Result<Data, Error>) -> Void ) {
-
         if let url = URL(string: urlString) {
             let session = URLSession(configuration: .default)
             let task = session.dataTask(with: url) { data, response, error in
@@ -109,7 +110,6 @@ class WeatherManager {
 
     func parseJSONForecast(with encodedData: Data) throws -> [ForecastModel] {
         let decoder = JSONDecoder()
-
         let decodedForecast = try decoder.decode(OpenWeatherAPI.Forecast.self, from: encodedData)
 
         //only get temp, weather id and date of filtered list
