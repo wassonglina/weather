@@ -20,7 +20,6 @@ protocol ViewModelDelegate: AnyObject {
     func didCatchError(errorMsg: String, errorImage: UIImage)
 }
 
-
 class WeatherViewModel: NSObject {
 
     var locationManager = CLLocationManager()
@@ -162,6 +161,7 @@ class WeatherViewModel: NSObject {
     }
 
     func didTapLocation() {
+        preferedLocationSource = .currentLocation
         handleAuthCase()
     }
 

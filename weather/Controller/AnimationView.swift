@@ -22,7 +22,6 @@ class AnimationView: UIView {
         UIColor.clear.cgColor
     ]
 
-    //TODO: only one function
     func defineLabelGradient() {
         labelGradientLayer.colors = animationColors
         labelGradientLayer.locations = [0, 0.48, 0.52, 1]

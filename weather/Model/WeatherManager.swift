@@ -20,30 +20,32 @@ extension String {
 
 class WeatherManager {
 
-    let currentWeatherURL = "https://api.openweathermap.org/data/2.5/weather?&appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
+    let currentWeatherURL = "https://api.openweathermap.org/data/2.5/weather?&units=metric"
 
     //gives weather of today and next 5 days of every 3h
-    let weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?appid=63f43c85a20418a56d7bd2c747992f0e&units=metric"
+    let weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?&units=metric"
+
+    let id = Secrets.openWeatherAppID       //replace with OpenWeather API keygit add .
 
     func requestCurrentCityURL(city: String, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
-        let currentURLString = "\(currentWeatherURL)&q=\(city.trimmingCharacters(in: .whitespaces).stringByAddingPercentEncodingForRFC3986()!)"
+        let currentURLString = "\(currentWeatherURL)&appid=\(id)&q=\(city.trimmingCharacters(in: .whitespaces).stringByAddingPercentEncodingForRFC3986()!)"
         print(currentURLString)
         perform(urlString: currentURLString, transform: parseJSONCurrent, completion: completion)
     }
 
     func requestForecastCityURL(city: String, completion: @escaping (Result<[ForecastModel], Error>) -> Void) {
-        let forecastURLString = "\(weatherForecastURL)&q=\(city.trimmingCharacters(in: .whitespaces).stringByAddingPercentEncodingForRFC3986()!)"
+        let forecastURLString = "\(weatherForecastURL)&appid=\(id)&q=\(city.trimmingCharacters(in: .whitespaces).stringByAddingPercentEncodingForRFC3986()!)"
         perform(urlString: forecastURLString, transform: parseJSONForecast, completion: completion)
         print(forecastURLString)
     }
 
     func requestCurrentGeoURL(with coordinates: CLLocationCoordinate2D, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
-        let currentURLString = "\(currentWeatherURL)&lat=\(coordinates.latitude)&lon=\(coordinates.longitude)"
+        let currentURLString = "\(currentWeatherURL)&appid=\(id)&lat=\(coordinates.latitude)&lon=\(coordinates.longitude)"
         perform(urlString: currentURLString, transform: parseJSONCurrent, completion: completion)
     }
 
     func requestForecastGeoURL(with coordinates: CLLocationCoordinate2D, completion: @escaping (Result<[ForecastModel], Error>) -> Void) {
-        let forecastURLString = "\(weatherForecastURL)&lat=\(coordinates.latitude)&lon=\(coordinates.longitude)"
+        let forecastURLString = "\(weatherForecastURL)&appid=\(id)&lat=\(coordinates.latitude)&lon=\(coordinates.longitude)"
         perform(urlString: forecastURLString, transform: parseJSONForecast, completion: completion)
     }
 
