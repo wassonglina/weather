@@ -25,7 +25,7 @@ class WeatherManager {
     //gives weather of today and next 5 days of every 3h
     let weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?&units=metric"
 
-    let id = Secrets.openWeatherAppID       //replace with OpenWeather API keygit add .
+    let id = Secrets.openWeatherAppID       //replace with OpenWeather API key
 
     func requestCurrentCityURL(city: String, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
         let currentURLString = "\(currentWeatherURL)&appid=\(id)&q=\(city.trimmingCharacters(in: .whitespaces).stringByAddingPercentEncodingForRFC3986()!)"

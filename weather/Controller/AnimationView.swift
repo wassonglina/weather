@@ -7,50 +7,73 @@
 
 import UIKit
 
+extension CAGradientLayer {
+
+    static var loading: CAGradientLayer {
+        let layer = CAGradientLayer()
+        layer.colors = [
+            UIColor.clear.cgColor,
+            UIColor.white.cgColor,
+            UIColor.white.cgColor,
+            UIColor.clear.cgColor
+        ]
+        layer.locations = [0, 0.48, 0.52, 1]
+        layer.startPoint = .init(x: 0.0, y: 0.5)
+        layer.endPoint = .init(x: 1.0, y: 0.5)
+        return layer
+    }
+}
+
+class LoadingView: UIView {
+
+    let gradientLayer = CAGradientLayer.loading
+    let animation = CABasicAnimation(keyPath: "transform.translation.x")
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setup()
+    }
+
+    private func setup() {
+        animation.repeatCount = Float.infinity
+        animation.duration = 1.7
+        layer.mask = gradientLayer
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        animation.fromValue = -self.frame.width
+        animation.toValue = self.frame.width
+        gradientLayer.frame = bounds
+        gradientLayer.add(animation, forKey: "Null")
+    }
+}
+
 class AnimationView: UIView {
 
-    let forecastGradientLayer = CAGradientLayer()
-    let labelGradientLayer = CAGradientLayer()
+    let labelGradientLayer = CAGradientLayer.loading
 
-    let animationForecast = CABasicAnimation(keyPath: "transform.translation.x")
-    let animationLabel = CABasicAnimation(keyPath: "transform.translation.x")
+    let labelAnimation = CABasicAnimation(keyPath: "transform.translation.x")
 
-    let animationColors = [
-        UIColor.clear.cgColor,
-        UIColor.white.cgColor,
-        UIColor.white.cgColor,
-        UIColor.clear.cgColor
-    ]
 
-    func defineLabelGradient() {
-        labelGradientLayer.colors = animationColors
-        labelGradientLayer.locations = [0, 0.48, 0.52, 1]
-        labelGradientLayer.startPoint = .init(x: 0.0, y: 0.5)
-        labelGradientLayer.endPoint = .init(x: 1.0, y: 0.5)
-    }
-
-    func defineForecastGradient() {
-        forecastGradientLayer.colors = animationColors
-        forecastGradientLayer.locations = [0, 0.48, 0.52, 1]
-        forecastGradientLayer.startPoint = .init(x: 0.0, y: 0.5)
-        forecastGradientLayer.endPoint = .init(x: 1.0, y: 0.5)
-    }
-
-    func startAnmiationLabel(with layer: UILabel){
+    private func startAnmiationLabel(with layer: UILabel){
         //TODO: test from and to value on different devices (view.frame.width)
-        animationLabel.fromValue = -layer.frame.width
-        animationLabel.toValue = layer.frame.width
-        animationLabel.repeatCount = Float.infinity
-        animationLabel.duration = 1.7
-        labelGradientLayer.add(animationLabel, forKey: "Null")
+        labelAnimation.fromValue = -layer.frame.width
+        labelAnimation.toValue = layer.frame.width
+        labelAnimation.repeatCount = Float.infinity
+        labelAnimation.duration = 1.7
+        labelGradientLayer.add(labelAnimation, forKey: "Null")
     }
 
-    func startAnmiationForecast(with layer: UIView){
-        //TODO: test from and to value on different devices (view.frame.width)
-        animationForecast.fromValue = -layer.frame.width
-        animationForecast.toValue = layer.frame.width
-        animationForecast.repeatCount = Float.infinity
-        animationForecast.duration = 1.7
-        forecastGradientLayer.add(animationForecast, forKey: "Null")
+
+
+    func startAnimations(withCurrent currentView: UILabel) {
+        startAnmiationLabel(with: currentView)
     }
+
 }

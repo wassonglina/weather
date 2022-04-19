@@ -15,7 +15,7 @@ class WeatherViewController: UIViewController {
     @IBOutlet var tempTextLabel: UILabel!
     @IBOutlet var weatherImageView: UIImageView!
     @IBOutlet var forecastView: UIView!                 //back View
-    @IBOutlet var forecastAnimationView: UIView!         //front View
+    @IBOutlet var forecastAnimationView: LoadingView!         //front View
     @IBOutlet var animationLabel: UILabel!
     @IBOutlet var errorImageview: UIImageView!
 
@@ -139,18 +139,14 @@ class WeatherViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(self.didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
 
+    //define gradients here to start animation in case didBecomeActive or viewDidLoad
     override func viewWillAppear(_ animated: Bool) {
         print(#function)
-        animationView.defineForecastGradient()
-        animationView.defineLabelGradient()
         startAnimation()
     }
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        forecastAnimationView.frame = forecastView.frame
-        animationView.forecastGradientLayer.frame = forecastAnimationView.bounds
-        forecastAnimationView.layer.mask = animationView.forecastGradientLayer
 
         animationLabel.frame = cityTextLabel.frame
         animationView.labelGradientLayer.frame = animationLabel.bounds
@@ -179,8 +175,9 @@ class WeatherViewController: UIViewController {
     }
 
     func startAnimation() {
-        animationView.startAnmiationForecast(with: forecastAnimationView)
-        animationView.startAnmiationLabel(with: animationLabel)
+        animationView.startAnimations(withCurrent: animationLabel)
+//        animationView.startAnmiationForecast(with: forecastAnimationView)
+//        animationView.startAnmiationLabel(with: animationLabel)
     }
 
     @objc func keyboardWillShow(notification: NSNotification) {
