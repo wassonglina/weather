@@ -139,20 +139,6 @@ class WeatherViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(self.didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
 
-    //define gradients here to start animation in case didBecomeActive or viewDidLoad
-    override func viewWillAppear(_ animated: Bool) {
-        print(#function)
-        startAnimation()
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-        animationLabel.frame = cityTextLabel.frame
-        animationView.labelGradientLayer.frame = animationLabel.bounds
-        animationLabel.layer.mask = animationView.labelGradientLayer
-    }
-
     @objc func didBecomeActive() {
         print("VC: \(#function)")
         weatherViewModel.didBecomeActive()
@@ -171,13 +157,6 @@ class WeatherViewController: UIViewController {
         forecastAnimationView.isHidden = false
         cityTextLabel.text = animationText
         cityTextLabel.textColor = .white.withAlphaComponent(0.15)
-        startAnimation()
-    }
-
-    func startAnimation() {
-        animationView.startAnimations(withCurrent: animationLabel)
-//        animationView.startAnmiationForecast(with: forecastAnimationView)
-//        animationView.startAnmiationLabel(with: animationLabel)
     }
 
     @objc func keyboardWillShow(notification: NSNotification) {
