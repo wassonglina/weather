@@ -19,30 +19,11 @@ class WeatherViewController: UIViewController {
     @IBOutlet var animationLabel: UILabel!
     @IBOutlet var errorImageview: UIImageView!
 
-
-    @IBOutlet var forecast1TextLabel: UILabel!
-    @IBOutlet var forecast2TextLabel: UILabel!
-    @IBOutlet var forecast3TextLabel: UILabel!
-    @IBOutlet var forecast4TextLabel: UILabel!
-    @IBOutlet var forecast5TextLabel: UILabel!
-
-    @IBOutlet var cond1ImageView: UIImageView!
-    @IBOutlet var cond2ImageView: UIImageView!
-    @IBOutlet var cond3ImageView: UIImageView!
-    @IBOutlet var cond4ImageView: UIImageView!
-    @IBOutlet var cond5ImageView: UIImageView!
-
-    @IBOutlet var temp1TextLabel: UILabel!
-    @IBOutlet var temp2TextLabel: UILabel!
-    @IBOutlet var temp3TextLabel: UILabel!
-    @IBOutlet var temp4TextLabel: UILabel!
-    @IBOutlet var temp5TextLabel: UILabel!
-
-    @IBOutlet var temp1MinTextLabel: UILabel!
-    @IBOutlet var temp2MinTextLabel: UILabel!
-    @IBOutlet var temp3MinTextLabel: UILabel!
-    @IBOutlet var temp4MinTextLabel: UILabel!
-    @IBOutlet var temp5MinTextLabel: UILabel!
+    private let forecastRowView1 = ForecastRowView()
+    private let forecastRowView2 = ForecastRowView()
+    private let forecastRowView3 = ForecastRowView()
+    private let forecastRowView4 = ForecastRowView()
+    private let forecastRowView5 = ForecastRowView()
 
     @IBOutlet var forecastStackView: UIStackView!
 
@@ -61,14 +42,11 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         print(#function)
 
-        let forecastRowView = ForecastRowView()
-        forecastStackView.addArrangedSubview(forecastRowView)
-        forecastRowView.configure(day: "Sunday",
-                                  image: UIImage(systemName: "sun.max.fill")!,
-                                  minTemp: "12*",
-                                  maxTemp: "25*")
-
-        let forecastFont = UIFont.scriptFont(size: 20, style: .medium)
+        forecastStackView.addArrangedSubview(forecastRowView1)
+        forecastStackView.addArrangedSubview(forecastRowView2)
+        forecastStackView.addArrangedSubview(forecastRowView3)
+        forecastStackView.addArrangedSubview(forecastRowView4)
+        forecastStackView.addArrangedSubview(forecastRowView5)
 
         searchButton?.isUserInteractionEnabled = false
         searchButton?.alpha = 0.4
@@ -87,42 +65,6 @@ class WeatherViewController: UIViewController {
         weatherImageView.isHidden = true
         errorImageview.isHidden = true
         forecastStackView.isHidden = true
-
-        forecast1TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-        forecast2TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-        forecast3TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-        forecast4TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-        forecast5TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-
-        forecast1TextLabel.adjustsFontForContentSizeCategory = true
-        forecast2TextLabel.adjustsFontForContentSizeCategory = true
-        forecast3TextLabel.adjustsFontForContentSizeCategory = true
-        forecast4TextLabel.adjustsFontForContentSizeCategory = true
-        forecast5TextLabel.adjustsFontForContentSizeCategory = true
-
-        temp1TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-        temp2TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-        temp3TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-        temp4TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-        temp5TextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-
-        temp1TextLabel.adjustsFontForContentSizeCategory = true
-        temp2TextLabel.adjustsFontForContentSizeCategory = true
-        temp3TextLabel.adjustsFontForContentSizeCategory = true
-        temp4TextLabel.adjustsFontForContentSizeCategory = true
-        temp5TextLabel.adjustsFontForContentSizeCategory = true
-
-        temp1MinTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-        temp2MinTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-        temp3MinTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-        temp4MinTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-        temp5MinTextLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: forecastFont)
-
-        temp1MinTextLabel.adjustsFontForContentSizeCategory = true
-        temp2MinTextLabel.adjustsFontForContentSizeCategory = true
-        temp3MinTextLabel.adjustsFontForContentSizeCategory = true
-        temp4MinTextLabel.adjustsFontForContentSizeCategory = true
-        temp5MinTextLabel.adjustsFontForContentSizeCategory = true
 
         forecastViewBackground.backgroundColor = .white.withAlphaComponent(0.15)
         forecastViewBackground.layer.cornerRadius = cornerRadius
@@ -245,10 +187,10 @@ extension WeatherViewController: ViewModelDelegate {
             self.weatherImageView.image = image
             self.errorImageview.isHidden = true
 
-            self.forecast1TextLabel.text = "Today"
-            self.cond1ImageView.image = forecastImage
-            self.temp1TextLabel.text = forecastMaxTemp
-            self.temp1MinTextLabel.text = forecastMinTemp
+            self.forecastRowView1.configure(day: "Today",
+                                      image: forecastImage,
+                                      minTemp: forecastMinTemp,
+                                      maxTemp: forecastMaxTemp)
 
             self.cityTextLabel.textColor = .white
             self.tempTextLabel.isHidden = false
@@ -259,25 +201,25 @@ extension WeatherViewController: ViewModelDelegate {
 
     func updateForecastUI(with forecastUIModels: [ForecastUIModel]) {
         DispatchQueue.main.async {
-            self.forecast2TextLabel.text = forecastUIModels[0].forecastDay
-            self.cond2ImageView.image = forecastUIModels[0].forecastImage
-            self.temp2MinTextLabel.text = forecastUIModels[0].forecastTempMin
-            self.temp2TextLabel.text = forecastUIModels[0].forecastTempMax
+            self.forecastRowView2.configure(day: forecastUIModels[1].forecastDay,
+                                      image: forecastUIModels[1].forecastImage,
+                                      minTemp: forecastUIModels[1].forecastTempMin,
+                                      maxTemp: forecastUIModels[1].forecastTempMax)
 
-            self.forecast3TextLabel.text = forecastUIModels[1].forecastDay
-            self.cond3ImageView.image = forecastUIModels[1].forecastImage
-            self.temp3MinTextLabel.text = forecastUIModels[1].forecastTempMin
-            self.temp3TextLabel.text = forecastUIModels[1].forecastTempMax
+            self.forecastRowView3.configure(day: forecastUIModels[2].forecastDay,
+                                      image: forecastUIModels[2].forecastImage,
+                                      minTemp: forecastUIModels[2].forecastTempMin,
+                                      maxTemp: forecastUIModels[2].forecastTempMax)
 
-            self.forecast4TextLabel.text = forecastUIModels[2].forecastDay
-            self.cond4ImageView.image = forecastUIModels[2].forecastImage
-            self.temp4MinTextLabel.text = forecastUIModels[2].forecastTempMin
-            self.temp4TextLabel.text = forecastUIModels[2].forecastTempMax
+            self.forecastRowView4.configure(day: forecastUIModels[3].forecastDay,
+                                      image: forecastUIModels[3].forecastImage,
+                                      minTemp: forecastUIModels[3].forecastTempMin,
+                                      maxTemp: forecastUIModels[3].forecastTempMax)
 
-            self.forecast5TextLabel.text = forecastUIModels[3].forecastDay
-            self.cond5ImageView.image = forecastUIModels[3].forecastImage
-            self.temp5MinTextLabel.text = forecastUIModels[3].forecastTempMin
-            self.temp5TextLabel.text = forecastUIModels[3].forecastTempMax
+            self.forecastRowView5.configure(day: forecastUIModels[4].forecastDay,
+                                      image: forecastUIModels[4].forecastImage,
+                                      minTemp: forecastUIModels[4].forecastTempMin,
+                                      maxTemp: forecastUIModels[4].forecastTempMax)
 
             self.forecastStackView.isHidden = false
             self.forecastAnimationView.isHidden = true
