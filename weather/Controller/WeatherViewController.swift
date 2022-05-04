@@ -51,7 +51,6 @@ class WeatherViewController: UIViewController {
 
     var weatherViewModel = WeatherViewModel()
     let cornerRadius = CGFloat(10)
-    let animationView = AnimationView()
     let animationText = "Loading ..."
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
