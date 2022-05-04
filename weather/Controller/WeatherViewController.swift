@@ -14,7 +14,7 @@ class WeatherViewController: UIViewController {
     @IBOutlet var cityTextLabel: UILabel!               //back View
     @IBOutlet var tempTextLabel: UILabel!
     @IBOutlet var weatherImageView: UIImageView!
-    @IBOutlet var forecastView: UIView!                 //back View
+    @IBOutlet var forecastViewBackground: UIView!                 //back View
     @IBOutlet var forecastAnimationView: LoadingView!         //front View
     @IBOutlet var animationLabel: UILabel!
     @IBOutlet var errorImageview: UIImageView!
@@ -118,16 +118,16 @@ class WeatherViewController: UIViewController {
         temp4MinTextLabel.adjustsFontForContentSizeCategory = true
         temp5MinTextLabel.adjustsFontForContentSizeCategory = true
 
-        forecastView.backgroundColor = .white.withAlphaComponent(0.15)
-        forecastView.layer.cornerRadius = cornerRadius
+        forecastViewBackground.backgroundColor = .white.withAlphaComponent(0.15)
+        forecastViewBackground.layer.cornerRadius = cornerRadius
+
+        forecastAnimationView.layer.cornerRadius = cornerRadius
+        forecastAnimationView.backgroundColor = .white.withAlphaComponent(0.45)
 
         animationLabel.textColor = .white.withAlphaComponent(0.65)
         animationLabel.text = cityTextLabel.text
         animationLabel.font = cityTextLabel.font
         animationLabel.textAlignment = cityTextLabel.textAlignment
-
-        forecastAnimationView.layer.cornerRadius = cornerRadius
-        forecastAnimationView.backgroundColor = .white.withAlphaComponent(0.45)
 
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.didTapScreen))
         view.addGestureRecognizer(tap)

@@ -416,7 +416,7 @@
                         <outlet property="forecast5TextLabel" destination="j1j-Eq-FBS" id="5pA-rr-q2t"/>
                         <outlet property="forecastAnimationView" destination="WVP-Ck-lez" id="Fmc-vY-43X"/>
                         <outlet property="forecastStackView" destination="tQC-9T-69t" id="BFh-6q-evM"/>
-                        <outlet property="forecastView" destination="pF2-Wx-93C" id="Tu6-GJ-UZh"/>
+                        <outlet property="forecastViewBackground" destination="pF2-Wx-93C" id="Tm4-8T-Qee"/>
                         <outlet property="locationUIButton" destination="CD1-ax-HTa" id="Qy1-Nv-1Nj"/>
                         <outlet property="searchButton" destination="jkG-8N-2VF" id="22s-3S-8eN"/>
                         <outlet property="temp1MinTextLabel" destination="KwB-GW-OaD" id="F0A-VV-4r2"/>

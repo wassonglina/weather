@@ -20,12 +20,14 @@ extension String {
 
 class WeatherManager {
 
+    //current weather
     let currentWeatherURL = "https://api.openweathermap.org/data/2.5/weather?&units=metric"
 
-    //gives weather of today and next 5 days of every 3h
+    //forecasted weather of today and next 5 days every 3h
     let weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?&units=metric"
 
     let id = Secrets.openWeatherAppID       //replace with OpenWeather API key
+
 
     func requestCurrentCityURL(city: String, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
         let currentURLString = "\(currentWeatherURL)&appid=\(id)&q=\(city.trimmingCharacters(in: .whitespaces).stringByAddingPercentEncodingForRFC3986()!)"
@@ -38,6 +40,7 @@ class WeatherManager {
         perform(urlString: forecastURLString, transform: parseJSONForecast, completion: completion)
         print(forecastURLString)
     }
+
 
     func requestCurrentGeoURL(with coordinates: CLLocationCoordinate2D, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
         let currentURLString = "\(currentWeatherURL)&appid=\(id)&lat=\(coordinates.latitude)&lon=\(coordinates.longitude)"
