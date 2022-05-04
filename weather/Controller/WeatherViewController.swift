@@ -48,6 +48,11 @@ class WeatherViewController: UIViewController {
         forecastStackView.addArrangedSubview(forecastRowView4)
         forecastStackView.addArrangedSubview(forecastRowView5)
 
+        forecastRowView1.constrainRelative(to: forecastRowView2)
+        forecastRowView1.constrainRelative(to: forecastRowView3)
+        forecastRowView1.constrainRelative(to: forecastRowView4)
+        forecastRowView1.constrainRelative(to: forecastRowView5)
+
         searchButton?.isUserInteractionEnabled = false
         searchButton?.alpha = 0.4
 

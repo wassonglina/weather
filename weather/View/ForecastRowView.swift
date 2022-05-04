@@ -17,23 +17,39 @@ class ForecastRowView: UIStackView {
 
     init() {
         super.init(frame: .zero)
-        spacing = 22
-        alignment = .center
-        addArrangedSubview(label)
-        addArrangedSubview(imageView)
+
         let tempStack = UIStackView()
         let hyphen = ForecastLabel()
-        hyphen.text = " - "
+
+        addArrangedSubview(label)
+        addArrangedSubview(imageView)
         addArrangedSubview(tempStack)
-        tempStack.addArrangedSubview(tempMinLabel)
         tempStack.addArrangedSubview(hyphen)
         tempStack.addArrangedSubview(tempMaxLabel)
-        imageView.tintColor = .white
+        tempStack.addArrangedSubview(tempMinLabel)
+
         imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
+
+        spacing = 22
+        alignment = .center
+        hyphen.text = " - "
+        tempMinLabel.textAlignment = .right
+        imageView.tintColor = .white
+        configure(day: "Wednesday", image: UIImage(systemName: "sun.max")!, minTemp: "14*", maxTemp: "22*")
     }
 
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func constrainRelative(to other: ForecastRowView) {
+        NSLayoutConstraint.activate([
+            label.widthAnchor.constraint(equalTo: other.label.widthAnchor),
+            imageView.widthAnchor.constraint(equalTo: other.imageView.widthAnchor),
+            tempMinLabel.widthAnchor.constraint(equalTo: other.tempMinLabel.widthAnchor),
+            tempMaxLabel.widthAnchor.constraint(equalTo: other.tempMaxLabel.widthAnchor)
+        ])
+
     }
 
     func configure(day: String, image: UIImage, minTemp: String, maxTemp: String) {
@@ -41,11 +57,8 @@ class ForecastRowView: UIStackView {
         imageView.image = image
         tempMinLabel.text = minTemp
         tempMaxLabel.text = maxTemp
-
     }
-
 }
-
 
 private class ForecastLabel: UILabel {
 
