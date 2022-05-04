@@ -61,6 +61,13 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         print(#function)
 
+        let forecastRowView = ForecastRowView()
+        forecastStackView.addArrangedSubview(forecastRowView)
+        forecastRowView.configure(day: "Sunday",
+                                  image: UIImage(systemName: "sun.max.fill")!,
+                                  minTemp: "12*",
+                                  maxTemp: "25*")
+
         let forecastFont = UIFont.scriptFont(size: 20, style: .medium)
 
         searchButton?.isUserInteractionEnabled = false
