@@ -89,6 +89,4 @@ fastlane/test_output
 
 iOSInjectionProject/
 
-Secrets.swift
-
 *.xcuserstate
