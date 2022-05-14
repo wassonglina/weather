@@ -24,9 +24,10 @@ class ForecastRowView: UIStackView {
         addArrangedSubview(label)
         addArrangedSubview(imageView)
         addArrangedSubview(tempStack)
+        tempStack.addArrangedSubview(tempMinLabel)
         tempStack.addArrangedSubview(hyphen)
         tempStack.addArrangedSubview(tempMaxLabel)
-        tempStack.addArrangedSubview(tempMinLabel)
+
 
         imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
 
