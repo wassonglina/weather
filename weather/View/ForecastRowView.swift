@@ -28,7 +28,6 @@ class ForecastRowView: UIStackView {
         tempStack.addArrangedSubview(hyphen)
         tempStack.addArrangedSubview(tempMaxLabel)
 
-
         imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
 
         spacing = 22
@@ -36,6 +35,7 @@ class ForecastRowView: UIStackView {
         hyphen.text = " - "
         tempMinLabel.textAlignment = .right
         imageView.tintColor = .white
+        imageView.contentMode = .scaleAspectFit
         configure(day: "Wednesday", image: UIImage(systemName: "sun.max")!, minTemp: "14*", maxTemp: "22*")
     }
 
@@ -50,7 +50,6 @@ class ForecastRowView: UIStackView {
             tempMinLabel.widthAnchor.constraint(equalTo: other.tempMinLabel.widthAnchor),
             tempMaxLabel.widthAnchor.constraint(equalTo: other.tempMaxLabel.widthAnchor)
         ])
-
     }
 
     func configure(day: String, image: UIImage, minTemp: String, maxTemp: String) {
