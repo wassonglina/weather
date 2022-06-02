@@ -30,9 +30,9 @@ class WeatherViewController: UIViewController {
     @IBOutlet var searchButton: UIButton!
     @IBOutlet var locationUIButton: UIButton!
 
-    var weatherViewModel = WeatherViewModel()
-    let cornerRadius = CGFloat(10)
-    let animationText = "Loading ..."
+    private var weatherViewModel = WeatherViewModel()
+    private let cornerRadius = CGFloat(10)
+    private let animationText = "Loading ..."
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -42,16 +42,7 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         print(#function)
 
-        forecastStackView.addArrangedSubview(forecastRowView1)
-        forecastStackView.addArrangedSubview(forecastRowView2)
-        forecastStackView.addArrangedSubview(forecastRowView3)
-        forecastStackView.addArrangedSubview(forecastRowView4)
-        forecastStackView.addArrangedSubview(forecastRowView5)
-
-        forecastRowView1.constrainRelative(to: forecastRowView2)
-        forecastRowView1.constrainRelative(to: forecastRowView3)
-        forecastRowView1.constrainRelative(to: forecastRowView4)
-        forecastRowView1.constrainRelative(to: forecastRowView5)
+        addForecastStackView()
 
         searchButton?.isUserInteractionEnabled = false
         searchButton?.alpha = 0.4
@@ -86,10 +77,21 @@ class WeatherViewController: UIViewController {
         view.addGestureRecognizer(tap)
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-
         NotificationCenter.default.addObserver(self, selector: #selector(self.didBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
+
+    private func addForecastStackView() {
+        forecastStackView.addArrangedSubview(forecastRowView1)
+        forecastStackView.addArrangedSubview(forecastRowView2)
+        forecastStackView.addArrangedSubview(forecastRowView3)
+        forecastStackView.addArrangedSubview(forecastRowView4)
+        forecastStackView.addArrangedSubview(forecastRowView5)
+
+        forecastRowView1.constrainRelative(to: forecastRowView2)
+        forecastRowView1.constrainRelative(to: forecastRowView3)
+        forecastRowView1.constrainRelative(to: forecastRowView4)
+        forecastRowView1.constrainRelative(to: forecastRowView5)
     }
 
     @objc func didBecomeActive() {
@@ -101,7 +103,7 @@ class WeatherViewController: UIViewController {
         cityTextField.endEditing(true)
     }
 
-    func prepareViewForAnimation() {
+    private func prepareViewForAnimation() {
         tempTextLabel.isHidden = true
         errorImageview.isHidden = true
         weatherImageView.isHidden = true
@@ -112,14 +114,14 @@ class WeatherViewController: UIViewController {
         cityTextLabel.textColor = .white.withAlphaComponent(0.15)
     }
 
-    @objc func keyboardWillShow(notification: NSNotification) {
+    @objc private func keyboardWillShow(notification: NSNotification) {
         guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else {
             return
         }
         self.view.frame.origin.y = 40 - keyboardSize.height
     }
 
-    @objc func keyboardWillHide(notification: NSNotification) {
+    @objc private func keyboardWillHide(notification: NSNotification) {
         self.view.frame.origin.y = 0
     }
 
@@ -139,7 +141,7 @@ class WeatherViewController: UIViewController {
         handleTextField()
     }
 
-    func handleTextField() {
+    private func handleTextField() {
         if cityTextField.text?.isEmpty == false {
             weatherViewModel.didEnterCity(with: cityTextField.text!)
             searchButton?.isUserInteractionEnabled = false
@@ -192,9 +194,9 @@ extension WeatherViewController: ViewModelDelegate {
             self.errorImageview.isHidden = true
 
             self.forecastRowView1.configure(day: "Today",
-                                      image: forecastImage,
-                                      minTemp: forecastMinTemp,
-                                      maxTemp: forecastMaxTemp)
+                                            image: forecastImage,
+                                            minTemp: forecastMinTemp,
+                                            maxTemp: forecastMaxTemp)
 
             self.cityTextLabel.textColor = .white
             self.tempTextLabel.isHidden = false
@@ -206,24 +208,24 @@ extension WeatherViewController: ViewModelDelegate {
     func updateForecastUI(with forecastUIModels: [ForecastUIModel]) {
         DispatchQueue.main.async {
             self.forecastRowView2.configure(day: forecastUIModels[1].forecastDay,
-                                      image: forecastUIModels[1].forecastImage,
-                                      minTemp: forecastUIModels[1].forecastTempMin,
-                                      maxTemp: forecastUIModels[1].forecastTempMax)
+                                            image: forecastUIModels[1].forecastImage,
+                                            minTemp: forecastUIModels[1].forecastTempMin,
+                                            maxTemp: forecastUIModels[1].forecastTempMax)
 
             self.forecastRowView3.configure(day: forecastUIModels[2].forecastDay,
-                                      image: forecastUIModels[2].forecastImage,
-                                      minTemp: forecastUIModels[2].forecastTempMin,
-                                      maxTemp: forecastUIModels[2].forecastTempMax)
+                                            image: forecastUIModels[2].forecastImage,
+                                            minTemp: forecastUIModels[2].forecastTempMin,
+                                            maxTemp: forecastUIModels[2].forecastTempMax)
 
             self.forecastRowView4.configure(day: forecastUIModels[3].forecastDay,
-                                      image: forecastUIModels[3].forecastImage,
-                                      minTemp: forecastUIModels[3].forecastTempMin,
-                                      maxTemp: forecastUIModels[3].forecastTempMax)
+                                            image: forecastUIModels[3].forecastImage,
+                                            minTemp: forecastUIModels[3].forecastTempMin,
+                                            maxTemp: forecastUIModels[3].forecastTempMax)
 
             self.forecastRowView5.configure(day: forecastUIModels[4].forecastDay,
-                                      image: forecastUIModels[4].forecastImage,
-                                      minTemp: forecastUIModels[4].forecastTempMin,
-                                      maxTemp: forecastUIModels[4].forecastTempMax)
+                                            image: forecastUIModels[4].forecastImage,
+                                            minTemp: forecastUIModels[4].forecastTempMin,
+                                            maxTemp: forecastUIModels[4].forecastTempMax)
 
             self.forecastStackView.isHidden = false
             self.forecastAnimationView.isHidden = true

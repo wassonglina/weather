@@ -45,23 +45,4 @@ protocol DateContaining {
     var dt: Int { get }
 }
 
-////Generics > flexible, reusable functions and types > [T]
-//func filterNoon<T: DateContaining>(unfilteredList: [T]) -> [T] {
-//
-//    let filteredList = unfilteredList.filter { item in
-//
-//        //creates the day of timestamp dt > prints:
-//        //2022-03-13 18:00:00 +0000
-//        let date = Date(timeIntervalSince1970: Double(item.dt))
-//
-//        //gives infos of choosen calendar fo date > prints:
-//        //calendar: gregorian (current) timeZone: America/Los_Angeles (fixed (equal to current)) era: 1 year: 2022 month: 3 day: 13 hour: 11 ...
-//        let components = Calendar.current.dateComponents(in: .current, from: date)
-//
-//        return (11...13).contains(components.hour!)
-//    }
-//    return filteredList
-//}
-
-
 

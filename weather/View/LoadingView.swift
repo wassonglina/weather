@@ -26,8 +26,8 @@ extension CAGradientLayer {
 
 class LoadingView: UIView {
 
-    let gradientLayer = CAGradientLayer.loading
-    let animation = CABasicAnimation(keyPath: "transform.translation.x")
+    private let gradientLayer = CAGradientLayer.loading
+    private let animation = CABasicAnimation(keyPath: "transform.translation.x")
 
     override init(frame: CGRect) {
         super.init(frame: frame)

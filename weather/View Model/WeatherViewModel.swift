@@ -22,14 +22,14 @@ protocol ViewModelDelegate: AnyObject {
 
 class WeatherViewModel: NSObject {
 
-    var locationManager = CLLocationManager()
+    private var locationManager = CLLocationManager()
     weak var delegate: ViewModelDelegate?
-    let weatherManager = WeatherManager()
-    var timer: Timer?
-    let defaults = UserDefaults.standard
-    let cities = ["Honolulu", "Hobart", "Pattani", "Manaus", "Stavanger", "Taipei", "Dhaka"]
+    private let weatherManager = WeatherManager()
+    private var timer: Timer?
+    private let defaults = UserDefaults.standard
+    private let cities = ["Honolulu", "Hobart", "Pattani", "Manaus", "Stavanger", "Taipei", "Dhaka"]
 
-    var networkRequestCheckCoordinates: CLLocationCoordinate2D?
+    private var networkRequestCheckCoordinates: CLLocationCoordinate2D?
 
     override init() {
         super.init()
@@ -52,7 +52,7 @@ class WeatherViewModel: NSObject {
         case randomCity
     }
 
-    var preferedLocationSource: PreferedLocationSource? {
+    private var preferedLocationSource: PreferedLocationSource? {
         didSet {
             switch preferedLocationSource {
             case .currentLocation:
@@ -118,7 +118,7 @@ class WeatherViewModel: NSObject {
         }
     }
 
-    func handleAuthCase() {
+    private func handleAuthCase() {
         switch locationManager.authorizationStatus {
         case .authorizedAlways:
             preferedLocationSource = .currentLocation
@@ -137,7 +137,7 @@ class WeatherViewModel: NSObject {
         }
     }
 
-    func getLocationBasedOnUserPref() {
+    private func getLocationBasedOnUserPref() {
         print(#function)
         switch preferedLocationSource {
         case .currentLocation:
@@ -174,10 +174,11 @@ class WeatherViewModel: NSObject {
         preferedLocationSource = .city(name)
     }
 
-    func createAlert(){
-        let title = "Turn on your location in Weather Pal"  //Get weather for your current location? Turn on your location in Weather Pal
+    // MARK: check self!
+   private func createAlert(){
+        let title = "Turn on your location in Weather Pal"
         let message = "Allow location access in settings."
-        let cancelAction = UIAlertAction(title: "Cancel", style: .default) { _ in
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default) { _ in  
             print("tapped cancel")
             self.getLocationBasedOnUserPref()
         }
@@ -192,9 +193,9 @@ class WeatherViewModel: NSObject {
     }
 
 
-    //MARK:  - Evaluation network request > prepare data for UI or error handling
+    //MARK:  - Evaluate network request > prepare data for UI or error handling
 
-    func evaluateCurrent(result: (Result<CurrentModel, Error>)) {
+    private func evaluateCurrent(result: (Result<CurrentModel, Error>)) {
         switch result {
         case .success(let currentData):
             didFetchCurrent(with: currentData)
@@ -204,7 +205,7 @@ class WeatherViewModel: NSObject {
         }
     }
 
-    func evaluateForecast(result: (Result<[ForecastModel], Error>)) {
+    private func evaluateForecast(result: (Result<[ForecastModel], Error>)) {
         switch result {
         case .success(let forecastData):
             didFetchForecast(with: forecastData)
@@ -214,18 +215,7 @@ class WeatherViewModel: NSObject {
         }
     }
 
-    //    func evaluate<T>(result: (Result<T, Error>), execute: (Data)) {      //, execute: (Data)
-    //            switch result {
-    //            case .success(let decodedData):
-    //                execute(with: decodedData)
-    //            case .failure(let error):
-    //                print(error)
-    //                didCatchError(error: error as NSError)
-    //            }
-    //        }
-
-
-    func didCatchError(error: NSError) {
+    private func didCatchError(error: NSError) {
         let text: String
         let image: UIImage
 
@@ -248,7 +238,7 @@ class WeatherViewModel: NSObject {
 
     //MARK: - Preparation current and forecast data for VC
 
-    func didFetchCurrent(with currentWeather: CurrentModel) {
+     private func didFetchCurrent(with currentWeather: CurrentModel) {
         let city = currentWeather.name
         let currentTemp = currentWeather.tempString
         let image = UIImage(systemName: "\(currentWeather.symbolName(isNight: currentWeather.isNight!, isForecast: currentWeather.isForecast))")!
@@ -259,7 +249,7 @@ class WeatherViewModel: NSObject {
         delegate?.updateCurrentUI(city: city, temperature: currentTemp, image: image, forecastImage: conditionImage, forecastMinTemp: minTemp, forecastMaxTemp: maxTemp)
     }
 
-    func didFetchForecast(with forecastEntries: [ForecastModel]) {
+    private func didFetchForecast(with forecastEntries: [ForecastModel]) {
         var x = 1
         let forecastUIModels: [ForecastUIModel] = forecastEntries.compactMap { item in
             let allEntries = filterDay(unfilteredList: forecastEntries, dayNumber: x)
@@ -275,7 +265,7 @@ class WeatherViewModel: NSObject {
         delegate?.updateForecastUI(with: forecastUIModels)
     }
 
-    func filterDay(unfilteredList: [ForecastModel], dayNumber: Int) -> [ForecastModel] {
+    private func filterDay(unfilteredList: [ForecastModel], dayNumber: Int) -> [ForecastModel] {
         var forecastDay =  Date.now
         switch dayNumber {
         case 1:
@@ -299,7 +289,7 @@ class WeatherViewModel: NSObject {
     }
 
     //style depends on temp unit and region setting > if temp unit selected that's less common will show unit (e.g. °C for USA or °F for DE)
-    func createTempString(temp: Double) -> String {
+    private func createTempString(temp: Double) -> String {
         let formatter = MeasurementFormatter()
         formatter.numberFormatter.maximumFractionDigits = 0
         formatter.numberFormatter.roundingMode = .halfEven
@@ -309,14 +299,14 @@ class WeatherViewModel: NSObject {
         return (temp)
     }
 
-    func getMinTemp(unfilteredList: [ForecastModel]) -> Double {
+    private func getMinTemp(unfilteredList: [ForecastModel]) -> Double {
         let temp: [Double] = unfilteredList.map { item in
             return item.currentTemp
         }
         return (temp.min()!)
     }
 
-    func getMaxTemp(unfilteredList: [ForecastModel]) -> Double {
+    private func getMaxTemp(unfilteredList: [ForecastModel]) -> Double {
         let temp: [Double] = unfilteredList.map { item in
             return item.currentTemp
         }
@@ -340,6 +330,7 @@ extension WeatherViewModel: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(#function)
+        //handle CLLocationManager error
     }
 }
 
