@@ -177,7 +177,6 @@ extension WeatherViewController: UITextFieldDelegate {
 
 extension WeatherViewController: ViewModelDelegate {
 
-
     func presentAuthAlert(with title: String, with message: String, with cancel: UIAlertAction, with action: UIAlertAction) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(action)

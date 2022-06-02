@@ -8,6 +8,9 @@
 import UIKit
 import CoreLocation
 
+enum NetworkError: Error {
+    case invalidURL
+}
 
 extension String {
     func stringByAddingPercentEncodingForRFC3986() -> String? {
@@ -26,8 +29,7 @@ class WeatherManager {
     //forecasted weather of today and next 5 days every 3h
     let weatherForecastURL = "https://api.openweathermap.org/data/2.5/forecast?&units=metric"
 
-    let id = Secrets.openWeatherAppID       //replace with OpenWeather API key
-
+    let id = Secrets.openWeatherAppID       //replace with OpenWeather API keyclass
 
     func requestCurrentCityURL(city: String, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
         let currentURLString = "\(currentWeatherURL)&appid=\(id)&q=\(city.trimmingCharacters(in: .whitespaces).stringByAddingPercentEncodingForRFC3986()!)"
@@ -41,7 +43,6 @@ class WeatherManager {
         print(forecastURLString)
     }
 
-
     func requestCurrentGeoURL(with coordinates: CLLocationCoordinate2D, completion: @escaping (Result<CurrentModel, Error>) -> Void) {
         let currentURLString = "\(currentWeatherURL)&appid=\(id)&lat=\(coordinates.latitude)&lon=\(coordinates.longitude)"
         perform(urlString: currentURLString, transform: parseJSONCurrent, completion: completion)
@@ -52,11 +53,10 @@ class WeatherManager {
         perform(urlString: forecastURLString, transform: parseJSONForecast, completion: completion)
     }
 
-
     //Generics: types not defined
     func perform<T>(urlString: String,
-                    transform: @escaping (Data) throws -> T,      //T: Current or Forecast Models
-                    completion: @escaping (Result<T, Error>) -> Void  //Result T > .success > Current or Forecast Models
+                    transform: @escaping (Data) throws -> T,      //T: Current or Forecast Model
+                    completion: @escaping (Result<T, Error>) -> Void  //Result T > .success > Current or Forecast Model
     ) {
         performNetworkRequest(with: urlString) { result in
 
@@ -76,24 +76,23 @@ class WeatherManager {
     }
 
     func performNetworkRequest(with urlString: String, completion: @escaping (Result<Data, Error>) -> Void ) {
-        if let url = URL(string: urlString) {
-            let session = URLSession(configuration: .default)
-            let task = session.dataTask(with: url) { data, response, error in
-                if error != nil {
-                    completion(.failure(error!))
-                    return
-                }
-                if let weatherData = data {
+        guard let url = URL(string: urlString) else {
+            completion(.failure(NetworkError.invalidURL))
+            return
+        }
+        let task = URLSession.shared
+            .dataTask(with: url) { data, response, error in
+                if let error = error {
+                    completion(.failure(error))
+                } else if let weatherData = data {
                     completion(.success(weatherData))
                 }
             }
-            task.resume()
-        }
+        task.resume()
     }
 
     func parseJSONCurrent(with encodedData: Data) throws -> CurrentModel {
         let decoder = JSONDecoder()
-
         let decodedWeather = try decoder.decode(OpenWeatherAPI.Current.self, from: encodedData)
         let decodedTemp = decodedWeather.main.temp
         let decodedName = decodedWeather.name
@@ -104,20 +103,17 @@ class WeatherManager {
         let decodedMinTemp = decodedWeather.main.temp_min
         let decodedMaxTemp = decodedWeather.main.temp_max
 
-
         return CurrentModel(currentTemp: decodedTemp, minTemp: decodedMinTemp, maxTemp: decodedMaxTemp, condition: decodedCondition, name: decodedName, isNight: answer, isForecast: false)
     }
 
     func parseJSONForecast(with encodedData: Data) throws -> [ForecastModel] {
         let decoder = JSONDecoder()
         let decodedForecast = try decoder.decode(OpenWeatherAPI.Forecast.self, from: encodedData)
-
         //only get temp, weather id and date of filtered list
         let forecastModels: [ForecastModel] = decodedForecast.list.compactMap { list in
             let forecastTemp = list.main.temp
             let forecastCondition = list.weather[0].id
             let foracastDay = list.dt
-
             let today = Calendar.current.component(.weekday, from: Date())
             let foracastDate = Date(timeIntervalSince1970: Double(list.dt))
             let forecastWeekday = Calendar.current.component(.weekday, from: foracastDate)
